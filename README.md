@@ -37,7 +37,7 @@ brew install tesseract
 sudo apt-get install tesseract-ocr
 
 # Install Python dependencies (Detectron2 CPU backend - default)
-pip install 'torch==2.3.*' 'torchvision==0.18.*' --index-url https://download.pytorch.org/whl/cpu
+pip install 'torch==2.2.*' 'torchvision==0.17.*' --index-url https://download.pytorch.org/whl/cpu
 pip install layoutparser detectron2==0.6
 pip install pytesseract opencv-python pymupdf pandas pyyaml pydantic typer
 
