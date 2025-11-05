@@ -38,7 +38,8 @@ sudo apt-get install tesseract-ocr
 
 # Install Python dependencies (Detectron2 CPU backend - default)
 pip install 'torch==2.2.*' 'torchvision==0.17.*' --index-url https://download.pytorch.org/whl/cpu
-pip install layoutparser detectron2==0.6
+pip install layoutparser
+CC=clang CXX=clang++ ARCHFLAGS="-arch x86_64" pip install --user 'git+https://github.com/facebookresearch/detectron2.git'
 pip install pytesseract opencv-python pymupdf pandas pyyaml pydantic typer
 
 # Alternative: PaddleDetection backend
