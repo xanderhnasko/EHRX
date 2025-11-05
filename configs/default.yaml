@@ -1,0 +1,47 @@
+detector:
+  backend: detectron2   # or paddle
+  model: "lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config"
+  label_map:
+    Text: "text_block"
+    Table: "table"
+    Figure: "figure"
+  min_conf: 0.5
+  nms_iou: 0.3
+
+ocr:
+  engine: tesseract
+  psm_text: 6           # uniform block
+  psm_table: 6
+  lang: eng
+  preprocess:
+    deskew: true
+    binarize: true
+
+tables:
+  csv_guess: true       # heuristic row/col if grid not found
+  min_row_height_px: 10
+  y_cluster_tol_px: 6
+  x_proj_bins: 40
+
+hierarchy:
+  heading_regex:
+    - "^(PROBLEMS?|PROBLEM LIST)\\b"
+    - "^(MEDICATIONS?|CURRENT MEDS?)\\b"
+    - "^(ALLERG(IES|Y))\\b"
+    - "^(LABS?|RESULTS?)\\b"
+    - "^(VITALS?)\\b"
+    - "^(IMAGING|RADIOLOGY)\\b"
+    - "^(ASSESSMENT|PLAN|A/P)\\b"
+    - "^NOTES?\\b"
+  caps_ratio_min: 0.6
+  gap_above_px: 18
+  left_margin_tolerance_px: 20
+  levels:
+    H1: strong_keyword|big_gap
+    H2: weaker_keyword|indented
+    H3: bullets|numbered
+
+privacy:
+  local_only: true
+  log_text_snippets: false   # never log OCR text
+

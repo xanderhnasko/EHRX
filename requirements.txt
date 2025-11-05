@@ -1,0 +1,26 @@
+# ehrx - EHR Extraction Tool Requirements
+
+# Core ML/CV/OCR
+torch==2.3.*
+torchvision==0.18.*
+layoutparser==0.3.*
+detectron2==0.6
+pytesseract==0.3.*
+opencv-python==4.9.*
+
+# PDF processing
+pymupdf==1.23.*
+
+# Data handling
+pandas==2.2.*
+pyyaml==6.0.*
+pydantic==2.6.*
+
+# CLI
+typer==0.9.*
+rich==13.7.*
+
+# Development
+pytest==8.0.*
+pytest-cov==4.1.*
+
