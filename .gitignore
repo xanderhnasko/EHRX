@@ -71,4 +71,6 @@ checkpoints/
 tmp/
 temp/
 .tmp/
+.claude/
+
 
