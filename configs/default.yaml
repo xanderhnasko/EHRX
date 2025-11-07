@@ -1,6 +1,7 @@
 detector:
   backend: detectron2   # or paddle
   model: "lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config"
+  model_path: "~/.layoutparser/models/model_final.pth"  # Local model path
   label_map:
     Text: "text_block"
     Table: "table"

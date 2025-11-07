@@ -9,6 +9,9 @@ layoutparser==0.3.*
 pytesseract==0.3.*
 opencv-python==4.9.*
 
+# System dependency (install separately, e.g., `brew install tesseract`)
+# tesseract-ocr >= 5.0
+
 # PDF processing
 pymupdf==1.23.*
 pdf2image==3.0.*
