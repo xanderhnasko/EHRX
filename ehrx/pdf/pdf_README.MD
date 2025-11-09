@@ -32,5 +32,3 @@ Key classes/functions
 - `config.py` defines and loads the run configuration, ensures dependencies are present, and initializes PHI-aware logging.
 - `pager.py` uses available PDF backends to rasterize pages and provides precise mapping between PDF coordinates and pixels, plus vector text when possible.
 - `utils.py` supplies supporting primitives (IDs, timers, logging helpers, manifests, filesystem checks, geometry ops) used across processing steps.
-
-- Made no code changes; provided a concise high-level and functional summary of `utils.py`, `config.py`, and `pager.py`, and how they interoperate as the core runtime scaffold.
