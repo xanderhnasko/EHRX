@@ -37,7 +37,7 @@ python -m pip install layoutparser==0.3.*
 
 #### Step 2d: Install Core Dependencies via Conda
 ```bash
-conda install -c conda-forge pandas pyyaml opencv pytesseract poppler
+conda install -c conda-forge pandas pyyaml opencv tesseract pytesseract poppler
 ```
 
 #### Step 2e: Install Remaining Dependencies via Pip
@@ -60,11 +60,13 @@ python -c "import detectron2; print('Detectron2: OK')"
 python -c "import layoutparser; print('LayoutParser:', layoutparser.__version__)"
 python -c "import cv2; print('OpenCV:', cv2.__version__)"
 python -c "import pandas; print('Pandas:', pandas.__version__)"
+python -c "import pytesseract; print('PyTesseract: OK')"
 ```
 
-Verify poppler is installed for PDF processing:
+Verify system dependencies are installed:
 ```bash
-pdftoppm -h  # Should show poppler help, not "command not found"
+pdftoppm -h     # Should show poppler help, not "command not found"
+tesseract --help # Should show tesseract help, not "command not found"
 ```
 
 ### 4. Optional: Suppress Telemetry Noise
@@ -74,10 +76,14 @@ To reduce logging noise from detectron2/iopath telemetry (optional):
 export IOPATH_NO_TELEMETRY=1
 ```
 
-### 5. Test Layout Detection
+### 5. Test Layout Detection and OCR
 
 ```bash
+# Test layout detection only
 python test_detection_visual.py path/to/your/document.pdf
+
+# Test with OCR processing (recommended)
+python test_detection_visual.py path/to/your/document.pdf --ocr
 ```
 
 ## Troubleshooting
@@ -100,6 +106,11 @@ python test_detection_visual.py path/to/your/document.pdf
 5. **PDF processing fails ("poppler not found")**
    - Install poppler: `conda install -c conda-forge poppler`
    - Verify: `pdftoppm -h` should show help, not error
+
+6. **OCR fails ("tesseract is not installed")**
+   - Install tesseract: `conda install -c conda-forge tesseract`
+   - Verify: `tesseract --help` should show help, not error
+   - Note: Both `tesseract` (binary) and `pytesseract` (Python wrapper) are needed
 
 ### Environment Verification Commands
 

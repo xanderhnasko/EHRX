@@ -15,16 +15,18 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from ehrx.detect import LayoutDetector, LayoutDetectionError
 from ehrx.pdf.pager import Pager
+from ehrx.route import ElementRouter, ElementRoutingError
 from ehrx.core.config import load_default_config, setup_logging_from_config
 
 
-def test_detection_on_pdf(pdf_path: str, page_range: str = "1", output_dir: str = "test_output"):
+def test_detection_on_pdf(pdf_path: str, page_range: str = "1", output_dir: str = "test_output", enable_ocr: bool = False):
     """Test layout detection on PDF pages with visualization.
     
     Args:
         pdf_path: Path to PDF file
         page_range: Page range to test (e.g., "1", "1-3", "1,3,5", or "all")
         output_dir: Directory to save output images
+        enable_ocr: Whether to run OCR on detected elements
     """
     try:
         # Load configuration
@@ -36,6 +38,17 @@ def test_detection_on_pdf(pdf_path: str, page_range: str = "1", output_dir: str 
         
         # Initialize detector
         detector = LayoutDetector(config.detector)
+        
+        # Initialize element router for OCR processing
+        element_router = None
+        if enable_ocr:
+            try:
+                doc_id = f"test_{Path(pdf_path).stem}"
+                element_router = ElementRouter(config, doc_id)
+                logger.info("OCR processing enabled")
+            except Exception as e:
+                logger.warning(f"Failed to initialize OCR: {e}")
+                enable_ocr = False
         
         # Initialize pager
         pager = Pager(pdf_path)
@@ -81,6 +94,15 @@ def test_detection_on_pdf(pdf_path: str, page_range: str = "1", output_dir: str 
                 
                 # Run layout detection
                 layout = detector.detect_layout(image)
+                
+                # Run OCR processing if enabled
+                elements = []
+                if enable_ocr and element_router:
+                    try:
+                        elements = element_router.process_layout_blocks(layout, image, page_info, mapper)
+                        logger.info(f"OCR processed {len(elements)} elements")
+                    except Exception as e:
+                        logger.error(f"OCR processing failed: {e}")
                 
                 # Get detection stats
                 stats = detector.get_detection_stats(layout)
@@ -190,6 +212,33 @@ def test_detection_on_pdf(pdf_path: str, page_range: str = "1", output_dir: str 
                 confidence = f" (conf: {block.score:.3f})" if hasattr(block, 'score') else ""
                 coords = f"[{block.block.x_1:.0f}, {block.block.y_1:.0f}, {block.block.x_2:.0f}, {block.block.y_2:.0f}]"
                 print(f"  {i+1}. {block_type}{confidence} at {coords}")
+                
+                # Show OCR results if available
+                if enable_ocr and i < len(elements):
+                    element = elements[i]
+                    payload = element.get("payload", {})
+                    
+                    if "text" in payload:
+                        text = payload["text"][:100] + "..." if len(payload["text"]) > 100 else payload["text"]
+                        print(f"      OCR: \"{text}\"")
+                        if "ocr_confidence" in payload and payload["ocr_confidence"]:
+                            print(f"      OCR Confidence: {payload['ocr_confidence']:.2f}")
+                    
+                    elif "ocr_lines" in payload:
+                        ocr_lines = payload["ocr_lines"][:3]  # Show first 3 lines
+                        for line_idx, line in enumerate(ocr_lines):
+                            if line.strip():
+                                line_text = line[:80] + "..." if len(line) > 80 else line
+                                print(f"      Line {line_idx+1}: \"{line_text}\"")
+                        if len(payload["ocr_lines"]) > 3:
+                            print(f"      ... and {len(payload['ocr_lines'])-3} more lines")
+                    
+                    elif "image_ref" in payload:
+                        print(f"      Image: {payload['image_ref']}")
+                        if "ocr_text" in payload and payload["ocr_text"]:
+                            text = payload["ocr_text"][:50] + "..." if len(payload["ocr_text"]) > 50 else payload["ocr_text"]
+                            print(f"      OCR: \"{text}\"")
+                print()  # Empty line between elements
         
         # Print summary statistics
         if len(all_page_stats) > 1:
@@ -222,6 +271,7 @@ def main():
     parser.add_argument("pdf_path", help="Path to PDF file to test")
     parser.add_argument("--pages", default="1", help="Pages to test (e.g., '1', '1-3', '1,3,5', or 'all', default: '1')")
     parser.add_argument("--output", default="test_output", help="Output directory for visualizations")
+    parser.add_argument("--ocr", action="store_true", help="Enable OCR processing on detected elements")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"])
     
     args = parser.parse_args()
@@ -231,7 +281,7 @@ def main():
         sys.exit(1)
     
     try:
-        test_detection_on_pdf(args.pdf_path, args.pages, args.output)
+        test_detection_on_pdf(args.pdf_path, args.pages, args.output, args.ocr)
         print(f"\nVisualizations saved to: {Path(args.output).absolute()}")
     except Exception as e:
         print(f"Error: {e}")
