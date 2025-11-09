@@ -5,6 +5,8 @@
 #
 # SYSTEM DEPENDENCIES (install via conda):
 # - poppler (for PDF processing via pdf2image)
+# - tesseract (for OCR text extraction)
+# - opencv (for image preprocessing)
 
 # Core ML/CV/OCR (install via conda where possible)
 torch>=2.3.0
