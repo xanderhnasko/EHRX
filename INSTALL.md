@@ -37,7 +37,7 @@ python -m pip install layoutparser==0.3.*
 
 #### Step 2d: Install Core Dependencies via Conda
 ```bash
-conda install -c conda-forge pandas pyyaml opencv pytesseract
+conda install -c conda-forge pandas pyyaml opencv pytesseract poppler
 ```
 
 #### Step 2e: Install Remaining Dependencies via Pip
@@ -62,7 +62,19 @@ python -c "import cv2; print('OpenCV:', cv2.__version__)"
 python -c "import pandas; print('Pandas:', pandas.__version__)"
 ```
 
-### 4. Test Layout Detection
+Verify poppler is installed for PDF processing:
+```bash
+pdftoppm -h  # Should show poppler help, not "command not found"
+```
+
+### 4. Optional: Suppress Telemetry Noise
+
+To reduce logging noise from detectron2/iopath telemetry (optional):
+```bash
+export IOPATH_NO_TELEMETRY=1
+```
+
+### 5. Test Layout Detection
 
 ```bash
 python test_detection_visual.py path/to/your/document.pdf
@@ -84,6 +96,10 @@ python test_detection_visual.py path/to/your/document.pdf
 
 4. **PyTorch/Detectron2 compatibility issues**
    - Use conda for both: `conda install pytorch detectron2 -c pytorch -c conda-forge`
+
+5. **PDF processing fails ("poppler not found")**
+   - Install poppler: `conda install -c conda-forge poppler`
+   - Verify: `pdftoppm -h` should show help, not error
 
 ### Environment Verification Commands
 

@@ -2,6 +2,9 @@
 # 
 # IMPORTANT: Use conda for installation! See INSTALL.md for setup instructions.
 # Regular pip install will likely fail due to dependency conflicts.
+#
+# SYSTEM DEPENDENCIES (install via conda):
+# - poppler (for PDF processing via pdf2image)
 
 # Core ML/CV/OCR (install via conda where possible)
 torch>=2.3.0
