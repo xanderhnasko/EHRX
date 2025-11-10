@@ -248,7 +248,7 @@ def process_document(
             
             for page_idx, (page_blocks, page_info) in enumerate(zip(all_pages_blocks, page_infos)):
                 page_num = pages_to_process[page_idx]
-                page_image, _ = rasterizer.rasterize_page(page_num, dpi=300)  # Higher DPI for OCR
+                page_image, _ = rasterizer.rasterize_page(page_num, dpi=600)  # Higher DPI for better OCR
                 
                 # Convert blocks back to layout format for enhanced router
                 layout_blocks = [block_data["block"] for block_data in page_blocks]

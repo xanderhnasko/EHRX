@@ -92,23 +92,43 @@ class OCREngine:
                 processed_image = self._preprocess_image(image)
                 preprocessing_applied = True
             
-            # Run OCR with timing
+            # Run OCR with timing and optimized parameters
             with Timer(f"ocr_{element_type}", self.logger):
-                # Use return_response=True to get confidence scores
-                ocr_result = self.ocr_agent.detect(
-                    processed_image, 
-                    return_response=True,
-                    return_only_text=False
-                )
+                # Get PSM setting based on element type
+                psm = self._get_psm_for_element_type(element_type)
+                
+                # Use return_response=True to get confidence scores with custom PSM
+                try:
+                    ocr_result = self.ocr_agent.detect(
+                        processed_image, 
+                        return_response=True,
+                        return_only_text=False,
+                        psm=psm
+                    )
+                except TypeError:
+                    # Fallback if PSM parameter not supported in this version
+                    ocr_result = self.ocr_agent.detect(
+                        processed_image, 
+                        return_response=True,
+                        return_only_text=False
+                    )
             
             # Extract text and confidence from result
             if isinstance(ocr_result, dict) and 'text' in ocr_result:
                 text = ocr_result['text']
-                confidence = ocr_result.get('conf', 0.0)
+                # Try multiple possible confidence field names
+                confidence = (ocr_result.get('conf') or 
+                             ocr_result.get('confidence') or 
+                             ocr_result.get('mean_confidence') or 
+                             0.0)
+            elif hasattr(ocr_result, 'text'):
+                # LayoutParser TextBlock object
+                text = ocr_result.text
+                confidence = getattr(ocr_result, 'confidence', getattr(ocr_result, 'score', 0.0))
             else:
                 # Fallback to simple text detection
                 text = self.ocr_agent.detect(processed_image, return_only_text=True)
-                confidence = None
+                confidence = 0.0
             
             # Clean up text
             text = self._clean_text(text)
@@ -130,6 +150,24 @@ class OCREngine:
             self.logger.error(f"OCR processing failed: {e}")
             raise OCRError(f"Text extraction failed: {e}")
     
+    def _get_psm_for_element_type(self, element_type: str) -> int:
+        """Get optimal PSM (Page Segmentation Mode) for element type.
+        
+        Args:
+            element_type: Type of element ("text", "table", "handwriting")
+            
+        Returns:
+            PSM value for Tesseract
+        """
+        psm_mapping = {
+            "text": self.config.psm_text,      # Usually PSM 6 (uniform text block)
+            "table": self.config.psm_table,  # Usually PSM 6 (uniform text block) 
+            "handwriting": 8,                # PSM 8 (single word) - better for handwritten text
+            "figure": 11                     # PSM 11 (sparse text) - for captions
+        }
+        
+        return psm_mapping.get(element_type, self.config.psm_text)
+    
     def _preprocess_image(self, image: np.ndarray) -> np.ndarray:
         """Apply preprocessing to image before OCR.
         
@@ -147,6 +185,9 @@ class OCREngine:
         
         processed = gray
         
+        # Enhance contrast and reduce noise
+        processed = self._enhance_image_quality(processed)
+        
         # Apply deskewing if configured
         if self.config.preprocess.deskew:
             processed = self._deskew_image(processed)
@@ -160,6 +201,36 @@ class OCREngine:
             processed = cv2.cvtColor(processed, cv2.COLOR_GRAY2RGB)
         
         return processed
+    
+    def _enhance_image_quality(self, image: np.ndarray) -> np.ndarray:
+        """Enhance image quality for better OCR results.
+        
+        Args:
+            image: Grayscale input image
+            
+        Returns:
+            Enhanced grayscale image
+        """
+        try:
+            # Apply slight Gaussian blur to reduce noise
+            denoised = cv2.GaussianBlur(image, (3, 3), 0)
+            
+            # Enhance contrast using CLAHE (Contrast Limited Adaptive Histogram Equalization)
+            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+            enhanced = clahe.apply(denoised)
+            
+            # Apply sharpening kernel for better text edges
+            kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+            sharpened = cv2.filter2D(enhanced, -1, kernel)
+            
+            # Ensure values are within valid range
+            sharpened = np.clip(sharpened, 0, 255).astype(np.uint8)
+            
+            return sharpened
+            
+        except Exception as e:
+            self.logger.warning(f"Image enhancement failed, using original: {e}")
+            return image
     
     def _deskew_image(self, image: np.ndarray) -> np.ndarray:
         """Deskew image to correct rotation."""
