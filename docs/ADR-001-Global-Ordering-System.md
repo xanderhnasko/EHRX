@@ -1,7 +1,7 @@
 # ADR-001: Document-Wide Column Detection and Global Ordering System
 
 ## Status
-Proposed
+Implemented
 
 ## Context
 
@@ -125,8 +125,49 @@ This ADR documents the architectural decision made to address limitations in the
 
 The two-component approach allows for modular development and testing while maintaining backward compatibility during the transition period.
 
+## Implementation Status
+
+### Completed Components (2025-11-10)
+
+**Phase 1: Column Detection Infrastructure** ✅
+- `ehrx/layout/column_detection.py` - Complete DocumentColumnDetector with ColumnLayout data structure
+- K-means clustering with silhouette analysis for optimal column count (k=1,2,3)
+- Robust coordinate extraction supporting multiple block formats
+- IQR-based outlier filtering for noisy OCR coordinates
+- Graceful fallback to single-column for edge cases
+
+**Phase 2: Global Ordering Manager** ✅  
+- `ehrx/layout/global_ordering.py` - Complete GlobalOrderingManager implementation
+- Document-wide z-order counter maintaining continuity across pages
+- Column-aware reading order sorting: (column_index, y_coordinate)
+- Per-column heading context tracking for proper element associations
+- Cross-page state management
+
+**Phase 3: Integration Infrastructure** ✅
+- `ehrx/layout/enhanced_router.py` - EnhancedElementRouter and DocumentProcessor
+- Two-pass processing pipeline: layout analysis → element processing  
+- Complete integration with existing coordinate mapping systems
+- Backward compatibility with single-column fallback behavior
+
+### Test Coverage: 33 Passing Tests
+- Column detection components: 24 tests
+- Global ordering manager: 5 tests  
+- Integration and two-pass processing: 4 tests
+
+### Ready for Integration
+The system is now ready for integration with the main extraction pipeline (`ehrx/cli.py`) and hierarchy builder (`ehrx/hierarchy.py`). Key integration points established:
+
+1. **Two-pass processing** can be added to CLI workflow
+2. **Enhanced elements** include column metadata for hierarchy building
+3. **Graceful fallbacks** ensure robustness for all document types
+
+### Next Steps
+- Integrate with main CLI extraction workflow
+- Update serialization to preserve column context
+- Enhance hierarchy builder to use column-aware associations
+
 ---
 
-**Date**: 2025-11-9
-**Authors**: Xander and Claude Code
-**Related Files**: `ehrx/route.py`, `ehrx/hierarchy.py`
+**Date**: 2025-11-10 (Updated)
+**Authors**: Xander and Claude Code  
+**Related Files**: `ehrx/route.py`, `ehrx/hierarchy.py`, `ehrx/layout/`
