@@ -10,8 +10,8 @@ detector:
 
 ocr:
   engine: tesseract
-  psm_text: 6           # uniform block
-  psm_table: 6
+  psm_text: 8           # single word - better for EHR text
+  psm_table: 6          # uniform block - good for tables
   lang: eng
   preprocess:
     deskew: true

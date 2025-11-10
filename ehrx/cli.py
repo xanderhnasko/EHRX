@@ -208,7 +208,7 @@ def process_document(
         page_infos = []
         
         for page_num in pages_to_process:
-            page_image, page_info = rasterizer.rasterize_page(page_num, dpi=200)
+            page_image, page_info = rasterizer.rasterize_page(page_num - 1, dpi=200)  # Convert to 0-based
             page_infos.append(page_info)
             
             layout = detector.detect_layout(page_image)
@@ -248,7 +248,11 @@ def process_document(
             
             for page_idx, (page_blocks, page_info) in enumerate(zip(all_pages_blocks, page_infos)):
                 page_num = pages_to_process[page_idx]
-                page_image, _ = rasterizer.rasterize_page(page_num, dpi=300)  # Higher DPI for OCR
+                # Use higher DPI for OCR quality, but scale coordinates accordingly
+                detection_dpi = 200
+                ocr_dpi = 600
+                dpi_scale_factor = ocr_dpi / detection_dpi
+                page_image, _ = rasterizer.rasterize_page(page_num - 1, dpi=ocr_dpi)
                 
                 # Convert blocks back to layout format for enhanced router
                 layout_blocks = [block_data["block"] for block_data in page_blocks]
@@ -270,9 +274,9 @@ def process_document(
                     # Extract text for text blocks
                     if element["type"] == "text_block":
                         try:
-                            # Crop region for OCR
+                            # Crop region for OCR - scale coordinates for higher DPI
                             bbox_px = element["bbox_px"]
-                            x0, y0, x1, y1 = [int(coord) for coord in bbox_px]
+                            x0, y0, x1, y1 = [int(coord * dpi_scale_factor) for coord in bbox_px]
                             cropped = page_image[y0:y1, x0:x1]
                             
                             if cropped.size > 0:
@@ -299,8 +303,9 @@ def process_document(
                     # Handle visual elements
                     elif element["type"] in ["table", "figure", "handwriting"]:
                         try:
+                            # Scale coordinates for higher DPI
                             bbox_px = element["bbox_px"] 
-                            x0, y0, x1, y1 = [int(coord) for coord in bbox_px]
+                            x0, y0, x1, y1 = [int(coord * dpi_scale_factor) for coord in bbox_px]
                             crop_image = page_image[y0:y1, x0:x1]
                             
                             if element["type"] == "table":
