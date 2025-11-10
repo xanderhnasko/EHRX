@@ -148,7 +148,7 @@ def show_config_summary(
     dry_run: bool
 ) -> None:
     """Display processing configuration summary."""
-    table = Table(title="🏥 EHRX Processing Configuration")
+    table = Table(title="EHRX Processing Configuration")
     table.add_column("Setting", style="cyan")
     table.add_column("Value", style="green")
     
@@ -277,9 +277,18 @@ def process_document(
                             
                             if cropped.size > 0:
                                 ocr_result = ocr_engine.extract_text(cropped, "text")
+                                # Handle confidence score properly
+                                confidence = ocr_result.get("confidence")
+                                if confidence is None:
+                                    confidence = 0.0
+                                elif isinstance(confidence, (int, float)):
+                                    confidence = float(confidence)
+                                else:
+                                    confidence = 0.0
+                                
                                 element["payload"] = {
                                     "text": ocr_result["text"],
-                                    "confidence": ocr_result.get("confidence", 0.0)
+                                    "confidence": confidence
                                 }
                             else:
                                 element["payload"] = {"text": "", "confidence": 0.0}
@@ -335,12 +344,12 @@ def process_document(
 
 def show_success_summary(output_dir: Path, elapsed_time: float) -> None:
     """Display processing success summary."""
-    rprint(f"\n[green]✅ Processing completed successfully![/green]")
-    rprint(f"[blue]📁 Output directory: {output_dir}[/blue]")
-    rprint(f"[blue]⏱️  Processing time: {elapsed_time:.1f} seconds[/blue]")
+    rprint(f"\n[green] Processing completed![/green]")
+    rprint(f"[blue] Output dir: {output_dir}[/blue]")
+    rprint(f"[blue] Processing time: {elapsed_time:.1f} seconds[/blue]")
     
     # Show output files
-    files_table = Table(title="📄 Generated Files")
+    files_table = Table(title=" Generated Files")
     files_table.add_column("File", style="cyan")
     files_table.add_column("Description", style="white")
     
