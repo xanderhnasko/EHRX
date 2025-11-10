@@ -105,8 +105,17 @@ class OCREngine:
                         return_only_text=False,
                         psm=psm
                     )
-                except TypeError:
+                    self.logger.debug(f"OCR with PSM {psm} successful")
+                except TypeError as e:
                     # Fallback if PSM parameter not supported in this version
+                    self.logger.debug(f"PSM parameter not supported: {e}")
+                    ocr_result = self.ocr_agent.detect(
+                        processed_image, 
+                        return_response=True,
+                        return_only_text=False
+                    )
+                except Exception as e:
+                    self.logger.warning(f"OCR with PSM failed: {e}, trying without PSM")
                     ocr_result = self.ocr_agent.detect(
                         processed_image, 
                         return_response=True,
@@ -116,16 +125,41 @@ class OCREngine:
             # Extract text and confidence from result
             if isinstance(ocr_result, dict) and 'text' in ocr_result:
                 text = ocr_result['text']
-                # Try multiple possible confidence field names
-                confidence = (ocr_result.get('conf') or 
-                             ocr_result.get('confidence') or 
-                             ocr_result.get('mean_confidence') or 
-                             0.0)
+                # Debug: Log all available keys for confidence extraction
+                self.logger.debug(f"OCR result dict keys: {list(ocr_result.keys())}")
+                
+                # Extract confidence from the 'data' field which contains Tesseract TSV output
+                confidence = 0.0
+                if 'data' in ocr_result and ocr_result['data'] is not None:
+                    try:
+                        # Parse Tesseract TSV data to extract confidence scores
+                        data = ocr_result['data']
+                        if hasattr(data, 'empty') and not data.empty:  # pandas DataFrame
+                            confidence = self._extract_confidence_from_dataframe(data)
+                        elif isinstance(data, str) and data.strip():  # string TSV
+                            confidence = self._extract_confidence_from_tsv(data)
+                    except Exception as e:
+                        self.logger.debug(f"Failed to extract confidence from TSV data: {e}")
+                        
+                # Fallback: try direct confidence fields
+                if confidence == 0.0:
+                    confidence = (ocr_result.get('conf') or 
+                                 ocr_result.get('confidence') or 
+                                 ocr_result.get('mean_confidence') or 
+                                 0.0)
+                
+                self.logger.debug(f"Extracted confidence from dict: {confidence}")
             elif hasattr(ocr_result, 'text'):
                 # LayoutParser TextBlock object
                 text = ocr_result.text
+                # Debug: Log all available attributes
+                attrs = [attr for attr in dir(ocr_result) if not attr.startswith('_')]
+                self.logger.debug(f"OCR result object attributes: {attrs}")
                 confidence = getattr(ocr_result, 'confidence', getattr(ocr_result, 'score', 0.0))
+                self.logger.debug(f"Extracted confidence from object: {confidence}")
             else:
+                # Debug: Log what we actually got
+                self.logger.debug(f"Unexpected OCR result type: {type(ocr_result)}, value: {ocr_result}")
                 # Fallback to simple text detection
                 text = self.ocr_agent.detect(processed_image, return_only_text=True)
                 confidence = 0.0
@@ -285,6 +319,76 @@ class OCREngine:
         except Exception as e:
             self.logger.warning(f"Binarization failed: {e}")
             return image
+    
+    def _extract_confidence_from_tsv(self, tsv_data: str) -> float:
+        """Extract average confidence score from Tesseract TSV data.
+        
+        Args:
+            tsv_data: TSV format data from Tesseract with confidence column
+            
+        Returns:
+            Average confidence score (0-100 scale, converted to 0-1)
+        """
+        if not tsv_data or not tsv_data.strip():
+            return 0.0
+            
+        lines = tsv_data.strip().split('\n')
+        if len(lines) < 2:  # Need header + at least one data row
+            return 0.0
+            
+        # Parse TSV header to find confidence column
+        header = lines[0].split('\t')
+        try:
+            conf_idx = header.index('conf')
+        except ValueError:
+            # No confidence column found
+            return 0.0
+        
+        # Extract confidence values from data rows
+        confidences = []
+        for line in lines[1:]:
+            fields = line.split('\t')
+            if len(fields) > conf_idx:
+                try:
+                    conf_val = float(fields[conf_idx])
+                    if conf_val > 0:  # Only include positive confidence scores
+                        confidences.append(conf_val)
+                except (ValueError, IndexError):
+                    continue
+        
+        if not confidences:
+            return 0.0
+            
+        # Return average confidence, converted from 0-100 scale to 0-1 scale
+        avg_confidence = sum(confidences) / len(confidences)
+        return avg_confidence / 100.0
+    
+    def _extract_confidence_from_dataframe(self, df) -> float:
+        """Extract average confidence score from Tesseract DataFrame.
+        
+        Args:
+            df: pandas DataFrame from Tesseract with confidence column
+            
+        Returns:
+            Average confidence score (0-100 scale, converted to 0-1)
+        """
+        try:
+            if 'conf' not in df.columns:
+                return 0.0
+            
+            # Filter out negative/zero confidence scores and get valid ones
+            valid_conf = df['conf'][df['conf'] > 0]
+            
+            if len(valid_conf) == 0:
+                return 0.0
+            
+            # Return average confidence, converted from 0-100 scale to 0-1 scale
+            avg_confidence = valid_conf.mean()
+            return avg_confidence / 100.0
+            
+        except Exception as e:
+            self.logger.debug(f"Failed to extract confidence from DataFrame: {e}")
+            return 0.0
     
     def _clean_text(self, text: str) -> str:
         """Clean and normalize extracted text."""
