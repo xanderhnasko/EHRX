@@ -106,6 +106,18 @@ class EHRXConfig(BaseModel):
     privacy: PrivacyConfig = Field(default_factory=PrivacyConfig)
     
     model_config = ConfigDict(extra="forbid")  # Prevent unknown fields
+    
+    @classmethod
+    def from_yaml(cls, config_path: Optional[Union[str, Path]] = None) -> "EHRXConfig":
+        """Load configuration from YAML file.
+        
+        Args:
+            config_path: Path to config YAML file. If None, uses default config.
+            
+        Returns:
+            Validated configuration object.
+        """
+        return load_config(config_path)
 
 
 def load_config(config_path: Optional[Union[str, Path]] = None) -> EHRXConfig:
