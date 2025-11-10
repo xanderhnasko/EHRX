@@ -208,7 +208,7 @@ def process_document(
         page_infos = []
         
         for page_num in pages_to_process:
-            page_image, page_info = rasterizer.rasterize_page(page_num, dpi=200)
+            page_image, page_info = rasterizer.rasterize_page(page_num - 1, dpi=200)  # Convert to 0-based
             page_infos.append(page_info)
             
             layout = detector.detect_layout(page_image)
@@ -248,7 +248,7 @@ def process_document(
             
             for page_idx, (page_blocks, page_info) in enumerate(zip(all_pages_blocks, page_infos)):
                 page_num = pages_to_process[page_idx]
-                page_image, _ = rasterizer.rasterize_page(page_num, dpi=600)  # Higher DPI for better OCR
+                page_image, _ = rasterizer.rasterize_page(page_num - 1, dpi=600)  # Higher DPI, convert to 0-based
                 
                 # Convert blocks back to layout format for enhanced router
                 layout_blocks = [block_data["block"] for block_data in page_blocks]
