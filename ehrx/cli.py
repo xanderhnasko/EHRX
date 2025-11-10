@@ -44,6 +44,12 @@ def setup_logging(log_level: str = "INFO") -> None:
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%H:%M:%S"
     )
+    
+    # Suppress noisy third-party loggers
+    logging.getLogger("iopath.common.file_io").setLevel(logging.CRITICAL)
+    logging.getLogger("iopath.common.event_logger").setLevel(logging.CRITICAL)
+    logging.getLogger("detectron2").setLevel(logging.WARNING)
+    logging.getLogger("layoutparser").setLevel(logging.WARNING)
 
 
 def main(
