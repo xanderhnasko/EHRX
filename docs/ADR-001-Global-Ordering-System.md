@@ -127,6 +127,6 @@ The two-component approach allows for modular development and testing while main
 
 ---
 
-**Date**: 2025-11-10  
-**Authors**: Development Team  
+**Date**: 2025-11-9
+**Authors**: Xander and Claude Code
 **Related Files**: `ehrx/route.py`, `ehrx/hierarchy.py`
