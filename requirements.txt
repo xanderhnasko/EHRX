@@ -7,6 +7,7 @@
 # - poppler (for PDF processing via pdf2image)
 # - tesseract (for OCR text extraction)
 # - opencv (for image preprocessing)
+# - scikit-learn
 
 # Core ML/CV/OCR (install via conda where possible)
 torch>=2.3.0

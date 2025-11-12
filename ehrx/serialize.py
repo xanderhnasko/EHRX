@@ -258,25 +258,33 @@ class IndexBuilder:
     
     def build_index(
         self, 
-        manifest: Dict[str, Any], 
-        hierarchy: List[Dict[str, Any]], 
-        labels_used: List[str]
+        doc_id: str,
+        hierarchy: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Build complete document index.
+        """Build complete document index with only hierarchy.
         
         Args:
-            manifest: Document manifest
-            hierarchy: Document hierarchy
-            labels_used: List of section labels found
+            doc_id: Document ID
+            hierarchy: Document hierarchy (categories -> subcategories -> documents -> pages -> elements)
             
         Returns:
-            Complete index dictionary
+            Complete index dictionary with clean structure
         """
+        # If hierarchy is empty, return minimal structure
+        if not hierarchy or not hierarchy.get("categories"):
+            return {
+                "ehr_id": doc_id,
+                "total_pages": 0,
+                "total_documents": 0,
+                "categories": {}
+            }
+        
+        # Return clean structure with hierarchy
         index = {
-            "doc_id": manifest.get("doc_id", "unknown"),
-            "manifest": manifest,
-            "hierarchy": hierarchy,
-            "labels_used": labels_used
+            "ehr_id": doc_id,
+            "total_pages": hierarchy.get("total_pages", 0),
+            "total_documents": hierarchy.get("total_documents", 0),
+            "categories": hierarchy.get("categories", {})
         }
         
         return index
@@ -393,17 +401,15 @@ class DocumentSerializer:
     
     def finalize(
         self, 
-        hierarchy: List[Dict[str, Any]], 
-        labels_used: List[str],
+        hierarchy: Dict[str, Any],
         column_layout: ColumnLayout,
         processing_time: float = 0.0
     ) -> Dict[str, Any]:
         """Finalize serialization and write index.
         
         Args:
-            hierarchy: Document hierarchy
-            labels_used: Section labels found
-            column_layout: Document column layout
+            hierarchy: Document hierarchy in new format
+            column_layout: Document column layout (not included in output)
             processing_time: Total processing time
             
         Returns:
@@ -413,20 +419,15 @@ class DocumentSerializer:
             # Close JSONL writer
             final_count = self.jsonl_writer.close()
             
-            # Build statistics
+            # Build statistics for internal use only
             stats = {
                 "total_elements": final_count,
-                "z_order_range": [int(self._z_order_range[0]), int(self._z_order_range[1])],
                 "elements_by_type": self._elements_by_type.copy(),
                 "processing_time": processing_time
             }
             
-            # Build manifest
-            manifest = self.index_builder.build_manifest(self.config, stats, column_layout)
-            manifest["doc_id"] = self.doc_id
-            
-            # Build and write index
-            index_data = self.index_builder.build_index(manifest, hierarchy, labels_used)
+            # Build and write index (no manifest or column_layout in output)
+            index_data = self.index_builder.build_index(self.doc_id, hierarchy)
             index_path = self.output_dir / "document.index.json"
             self.index_builder.write_index(index_path, index_data)
             

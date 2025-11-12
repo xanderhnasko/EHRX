@@ -20,6 +20,8 @@ from .ocr import OCREngine
 from .route import ElementRouter
 from .layout.enhanced_router import DocumentProcessor, EnhancedElementRouter
 from .serialize import DocumentSerializer
+from .hierarchy import HierarchyBuilder
+from .visualize import HierarchyVisualizer
 
 # Initialize CLI app and console
 app = typer.Typer(help="EHRX - Clinical EHR PDF extraction tool")
@@ -61,6 +63,8 @@ def main(
     ocr_engine: Optional[str] = typer.Option(None, help="Override OCR engine (tesseract)"),
     pages: Optional[str] = typer.Option("all", help="Pages to process (e.g., '1-5,10,15-20' or 'all')"),
     log_level: str = typer.Option("INFO", help="Logging level (DEBUG|INFO|WARNING|ERROR)"),
+    build_hierarchy: bool = typer.Option(True, help="Build hierarchical document structure"),
+    generate_debug_viz: bool = typer.Option(False, "--debug-viz", help="Generate visual debug output"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Show what would be processed without running")
 ) -> None:
     """
@@ -112,7 +116,10 @@ def main(
     
     try:
         # Main processing pipeline
-        process_document(input_pdf, output_dir, doc_id, config, page_range, logger)
+        process_document(
+            input_pdf, output_dir, doc_id, config, page_range, 
+            build_hierarchy, generate_debug_viz, logger
+        )
         
         # Success summary
         elapsed = time.time() - start_time
@@ -176,6 +183,8 @@ def process_document(
     doc_id: str,
     config: EHRXConfig,
     page_range: Optional[List[int]],
+    build_hierarchy: bool,
+    generate_debug_viz: bool,
     logger: logging.Logger
 ) -> None:
     """Main document processing pipeline."""
@@ -235,6 +244,10 @@ def process_document(
         # Step 3: Pass 2 - Enhanced element processing with serialization
         progress.update(task, description="Pass 2: Processing elements with global ordering...")
         
+        # Store all pages data for hierarchy building
+        all_pages_data = []
+        page_images_for_viz = {}
+        
         with DocumentSerializer(output_dir, doc_id, config.model_dump()) as serializer:
             
             # Initialize enhanced router
@@ -254,6 +267,12 @@ def process_document(
                 dpi_scale_factor = ocr_dpi / detection_dpi
                 page_image, _ = rasterizer.rasterize_page(page_num - 1, dpi=ocr_dpi)
                 
+                # Store page image for hierarchy visualization
+                if generate_debug_viz:
+                    # Store lower-res version for visualization
+                    viz_image, _ = rasterizer.rasterize_page(page_num - 1, dpi=200)
+                    page_images_for_viz[page_num - 1] = viz_image
+                
                 # Convert blocks back to layout format for enhanced router
                 layout_blocks = [block_data["block"] for block_data in page_blocks]
                 
@@ -265,6 +284,9 @@ def process_document(
                     layout_blocks, page_image, page_info, mapper
                 )
                 
+                # Store elements for hierarchy building
+                page_elements_for_hierarchy = []
+                
                 # Process each element for serialization
                 for element in elements:
                     # Add basic payload and process for OCR/assets
@@ -274,9 +296,18 @@ def process_document(
                     # Extract text for text blocks
                     if element["type"] == "text_block":
                         try:
-                            # Crop region for OCR - scale coordinates for higher DPI
+                            # Crop region for OCR - scale coordinates for higher DPI and add padding
                             bbox_px = element["bbox_px"]
                             x0, y0, x1, y1 = [int(coord * dpi_scale_factor) for coord in bbox_px]
+                            
+                            # Add 10px padding (scaled for DPI)
+                            padding = int(10 * dpi_scale_factor)
+                            h, w = page_image.shape[:2]
+                            x0 = max(0, x0 - padding)
+                            y0 = max(0, y0 - padding)
+                            x1 = min(w, x1 + padding)
+                            y1 = min(h, y1 + padding)
+                            
                             cropped = page_image[y0:y1, x0:x1]
                             
                             if cropped.size > 0:
@@ -303,9 +334,18 @@ def process_document(
                     # Handle visual elements
                     elif element["type"] in ["table", "figure", "handwriting"]:
                         try:
-                            # Scale coordinates for higher DPI
+                            # Scale coordinates for higher DPI and add padding
                             bbox_px = element["bbox_px"] 
                             x0, y0, x1, y1 = [int(coord * dpi_scale_factor) for coord in bbox_px]
+                            
+                            # Add 10px padding (scaled for DPI)
+                            padding = int(10 * dpi_scale_factor)
+                            h, w = page_image.shape[:2]
+                            x0 = max(0, x0 - padding)
+                            y0 = max(0, y0 - padding)
+                            x1 = min(w, x1 + padding)
+                            y1 = min(h, y1 + padding)
+                            
                             crop_image = page_image[y0:y1, x0:x1]
                             
                             if element["type"] == "table":
@@ -337,12 +377,130 @@ def process_document(
                     # Serialize element
                     serializer.serialize_element(element, crop_image, table_data)
                     element_count += 1
+                    
+                    # Store for hierarchy building
+                    page_elements_for_hierarchy.append(element)
+                
+                # Store page data for hierarchy
+                if build_hierarchy:
+                    all_pages_data.append({
+                        "page_num": page_num - 1,  # 0-indexed
+                        "elements": page_elements_for_hierarchy,
+                        "page_info": {
+                            "width_px": page_info.width_px,
+                            "height_px": page_info.height_px,
+                            "dpi": page_info.dpi
+                        }
+                    })
                 
                 progress.update(task, description=f"Pass 2: Processed page {page_num} ({element_count} elements)")
             
-            # Finalize with empty hierarchy
+            # Step 4: Build hierarchy if requested
+            hierarchy_data = {}
+            if build_hierarchy and all_pages_data:
+                progress.update(task, description="Building document hierarchy...")
+                
+                try:
+                    hierarchy_builder = HierarchyBuilder(config.model_dump())
+                    hierarchy_data = hierarchy_builder.build_hierarchy(all_pages_data)
+                    
+                    logger.info(
+                        f"Built hierarchy: {hierarchy_data.get('total_documents', 0)} documents, "
+                        f"{len(hierarchy_data.get('categories', []))} categories"
+                    )
+                except Exception as e:
+                    logger.warning(f"Hierarchy building failed: {e}. Continuing with flat structure.")
+                    hierarchy_data = {}
+            
+            # Step 5: Generate debug visualizations if requested
+            if generate_debug_viz and all_pages_data:
+                progress.update(task, description="Generating debug visualizations...")
+                
+                try:
+                    visualizer = HierarchyVisualizer(output_dir)
+                    
+                    # Create summary
+                    if hierarchy_data:
+                        visualizer.create_document_summary(hierarchy_data, doc_id)
+                    
+                    # Generate page visualizations
+                    for page_data in all_pages_data:
+                        page_num = page_data["page_num"]
+                        
+                        if page_num not in page_images_for_viz:
+                            continue
+                        
+                        page_image_viz = page_images_for_viz[page_num]
+                        elements = page_data["elements"]
+                        
+                        # Visualize label detection
+                        if hierarchy_data:
+                            label = hierarchy_builder.label_detector.detect_label(
+                                elements,
+                                page_data["page_info"]
+                            )
+                            detection_region = hierarchy_builder.label_detector.get_detection_region(
+                                page_data["page_info"]
+                            )
+                            
+                            label_elem = None
+                            for elem in elements:
+                                if elem.get("payload", {}).get("text") == label:
+                                    label_elem = elem
+                                    break
+                            
+                            visualizer.visualize_label_detection(
+                                page_image_viz, page_num, elements,
+                                detection_region, label, label_elem
+                            )
+                            
+                            # Visualize sections
+                            page_headings = []
+                            for i, elem in enumerate(elements):
+                                if elem.get("type") != "text_block":
+                                    continue
+                                
+                                text = elem.get("payload", {}).get("text", "").strip()
+                                if text:
+                                    is_heading, level, scores = hierarchy_builder.section_detector._classify_heading(
+                                        elem, elements, i
+                                    )
+                                    
+                                    if is_heading:
+                                        page_headings.append({
+                                            "element": elem,
+                                            "text": text,
+                                            "level": level,
+                                            "scores": scores
+                                        })
+                            
+                            # Find document type
+                            doc_type = None
+                            for doc in hierarchy_data.get("documents", []):
+                                if page_num in doc.get("pages", []):
+                                    doc_type = doc["document_type"]
+                                    break
+                            
+                            visualizer.visualize_sections(
+                                page_image_viz, page_num, elements,
+                                page_headings, doc_type
+                            )
+                    
+                    # Generate overview
+                    if hierarchy_data and page_images_for_viz:
+                        visualizer.visualize_document_overview(
+                            hierarchy_data, page_images_for_viz, doc_id
+                        )
+                    
+                    logger.info("Debug visualizations generated")
+                except Exception as e:
+                    logger.warning(f"Visualization generation failed: {e}")
+            
+            # Finalize with hierarchy
             elapsed = time.time() - progress.start_time if hasattr(progress, 'start_time') else 0
-            stats = serializer.finalize([], [], column_layout, elapsed)
+            
+            # Pass hierarchy data directly (now in new format)
+            stats = serializer.finalize(hierarchy_data, column_layout, elapsed)
             
             logger.info(f"Serialized {stats['total_elements']} elements")
 
