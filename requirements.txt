@@ -18,6 +18,12 @@ pandas>=2.2.0
 pyyaml>=6.0.0
 pydantic>=2.6.0
 
+# VLM integration (Google Cloud Vertex AI + Gemini)
+google-cloud-aiplatform>=1.38.0
+vertexai>=1.0.0
+pillow>=10.0.0
+python-dotenv>=1.0.0
+
 # Development
 pytest>=8.0.0
 pytest-cov>=4.1.0
