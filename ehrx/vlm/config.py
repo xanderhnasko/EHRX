@@ -7,7 +7,7 @@ and quality thresholds.
 
 import os
 from typing import Optional
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class VLMConfig(BaseModel):
@@ -189,12 +189,10 @@ class VLMConfig(BaseModel):
             "GCP_PROJECT_ID/GOOGLE_CLOUD_PROJECT environment variable"
         )
 
-    def model_config(self):
-        """Pydantic model configuration."""
-        return {
-            "validate_assignment": True,
-            "extra": "forbid",
-        }
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra="forbid"
+    )
 
     def get_generation_config(self) -> dict:
         """
