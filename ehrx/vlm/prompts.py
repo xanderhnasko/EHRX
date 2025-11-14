@@ -89,7 +89,9 @@ For each element, provide:
    - `clinical_paragraph`: Free-text clinical narratives
    - `medication_table`: Structured medication lists
    - `lab_results_table`: Laboratory values with ranges/units
+   - `recommendations_table`: Table of reccomended treatments, screenings, specialist referrals, vaccinations, or other actions for the patient
    - `vital_signs_table`: Temperature, BP, pulse, etc.
+    - `general_table`:  A multi-column block of aligned text or numbers with a clear header row (May coincide with section headers) and at least two data rows, where each column contains consistent types of information. It should not match a domain-specific table type and must not resemble a list (lists have a single text column, no headers, and use bullets or numbers). 
    - `problem_list`: Diagnoses with ICD codes
    - `assessment_plan`: Clinical reasoning and treatment plans
    - `list_items`: Bullet/numbered lists with clinical content

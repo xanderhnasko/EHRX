@@ -34,16 +34,16 @@ class VLMConfig(BaseModel):
 
     # Model selection
     model_name: str = Field(
-        default="gemini-1.5-flash",
-        description="Gemini model version (flash for speed/cost, pro for quality)"
+        default="gemini-2.5-flash",
+        description="Gemini model version (2.5-flash, 2.0-flash, or 2.0-flash-lite)"
     )
 
     # API parameters
     max_tokens: int = Field(
         default=8192,
         ge=1024,
-        le=32768,
-        description="Maximum response tokens from VLM"
+        le=65536,
+        description="Maximum response tokens from VLM (Gemini 2.5 Flash supports up to 65K)"
     )
     temperature: float = Field(
         default=0.1,

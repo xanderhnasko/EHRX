@@ -5,10 +5,10 @@ vlm:
   location: "us-central1"
 
   # Model selection
-  model_name: "gemini-2.0-flash"  # gemini-2.0-flash, gemini-2.5-flash, or gemini-2.0-flash-lite
+  model_name: "gemini-2.5-flash"  # gemini-2.5-flash (65K tokens), gemini-2.0-flash (32K), or gemini-2.0-flash-lite
 
   # API parameters
-  max_tokens: 8192
+  max_tokens: 65536  # Gemini 2.5 Flash supports up to 65K output tokens
   temperature: 0.1
   top_p: 0.95
   top_k: 40

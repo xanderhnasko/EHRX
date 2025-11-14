@@ -29,6 +29,8 @@ class ElementType(str, Enum):
     MEDICATION_TABLE = "medication_table"
     LAB_RESULTS_TABLE = "lab_results_table"
     VITAL_SIGNS_TABLE = "vital_signs_table"
+    RECOMMENDATIONS_TABLE = "recommendations_table"
+    GENERAL_TABLE = "general_table"
     PROBLEM_LIST = "problem_list"
     ASSESSMENT_PLAN = "assessment_plan"
     LIST_ITEMS = "list_items"
