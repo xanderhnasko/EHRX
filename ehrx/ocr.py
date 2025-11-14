@@ -1,18 +1,18 @@
 """
-OCR processing using LayoutParser TesseractAgent with preprocessing
+OCR processing using direct pytesseract with preprocessing
 """
 import logging
-from typing import Dict, Any, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Dict, Any, Optional, Tuple, Union
 import numpy as np
 import cv2
 from pathlib import Path
 
-# LayoutParser imports
+# Direct pytesseract imports
 try:
-    import layoutparser as lp
-    LAYOUTPARSER_AVAILABLE = True
+    import pytesseract
+    PYTESSERACT_AVAILABLE = True
 except ImportError:
-    LAYOUTPARSER_AVAILABLE = False
+    PYTESSERACT_AVAILABLE = False
 
 # Configuration and utilities
 from .core.config import OCRConfig
@@ -25,7 +25,7 @@ class OCRError(Exception):
 
 
 class OCREngine:
-    """OCR processing engine using LayoutParser TesseractAgent."""
+    """OCR processing engine using direct pytesseract."""
     
     def __init__(self, config: OCRConfig):
         """Initialize OCR engine with configuration.
@@ -34,30 +34,29 @@ class OCREngine:
             config: OCRConfig object with OCR settings
             
         Raises:
-            OCRError: If LayoutParser or Tesseract not available
+            OCRError: If pytesseract not available
         """
         self.config = config
         self.logger = logging.getLogger(__name__)
-        self.ocr_agent = None
         
-        if not LAYOUTPARSER_AVAILABLE:
+        if not PYTESSERACT_AVAILABLE:
             raise OCRError(
-                "LayoutParser not available. Install with: pip install layoutparser"
+                "pytesseract not available. Install with: pip install pytesseract"
             )
         
-        self._initialize_agent()
+        self._initialize_engine()
     
-    def _initialize_agent(self):
-        """Initialize the LayoutParser TesseractAgent."""
+    def _initialize_engine(self):
+        """Initialize the direct pytesseract engine."""
         try:
-            # Initialize TesseractAgent with language configuration
-            self.ocr_agent = lp.TesseractAgent(languages=self.config.lang)
+            # Test that tesseract is available
+            pytesseract.get_tesseract_version()
             
-            self.logger.info(f"Initialized Tesseract OCR agent with language: {self.config.lang}")
+            self.logger.info(f"Initialized direct pytesseract engine with language: {self.config.lang}")
             
         except Exception as e:
-            self.logger.error(f"Failed to initialize OCR agent: {e}")
-            raise OCRError(f"OCR agent initialization failed: {e}")
+            self.logger.error(f"Failed to initialize OCR engine: {e}")
+            raise OCRError(f"OCR engine initialization failed: {e}")
     
     def extract_text(self, image: np.ndarray, element_type: str = "text", 
                     apply_preprocessing: bool = True) -> Dict[str, Any]:
@@ -80,8 +79,7 @@ class OCREngine:
         Raises:
             OCRError: If OCR processing fails
         """
-        if self.ocr_agent is None:
-            raise OCRError("OCR agent not initialized")
+        # Direct pytesseract doesn't require agent initialization check
         
         try:
             # Apply preprocessing if requested
@@ -97,72 +95,52 @@ class OCREngine:
                 # Get PSM setting based on element type
                 psm = self._get_psm_for_element_type(element_type)
                 
-                # Use return_response=True to get confidence scores with custom PSM
+                # Use direct pytesseract with image_to_data for confidence scores
                 try:
-                    ocr_result = self.ocr_agent.detect(
-                        processed_image, 
-                        return_response=True,
-                        return_only_text=False,
-                        psm=psm
+                    # Convert to PIL Image if needed
+                    if len(processed_image.shape) == 3 and processed_image.shape[2] == 3:
+                        # RGB - convert to grayscale for tesseract
+                        gray_image = cv2.cvtColor(processed_image, cv2.COLOR_RGB2GRAY)
+                    else:
+                        gray_image = processed_image
+                    
+                    # Get detailed OCR data with confidence scores
+                    ocr_data = pytesseract.image_to_data(
+                        gray_image,
+                        config=f'--psm {psm} -l {self.config.lang}',
+                        output_type=pytesseract.Output.DICT
                     )
+                    
+                    # Get plain text
+                    text = pytesseract.image_to_string(
+                        gray_image,
+                        config=f'--psm {psm} -l {self.config.lang}'
+                    )
+                    
                     self.logger.debug(f"OCR with PSM {psm} successful")
-                except TypeError as e:
-                    # Fallback if PSM parameter not supported in this version
-                    self.logger.debug(f"PSM parameter not supported: {e}")
-                    ocr_result = self.ocr_agent.detect(
-                        processed_image, 
-                        return_response=True,
-                        return_only_text=False
-                    )
+                    
                 except Exception as e:
-                    self.logger.warning(f"OCR with PSM failed: {e}, trying without PSM")
-                    ocr_result = self.ocr_agent.detect(
-                        processed_image, 
-                        return_response=True,
-                        return_only_text=False
+                    self.logger.warning(f"OCR with PSM failed: {e}, trying with default PSM")
+                    # Fallback with default PSM
+                    ocr_data = pytesseract.image_to_data(
+                        gray_image,
+                        config=f'-l {self.config.lang}',
+                        output_type=pytesseract.Output.DICT
+                    )
+                    text = pytesseract.image_to_string(
+                        gray_image,
+                        config=f'-l {self.config.lang}'
                     )
             
-            # Extract text and confidence from result
-            if isinstance(ocr_result, dict) and 'text' in ocr_result:
-                text = ocr_result['text']
-                # Debug: Log all available keys for confidence extraction
-                self.logger.debug(f"OCR result dict keys: {list(ocr_result.keys())}")
-                
-                # Extract confidence from the 'data' field which contains Tesseract TSV output
-                confidence = 0.0
-                if 'data' in ocr_result and ocr_result['data'] is not None:
-                    try:
-                        # Parse Tesseract TSV data to extract confidence scores
-                        data = ocr_result['data']
-                        if hasattr(data, 'empty') and not data.empty:  # pandas DataFrame
-                            confidence = self._extract_confidence_from_dataframe(data)
-                        elif isinstance(data, str) and data.strip():  # string TSV
-                            confidence = self._extract_confidence_from_tsv(data)
-                    except Exception as e:
-                        self.logger.debug(f"Failed to extract confidence from TSV data: {e}")
-                        
-                # Fallback: try direct confidence fields
-                if confidence == 0.0:
-                    confidence = (ocr_result.get('conf') or 
-                                 ocr_result.get('confidence') or 
-                                 ocr_result.get('mean_confidence') or 
-                                 0.0)
-                
-                self.logger.debug(f"Extracted confidence from dict: {confidence}")
-            elif hasattr(ocr_result, 'text'):
-                # LayoutParser TextBlock object
-                text = ocr_result.text
-                # Debug: Log all available attributes
-                attrs = [attr for attr in dir(ocr_result) if not attr.startswith('_')]
-                self.logger.debug(f"OCR result object attributes: {attrs}")
-                confidence = getattr(ocr_result, 'confidence', getattr(ocr_result, 'score', 0.0))
-                self.logger.debug(f"Extracted confidence from object: {confidence}")
-            else:
-                # Debug: Log what we actually got
-                self.logger.debug(f"Unexpected OCR result type: {type(ocr_result)}, value: {ocr_result}")
-                # Fallback to simple text detection
-                text = self.ocr_agent.detect(processed_image, return_only_text=True)
-                confidence = 0.0
+            # Extract confidence from pytesseract data
+            confidence = 0.0
+            if ocr_data and 'conf' in ocr_data:
+                # Calculate average confidence from valid confidence scores
+                conf_scores = [c for c in ocr_data['conf'] if c > 0]
+                if conf_scores:
+                    confidence = sum(conf_scores) / len(conf_scores) / 100.0  # Convert to 0-1 scale
+            
+            self.logger.debug(f"Extracted confidence: {confidence:.2f}")
             
             # Clean up text
             text = self._clean_text(text)
@@ -320,75 +298,7 @@ class OCREngine:
             self.logger.warning(f"Binarization failed: {e}")
             return image
     
-    def _extract_confidence_from_tsv(self, tsv_data: str) -> float:
-        """Extract average confidence score from Tesseract TSV data.
-        
-        Args:
-            tsv_data: TSV format data from Tesseract with confidence column
-            
-        Returns:
-            Average confidence score (0-100 scale, converted to 0-1)
-        """
-        if not tsv_data or not tsv_data.strip():
-            return 0.0
-            
-        lines = tsv_data.strip().split('\n')
-        if len(lines) < 2:  # Need header + at least one data row
-            return 0.0
-            
-        # Parse TSV header to find confidence column
-        header = lines[0].split('\t')
-        try:
-            conf_idx = header.index('conf')
-        except ValueError:
-            # No confidence column found
-            return 0.0
-        
-        # Extract confidence values from data rows
-        confidences = []
-        for line in lines[1:]:
-            fields = line.split('\t')
-            if len(fields) > conf_idx:
-                try:
-                    conf_val = float(fields[conf_idx])
-                    if conf_val > 0:  # Only include positive confidence scores
-                        confidences.append(conf_val)
-                except (ValueError, IndexError):
-                    continue
-        
-        if not confidences:
-            return 0.0
-            
-        # Return average confidence, converted from 0-100 scale to 0-1 scale
-        avg_confidence = sum(confidences) / len(confidences)
-        return avg_confidence / 100.0
-    
-    def _extract_confidence_from_dataframe(self, df) -> float:
-        """Extract average confidence score from Tesseract DataFrame.
-        
-        Args:
-            df: pandas DataFrame from Tesseract with confidence column
-            
-        Returns:
-            Average confidence score (0-100 scale, converted to 0-1)
-        """
-        try:
-            if 'conf' not in df.columns:
-                return 0.0
-            
-            # Filter out negative/zero confidence scores and get valid ones
-            valid_conf = df['conf'][df['conf'] > 0]
-            
-            if len(valid_conf) == 0:
-                return 0.0
-            
-            # Return average confidence, converted from 0-100 scale to 0-1 scale
-            avg_confidence = valid_conf.mean()
-            return avg_confidence / 100.0
-            
-        except Exception as e:
-            self.logger.debug(f"Failed to extract confidence from DataFrame: {e}")
-            return 0.0
+# Confidence extraction methods removed - now handled directly in extract_text
     
     def _clean_text(self, text: str) -> str:
         """Clean and normalize extracted text."""

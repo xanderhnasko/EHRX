@@ -1,35 +1,22 @@
-# ehrx - EHR Extraction Tool Requirements
+# ehrx - EHR Extraction Tool Requirements (Post-LayoutParser Cleanup)
 # 
-# IMPORTANT: Use conda for installation! See INSTALL.md for setup instructions.
-# Regular pip install will likely fail due to dependency conflicts.
-#
-# SYSTEM DEPENDENCIES (install via conda):
+# SYSTEM DEPENDENCIES:
 # - poppler (for PDF processing via pdf2image)
 # - tesseract (for OCR text extraction)
-# - opencv (for image preprocessing)
-# - scikit-learn
 
-# Core ML/CV/OCR (install via conda where possible)
-torch>=2.3.0
-torchvision>=0.18.0
-detectron2>=0.6  # Install via: conda install -c conda-forge detectron2
-layoutparser==0.3.*  # Install via: python -m pip install layoutparser==0.3.*
+# Core processing
 pytesseract>=0.3.0
-opencv-python>=4.9.0  # Install via: conda install -c conda-forge opencv
-numpy<2  # Required for matplotlib compatibility
+opencv-python>=4.9.0
+numpy<2
 
 # PDF processing
 pymupdf==1.23.*
-pdf2image>=1.17.0  # Note: 3.0.* doesn't exist, use 1.17.*
+pdf2image>=1.17.0
 
 # Data handling
 pandas>=2.2.0
 pyyaml>=6.0.0
 pydantic>=2.6.0
-
-# CLI
-typer>=0.9.0
-rich>=13.7.0
 
 # Development
 pytest>=8.0.0

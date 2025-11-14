@@ -9,24 +9,7 @@ from pydantic import BaseModel, Field, field_validator, ConfigDict
 import logging
 
 
-class DetectorConfig(BaseModel):
-    """Configuration for layout detection."""
-    backend: str = Field(default="detectron2", description="Backend: detectron2 or paddle")
-    model: str = Field(default="lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config")
-    label_map: Dict[str, str] = Field(default_factory=lambda: {
-        "Text": "text_block",
-        "Table": "table", 
-        "Figure": "figure"
-    })
-    min_conf: float = Field(default=0.5, ge=0.0, le=1.0)
-    nms_iou: float = Field(default=0.3, ge=0.0, le=1.0)
-    
-    @field_validator('backend')
-    @classmethod
-    def validate_backend(cls, v):
-        if v not in ['detectron2', 'paddle']:
-            raise ValueError('backend must be "detectron2" or "paddle"')
-        return v
+# DetectorConfig removed - LayoutParser dependency eliminated
 
 
 class OCRPreprocessConfig(BaseModel):
@@ -99,7 +82,6 @@ class PrivacyConfig(BaseModel):
 
 class EHRXConfig(BaseModel):
     """Main configuration model."""
-    detector: DetectorConfig = Field(default_factory=DetectorConfig)
     ocr: OCRConfig = Field(default_factory=OCRConfig)
     tables: TablesConfig = Field(default_factory=TablesConfig) 
     hierarchy: HierarchyConfig = Field(default_factory=HierarchyConfig)
@@ -189,21 +171,6 @@ def validate_environment(config: EHRXConfig) -> List[str]:
             pytesseract.get_tesseract_version()
         except Exception as e:
             errors.append(f"Tesseract not available: {e}")
-    
-    # Check detector backend dependencies
-    if config.detector.backend == "detectron2":
-        try:
-            import detectron2
-            import layoutparser as lp
-        except ImportError as e:
-            errors.append(f"Detectron2 backend not available: {e}")
-    
-    elif config.detector.backend == "paddle":
-        try:
-            import paddledetection
-            import layoutparser as lp
-        except ImportError as e:
-            errors.append(f"Paddle backend not available: {e}")
     
     # Check PDF processing
     try:
