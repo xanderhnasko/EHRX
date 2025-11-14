@@ -7,7 +7,7 @@ and quality thresholds.
 
 import os
 from typing import Optional
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class VLMConfig(BaseModel):
@@ -108,14 +108,14 @@ class VLMConfig(BaseModel):
         description="Track estimated API costs per request"
     )
     cost_per_1k_input_tokens: float = Field(
-        default=0.00025,
+        default=0.0001,
         ge=0.0,
-        description="Cost per 1K input tokens (Gemini 1.5 Flash pricing)"
+        description="Cost per 1K input tokens (Gemini 2.0 Flash: $0.10/1M tokens)"
     )
     cost_per_1k_output_tokens: float = Field(
-        default=0.00075,
+        default=0.0004,
         ge=0.0,
-        description="Cost per 1K output tokens (Gemini 1.5 Flash pricing)"
+        description="Cost per 1K output tokens (Gemini 2.0 Flash: $0.40/1M tokens)"
     )
 
     # Caching (optional)
@@ -175,13 +175,14 @@ class VLMConfig(BaseModel):
 
         Checks GCP_PROJECT_ID and GOOGLE_CLOUD_PROJECT environment variables.
         """
-        if v is not None:
+        # Check if value is provided and non-empty
+        if v is not None and v.strip():
             return v
 
         # Check common environment variables
         for env_var in ["GCP_PROJECT_ID", "GOOGLE_CLOUD_PROJECT"]:
             env_value = os.getenv(env_var)
-            if env_value:
+            if env_value and env_value.strip():
                 return env_value
 
         raise ValueError(
@@ -189,12 +190,10 @@ class VLMConfig(BaseModel):
             "GCP_PROJECT_ID/GOOGLE_CLOUD_PROJECT environment variable"
         )
 
-    def model_config(self):
-        """Pydantic model configuration."""
-        return {
-            "validate_assignment": True,
-            "extra": "forbid",
-        }
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra="forbid"
+    )
 
     def get_generation_config(self) -> dict:
         """
@@ -251,8 +250,11 @@ class VLMConfig(BaseModel):
         Returns:
             VLMConfig instance with values from environment
         """
+        # Get project_id from environment (will trigger validator if missing)
+        project_id = os.getenv("GCP_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT") or None
+
         return cls(
-            project_id=os.getenv("GCP_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT", ""),
+            project_id=project_id,
             location=os.getenv("GCP_LOCATION", "us-central1"),
             credentials_path=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
             model_name=os.getenv("VLM_MODEL_NAME", "gemini-1.5-flash"),

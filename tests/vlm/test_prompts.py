@@ -27,7 +27,7 @@ class TestElementExtractionPrompt:
         )
         prompt = build_element_extraction_prompt(context)
 
-        assert "Page: 1 of 5" in prompt
+        assert "**Page**: 1 of 5" in prompt
         assert "Task" in prompt
         assert "Bounding Box" in prompt
         assert "Semantic Type" in prompt
@@ -45,7 +45,7 @@ class TestElementExtractionPrompt:
         )
         prompt = build_element_extraction_prompt(context)
 
-        assert "Page: 5 of 10" in prompt
+        assert "**Page**: 5 of 10" in prompt
         assert "Clinical Notes" in prompt
         assert "Notes → Progress Notes → Daily Assessment" in prompt
         assert "Patient Context" in prompt

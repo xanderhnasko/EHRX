@@ -224,12 +224,64 @@ class VLMClient:
         if self._model is None:
             raise RuntimeError("VLM client not initialized")
 
-        # Build generation config
+        # Build generation config with response schema for structured output
         generation_config = GenerationConfig(
             max_output_tokens=max_tokens,
             temperature=temperature,
             top_p=self.config.top_p,
             top_k=self.config.top_k,
+            response_mime_type="application/json",
+            response_schema={
+                "type": "object",
+                "properties": {
+                    "elements": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "element_id": {"type": "string"},
+                                "semantic_type": {"type": "string"},
+                                "content": {"type": "string"},
+                                "bbox": {
+                                    "type": "object",
+                                    "properties": {
+                                        "x0": {"type": "number"},
+                                        "y0": {"type": "number"},
+                                        "x1": {"type": "number"},
+                                        "y1": {"type": "number"}
+                                    },
+                                    "required": ["x0", "y0", "x1", "y1"]
+                                },
+                                "confidence_scores": {
+                                    "type": "object",
+                                    "properties": {
+                                        "extraction": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                                        "classification": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                                        "clinical_context": {"type": "number", "minimum": 0.0, "maximum": 1.0}
+                                    },
+                                    "required": ["extraction", "classification", "clinical_context"]
+                                },
+                                "clinical_metadata": {
+                                    "type": "object",
+                                    "properties": {
+                                        "temporal_qualifier": {"type": "string"},
+                                        "clinical_domain": {"type": "string"},
+                                        "requires_validation": {"type": "boolean"},
+                                        "validation_reason": {"type": "string"}
+                                    }
+                                }
+                            },
+                            "required": ["element_id", "semantic_type", "content", "bbox", "confidence_scores"]
+                        }
+                    },
+                    "requires_human_review": {"type": "boolean"},
+                    "review_reasons": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    }
+                },
+                "required": ["elements", "requires_human_review", "review_reasons"]
+            }
         )
 
         # Retry loop
@@ -252,7 +304,23 @@ class VLMClient:
                 if not response.candidates:
                     raise RuntimeError("No candidates in response")
 
-                response_text = response.candidates[0].content.parts[0].text
+                candidate = response.candidates[0]
+                response_text = candidate.content.parts[0].text
+
+                # Check if response was truncated due to token limit
+                finish_reason = candidate.finish_reason
+                if finish_reason and hasattr(finish_reason, 'name'):
+                    finish_reason_str = finish_reason.name
+                else:
+                    finish_reason_str = str(finish_reason)
+
+                if "MAX_TOKENS" in finish_reason_str or "LENGTH" in finish_reason_str:
+                    logger.warning(
+                        f"Response truncated due to token limit (finish_reason: {finish_reason_str}). "
+                        f"Consider increasing max_tokens or requesting more concise output."
+                    )
+                    # Don't fail - attempt to parse what we got, but it will likely fail
+                    # Better: In future, we should retry with instructions to be more concise
 
                 # Track usage
                 self._request_count += 1
@@ -310,20 +378,27 @@ class VLMClient:
         Returns:
             Parsed VLMResponse with elements and metadata
         """
-        # Clean response (remove markdown code fences if present)
+        # Parse JSON directly - guaranteed valid due to response_schema
         response_text = raw_response.strip()
-        if response_text.startswith("```json"):
-            response_text = response_text[7:]  # Remove ```json
-        if response_text.startswith("```"):
-            response_text = response_text[3:]  # Remove ```
-        if response_text.endswith("```"):
-            response_text = response_text[:-3]  # Remove trailing ```
-        response_text = response_text.strip()
 
-        # Parse JSON
         try:
             response_data = json.loads(response_text)
+            logger.debug(f"Successfully parsed structured JSON response with {len(response_data.get('elements', []))} elements")
         except json.JSONDecodeError as e:
+            # This should rarely happen with structured output, but handle gracefully
+            logger.error(f"JSON parse failed despite structured output: {e}")
+
+            # Save for debugging
+            if self.config.save_raw_responses:
+                debug_path = Path(self.config.raw_responses_dir or "./debug")
+                debug_path.mkdir(parents=True, exist_ok=True)
+                error_file = debug_path / f"error_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.txt"
+                with open(error_file, 'w') as f:
+                    f.write(f"JSON Parse Error: {e}\n\n")
+                    f.write("=== RAW RESPONSE ===\n")
+                    f.write(raw_response)
+                logger.error(f"Saved problematic response to {error_file}")
+
             raise ValueError(f"Invalid JSON response: {e}") from e
 
         # Extract elements

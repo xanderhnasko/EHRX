@@ -51,7 +51,9 @@ class TestVLMConfig:
 
     def test_project_id_missing_raises_error(self):
         """Test that missing project_id raises error."""
-        with patch.dict(os.environ, {}, clear=True):
+        # Clear environment variables that provide project_id
+        env_vars_to_clear = ["GCP_PROJECT_ID", "GOOGLE_CLOUD_PROJECT"]
+        with patch.dict(os.environ, {k: "" for k in env_vars_to_clear}, clear=False):
             with pytest.raises(ValueError, match="project_id must be provided"):
                 VLMConfig.from_env()
 

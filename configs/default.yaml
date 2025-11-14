@@ -5,7 +5,7 @@ vlm:
   location: "us-central1"
 
   # Model selection
-  model_name: "gemini-1.5-flash"  # gemini-1.5-flash or gemini-1.5-pro
+  model_name: "gemini-2.0-flash"  # gemini-2.0-flash, gemini-2.5-flash, or gemini-2.0-flash-lite
 
   # API parameters
   max_tokens: 8192
@@ -25,8 +25,8 @@ vlm:
 
   # Cost tracking
   enable_cost_tracking: true
-  cost_per_1k_input_tokens: 0.00025   # Gemini 1.5 Flash pricing
-  cost_per_1k_output_tokens: 0.00075
+  cost_per_1k_input_tokens: 0.0001    # Gemini 2.0 Flash: $0.10 per 1M input tokens
+  cost_per_1k_output_tokens: 0.0004   # Gemini 2.0 Flash: $0.40 per 1M output tokens
 
   # Caching (optional)
   enable_caching: false
