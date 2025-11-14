@@ -108,14 +108,14 @@ class VLMConfig(BaseModel):
         description="Track estimated API costs per request"
     )
     cost_per_1k_input_tokens: float = Field(
-        default=0.00025,
+        default=0.0001,
         ge=0.0,
-        description="Cost per 1K input tokens (Gemini 1.5 Flash pricing)"
+        description="Cost per 1K input tokens (Gemini 2.0 Flash: $0.10/1M tokens)"
     )
     cost_per_1k_output_tokens: float = Field(
-        default=0.00075,
+        default=0.0004,
         ge=0.0,
-        description="Cost per 1K output tokens (Gemini 1.5 Flash pricing)"
+        description="Cost per 1K output tokens (Gemini 2.0 Flash: $0.40/1M tokens)"
     )
 
     # Caching (optional)

@@ -104,16 +104,35 @@ For each element, provide:
    - `margin_content`: Headers, footers, confidentiality notices
    - `uncategorized`: Content that doesn't fit other categories
 
-3. **Text Content**: Extract ALL text exactly as it appears
+3. **Text Content**:
+   - **Clinical content** (patient_demographics, clinical_paragraph, medication_table, lab_results_table, vital_signs_table, problem_list, assessment_plan, list_items): Extract ALL text exactly as written - preserve every detail
+   - **Administrative content** (margin_content, page_metadata, confidentiality notices): Provide brief summary or first line only
    - Preserve medical abbreviations and terminology
-   - Maintain formatting (line breaks, indentation)
-   - For tables: preserve row/column structure
+   - Maintain formatting for clinical content
+   - For tables: preserve complete row/column structure
    - For empty/non-text elements: use empty string ""
 
-4. **Confidence Scores**: Provide three scores (0.0-1.0):
-   - `extraction`: Confidence in text accuracy (OCR quality)
-   - `classification`: Confidence in semantic type assignment
-   - `clinical_context`: Confidence in clinical metadata understanding
+4. **Confidence Scores**: Provide three scores (0.0-1.0) for each element:
+
+   - `extraction` - Confidence in text accuracy:
+     * 0.9-1.0: Clear, legible text with no ambiguity
+     * 0.7-0.9: Mostly clear but some minor blur or spacing issues
+     * 0.5-0.7: Partially unclear, handwritten, or low quality
+     * <0.5: Very difficult to read, severely degraded
+
+   - `classification` - Confidence in semantic type assignment:
+     * 0.9-1.0: Unambiguous type (e.g., clearly labeled "MEDICATIONS" section)
+     * 0.7-0.9: Strong indicators but some ambiguity (e.g., unlabeled table that's clearly labs)
+     * 0.5-0.7: Uncertain type, could fit multiple categories
+     * <0.5: Very ambiguous or unclear purpose
+
+   - `clinical_context` - Confidence in clinical metadata understanding:
+     * 0.9-1.0: Clear clinical domain and temporal context
+     * 0.7-0.9: Can infer clinical context from content
+     * 0.5-0.7: Ambiguous clinical significance
+     * <0.5: Unable to determine clinical context
+
+   **Be realistic**: Don't default to 0.5 - assess each element independently
 
 5. **Clinical Metadata** (when applicable):
    - `temporal_qualifier`: "current", "historical", "planned"
