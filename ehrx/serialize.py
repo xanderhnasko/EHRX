@@ -242,7 +242,7 @@ class IndexBuilder:
         """
         manifest = {
             "pages": stats.get("total_pages", 0),
-            "detector": config.get("detector", {}).get("backend", "layoutparser"),
+            "detector": "vlm",  # VLM-based detection
             "ocr": config.get("ocr", {}).get("engine", "tesseract"),
             "created_at": datetime.now().isoformat(),
             "column_layout": column_layout.to_dict(),

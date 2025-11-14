@@ -4,29 +4,15 @@ Load and validate YAML configuration
 import os
 import yaml
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional, Union, TYPE_CHECKING
 from pydantic import BaseModel, Field, field_validator, ConfigDict
 import logging
 
+if TYPE_CHECKING:
+    from ehrx.vlm.config import VLMConfig
 
-class DetectorConfig(BaseModel):
-    """Configuration for layout detection."""
-    backend: str = Field(default="detectron2", description="Backend: detectron2 or paddle")
-    model: str = Field(default="lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config")
-    label_map: Dict[str, str] = Field(default_factory=lambda: {
-        "Text": "text_block",
-        "Table": "table", 
-        "Figure": "figure"
-    })
-    min_conf: float = Field(default=0.5, ge=0.0, le=1.0)
-    nms_iou: float = Field(default=0.3, ge=0.0, le=1.0)
-    
-    @field_validator('backend')
-    @classmethod
-    def validate_backend(cls, v):
-        if v not in ['detectron2', 'paddle']:
-            raise ValueError('backend must be "detectron2" or "paddle"')
-        return v
+
+# DetectorConfig removed - LayoutParser dependency eliminated
 
 
 class OCRPreprocessConfig(BaseModel):
@@ -99,12 +85,12 @@ class PrivacyConfig(BaseModel):
 
 class EHRXConfig(BaseModel):
     """Main configuration model."""
-    detector: DetectorConfig = Field(default_factory=DetectorConfig)
     ocr: OCRConfig = Field(default_factory=OCRConfig)
-    tables: TablesConfig = Field(default_factory=TablesConfig) 
+    tables: TablesConfig = Field(default_factory=TablesConfig)
     hierarchy: HierarchyConfig = Field(default_factory=HierarchyConfig)
     privacy: PrivacyConfig = Field(default_factory=PrivacyConfig)
-    
+    vlm: Optional['VLMConfig'] = Field(default=None, description="VLM processing configuration")
+
     model_config = ConfigDict(extra="forbid")  # Prevent unknown fields
     
     @classmethod
@@ -122,13 +108,13 @@ class EHRXConfig(BaseModel):
 
 def load_config(config_path: Optional[Union[str, Path]] = None) -> EHRXConfig:
     """Load and validate configuration from YAML file.
-    
+
     Args:
         config_path: Path to config YAML file. If None, uses default config.
-        
+
     Returns:
         Validated configuration object.
-        
+
     Raises:
         FileNotFoundError: If config file doesn't exist
         yaml.YAMLError: If YAML is invalid
@@ -136,16 +122,21 @@ def load_config(config_path: Optional[Union[str, Path]] = None) -> EHRXConfig:
     """
     # Start with default config
     config_data = {}
-    
+
     # Load from file if provided
     if config_path:
         config_path = Path(config_path)
         if not config_path.exists():
             raise FileNotFoundError(f"Config file not found: {config_path}")
-        
+
         with open(config_path, 'r') as f:
             config_data = yaml.safe_load(f) or {}
-    
+
+    # Handle VLM config if present
+    if 'vlm' in config_data:
+        from ehrx.vlm.config import VLMConfig
+        config_data['vlm'] = VLMConfig(**config_data['vlm'])
+
     # Validate and return
     return EHRXConfig(**config_data)
 
@@ -189,21 +180,6 @@ def validate_environment(config: EHRXConfig) -> List[str]:
             pytesseract.get_tesseract_version()
         except Exception as e:
             errors.append(f"Tesseract not available: {e}")
-    
-    # Check detector backend dependencies
-    if config.detector.backend == "detectron2":
-        try:
-            import detectron2
-            import layoutparser as lp
-        except ImportError as e:
-            errors.append(f"Detectron2 backend not available: {e}")
-    
-    elif config.detector.backend == "paddle":
-        try:
-            import paddledetection
-            import layoutparser as lp
-        except ImportError as e:
-            errors.append(f"Paddle backend not available: {e}")
     
     # Check PDF processing
     try:

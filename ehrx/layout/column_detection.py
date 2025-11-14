@@ -162,7 +162,7 @@ class DocumentColumnDetector:
                 except (ValueError, TypeError):
                     pass
         
-        # Try layoutparser block format
+        # Try block format with .block attribute
         if "block" in block and isinstance(block["block"], dict):
             block_data = block["block"]
             if "x_1" in block_data:

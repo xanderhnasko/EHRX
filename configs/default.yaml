@@ -1,12 +1,43 @@
-detector:
-  backend: detectron2   # or paddle
-  model: "lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config"
-  label_map:
-    Text: "text_block"
-    Table: "table"
-    Figure: "figure"
-  min_conf: 0.5
-  nms_iou: 0.3
+# VLM configuration (replaces LayoutParser detector)
+vlm:
+  # GCP project settings (can override with environment variables)
+  # project_id: "your-gcp-project-id"  # Or set GCP_PROJECT_ID env var
+  location: "us-central1"
+
+  # Model selection
+  model_name: "gemini-1.5-flash"  # gemini-1.5-flash or gemini-1.5-pro
+
+  # API parameters
+  max_tokens: 8192
+  temperature: 0.1
+  top_p: 0.95
+  top_k: 40
+
+  # Quality thresholds
+  confidence_threshold_extraction: 0.85
+  confidence_threshold_classification: 0.85
+  confidence_threshold_overall: 0.85
+
+  # Processing behavior
+  enable_retry: true
+  max_retries: 3
+  retry_delay_seconds: 1.0
+
+  # Cost tracking
+  enable_cost_tracking: true
+  cost_per_1k_input_tokens: 0.00025   # Gemini 1.5 Flash pricing
+  cost_per_1k_output_tokens: 0.00075
+
+  # Caching (optional)
+  enable_caching: false
+  cache_ttl_seconds: 3600
+
+  # Timeout
+  api_timeout_seconds: 60.0
+
+  # Debugging
+  save_raw_responses: false
+  # raw_responses_dir: "./debug/vlm_responses"
 
 ocr:
   engine: tesseract
