@@ -175,13 +175,14 @@ class VLMConfig(BaseModel):
 
         Checks GCP_PROJECT_ID and GOOGLE_CLOUD_PROJECT environment variables.
         """
-        if v is not None:
+        # Check if value is provided and non-empty
+        if v is not None and v.strip():
             return v
 
         # Check common environment variables
         for env_var in ["GCP_PROJECT_ID", "GOOGLE_CLOUD_PROJECT"]:
             env_value = os.getenv(env_var)
-            if env_value:
+            if env_value and env_value.strip():
                 return env_value
 
         raise ValueError(
@@ -249,8 +250,11 @@ class VLMConfig(BaseModel):
         Returns:
             VLMConfig instance with values from environment
         """
+        # Get project_id from environment (will trigger validator if missing)
+        project_id = os.getenv("GCP_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT") or None
+
         return cls(
-            project_id=os.getenv("GCP_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT", ""),
+            project_id=project_id,
             location=os.getenv("GCP_LOCATION", "us-central1"),
             credentials_path=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
             model_name=os.getenv("VLM_MODEL_NAME", "gemini-1.5-flash"),
