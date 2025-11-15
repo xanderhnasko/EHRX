@@ -2,10 +2,8 @@
 # 
 # SYSTEM DEPENDENCIES:
 # - poppler (for PDF processing via pdf2image)
-# - tesseract (for OCR text extraction)
 
 # Core processing
-pytesseract>=0.3.0
 opencv-python>=4.9.0
 numpy<2
 
