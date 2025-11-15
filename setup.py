@@ -20,13 +20,17 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "pytesseract>=0.3.0",
         "opencv-python>=4.9.0",
         "pymupdf>=1.23.0",
+        "pdf2image>=1.17.0",
         "pandas>=2.2.0",
         "pyyaml>=6.0.0",
         "pydantic>=2.6.0",
         "numpy<2",
+        "google-cloud-aiplatform>=1.38.0",
+        "vertexai>=1.0.0",
+        "pillow>=10.0.0",
+        "python-dotenv>=1.0.0",
     ],
     extras_require={
         "dev": [

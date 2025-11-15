@@ -151,6 +151,7 @@ class HybridQueryAgent:
             "question": question,
             "matched_elements": answer.get("elements", []),
             "reasoning": answer.get("reasoning", ""),
+            "answer_summary": answer.get("answer_summary", ""),
             "filter_stats": {
                 "original_elements": self._count_total_elements(),
                 "filtered_elements": len(filtered_schema["elements"]),
@@ -191,7 +192,7 @@ Available sub-document types:
 - patient_instructions: Discharge instructions, patient education
 
 TASK: Identify ALL semantic types and sub-document types that are relevant to answering this question.
-Err on the the liberal side - better to include an extra type or two than to miss important context.
+Err on the the slightly liberal side - better to include an extra type or two than to miss important context.
 
 Return your answer as a JSON object with this structure:
 {{
@@ -398,7 +399,7 @@ Only return the JSON object, nothing else."""
         # Use structured output to FORCE valid JSON
         generation_config = GenerationConfig(
             temperature=0.2,
-            max_output_tokens=4096,
+            max_output_tokens=65536,
             response_mime_type="application/json",
             response_schema={
                 "type": "object",
@@ -437,9 +438,19 @@ Only return the JSON object, nothing else."""
             generation_config=generation_config
         )
 
-        # Parse JSON response (guaranteed valid due to response_schema)
-        result = json.loads(response.text)
-        return result
+        # Parse JSON response
+        try:
+            result = json.loads(response.text)
+            return result
+        except json.JSONDecodeError as e:
+            self.logger.error(f"JSON parsing failed: {e}")
+            self.logger.error(f"Response length: {len(response.text)} chars")
+            # Return a fallback response with error info
+            return {
+                "elements": [],
+                "reasoning": f"Response parsing error: {str(e)}. The model response may have been truncated.",
+                "answer_summary": "Unable to generate answer due to response parsing error. Please try a more specific query."
+            }
 
     def _count_total_elements(self) -> int:
         """Count total elements in schema."""
