@@ -40,7 +40,7 @@ class VLMConfig(BaseModel):
 
     # API parameters
     max_tokens: int = Field(
-        default=8192,
+        default=65536,  
         ge=1024,
         le=65536,
         description="Maximum response tokens from VLM (Gemini 2.5 Flash supports up to 65K)"
@@ -243,8 +243,8 @@ class VLMConfig(BaseModel):
             - GCP_PROJECT_ID or GOOGLE_CLOUD_PROJECT: GCP project ID
             - GCP_LOCATION: GCP region (default: us-central1)
             - GOOGLE_APPLICATION_CREDENTIALS: Path to service account JSON
-            - VLM_MODEL_NAME: Model name (default: gemini-1.5-flash)
-            - VLM_MAX_TOKENS: Max output tokens (default: 8192)
+            - VLM_MODEL_NAME: Model name (default: gemini-2.5-flash)
+            - VLM_MAX_TOKENS: Max output tokens (default: 65536)
             - VLM_TEMPERATURE: Sampling temperature (default: 0.1)
 
         Returns:
@@ -257,8 +257,8 @@ class VLMConfig(BaseModel):
             project_id=project_id,
             location=os.getenv("GCP_LOCATION", "us-central1"),
             credentials_path=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
-            model_name=os.getenv("VLM_MODEL_NAME", "gemini-1.5-flash"),
-            max_tokens=int(os.getenv("VLM_MAX_TOKENS", "8192")),
+            model_name=os.getenv("VLM_MODEL_NAME", "gemini-2.5-flash"),
+            max_tokens=int(os.getenv("VLM_MAX_TOKENS", "65536")),
             temperature=float(os.getenv("VLM_TEMPERATURE", "0.1")),
         )
 
