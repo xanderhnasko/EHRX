@@ -3,7 +3,10 @@ DB helpers for FastAPI service.
 """
 
 import uuid
+import json
 from typing import Optional, List, Dict, Any
+
+from psycopg.types.json import Jsonb
 
 from ehrx.db.client import get_conn
 from ehrx.db.config import DBConfig
@@ -54,6 +57,7 @@ class DB:
         total_elements: Optional[int],
         metadata: Optional[dict] = None,
     ) -> None:
+        metadata_param = Jsonb(metadata) if metadata is not None else None
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute(
                 """
@@ -66,7 +70,7 @@ class DB:
                     metadata = excluded.metadata,
                     created_at = now()
                 """,
-                (document_id, kind, storage_url, total_pages, total_elements, metadata),
+                (document_id, kind, storage_url, total_pages, total_elements, metadata_param),
             )
 
     def get_extractions(self, document_id: uuid.UUID) -> List[Dict[str, Any]]:

@@ -117,7 +117,7 @@ class VLMClient:
         )
 
         # Generate response with retry logic
-        raw_response = self._generate_with_retry(
+        raw_response, finish_reason = self._generate_with_retry(
             image_part=image_part,
             prompt=prompt,
             max_tokens=request.max_tokens,
@@ -127,25 +127,42 @@ class VLMClient:
         # Calculate latency
         latency_ms = (time.time() - start_time) * 1000
 
-        # Parse response
-        try:
+        vlm_response = self._parse_response(
+            raw_response=raw_response,
+            request=request,
+            latency_ms=latency_ms,
+        )
+
+        # If truncated or parse issues, retry once with a compact prompt
+        needs_compact_retry = False
+        if finish_reason and ("MAX_TOKENS" in finish_reason or "LENGTH" in finish_reason):
+            needs_compact_retry = True
+        elif (
+            vlm_response.requires_human_review
+            and not vlm_response.elements
+            and any("Invalid JSON" in reason for reason in vlm_response.review_reasons or [])
+        ):
+            needs_compact_retry = True
+
+        if needs_compact_retry:
+            logger.warning("Retrying extraction with compact prompt due to truncation/parse issues")
+            compact_prompt = build_element_extraction_prompt(
+                context=request.context,
+                additional_instructions="If output may exceed limits, keep each element's content concise (<=500 chars) and keep JSON valid.",
+            )
+            raw_response_compact, finish_reason_compact = self._generate_with_retry(
+                image_part=image_part,
+                prompt=compact_prompt,
+                max_tokens=min(request.max_tokens, 32768),
+                temperature=request.temperature,
+            )
             vlm_response = self._parse_response(
-                raw_response=raw_response,
+                raw_response=raw_response_compact,
                 request=request,
                 latency_ms=latency_ms,
             )
-            return vlm_response
 
-        except Exception as e:
-            logger.error(f"Failed to parse VLM response: {e}")
-            logger.debug(f"Raw response: {raw_response}")
-
-            # Return error response
-            return self._create_error_response(
-                error_message=f"Response parsing failed: {e}",
-                raw_response=raw_response,
-                latency_ms=latency_ms,
-            )
+        return vlm_response
 
     def _prepare_image(
         self,
@@ -205,7 +222,7 @@ class VLMClient:
         prompt: str,
         max_tokens: int,
         temperature: float,
-    ) -> str:
+    ) -> tuple[str, Optional[str]]:
         """
         Call Gemini API with retry logic for transient failures.
 
@@ -339,7 +356,7 @@ class VLMClient:
                         f"output: {usage.candidates_token_count} tokens)"
                     )
 
-                return response_text
+                return response_text, finish_reason_str
 
             except Exception as e:
                 last_error = e
@@ -385,8 +402,9 @@ class VLMClient:
             response_data = json.loads(response_text)
             logger.debug(f"Successfully parsed structured JSON response with {len(response_data.get('elements', []))} elements")
         except json.JSONDecodeError as e:
-            # This should rarely happen with structured output, but handle gracefully
+            # Gracefully degrade: return empty response flagged for review instead of raising
             logger.error(f"JSON parse failed despite structured output: {e}")
+            logger.error(f"Response length: {len(raw_response)} chars")
 
             # Save for debugging
             if self.config.save_raw_responses:
@@ -399,7 +417,23 @@ class VLMClient:
                     f.write(raw_response)
                 logger.error(f"Saved problematic response to {error_file}")
 
-            raise ValueError(f"Invalid JSON response: {e}") from e
+            processing_metadata = ProcessingMetadata(
+                model_name=self.config.model_name,
+                processing_timestamp=datetime.utcnow().isoformat(),
+                api_latency_ms=latency_ms,
+                cost_estimate_usd=None,
+                human_reviewed=False,
+                review_flags=[],
+            )
+
+            return VLMResponse(
+                elements=[],
+                processing_metadata=processing_metadata,
+                overall_confidence=0.0,
+                requires_human_review=True,
+                review_reasons=[f"Invalid JSON response: {e}"],
+                raw_response=raw_response if self.config.save_raw_responses else None,
+            )
 
         # Extract elements
         elements = []
