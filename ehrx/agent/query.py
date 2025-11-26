@@ -8,7 +8,7 @@ Two-stage process:
 
 import json
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from pathlib import Path
 
 from vertexai.generative_models import GenerativeModel, GenerationConfig
@@ -43,6 +43,15 @@ SEMANTIC_TYPES = [
     "margin_content",
     "uncategorized"
 ]
+
+# Reasoning safeguards
+MAX_ELEMENTS_PER_BATCH = 120
+MAX_TOTAL_CHARS_PER_BATCH = 100_000
+MAX_CONTENT_CHARS_PER_ELEMENT = 1500
+COMPACT_CONTENT_CHARS_PER_ELEMENT = 600
+PRO_MAX_OUTPUT_TOKENS = 4096
+PRO_MAX_OUTPUT_TOKENS_COMPACT = 2048
+REASONING_MAX_CHARS = 800
 
 
 class HybridQueryAgent:
@@ -147,10 +156,14 @@ class HybridQueryAgent:
         # Stage 3: Reason with Pro
         answer = self._reason_with_pro(question, filtered_schema)
 
+        reasoning_text = answer.get("reasoning", "")
+        if reasoning_text and len(reasoning_text) > REASONING_MAX_CHARS:
+            reasoning_text = reasoning_text[:REASONING_MAX_CHARS] + "..."
+
         return {
             "question": question,
             "matched_elements": answer.get("elements", []),
-            "reasoning": answer.get("reasoning", ""),
+            "reasoning": reasoning_text,
             "answer_summary": answer.get("answer_summary", ""),
             "filter_stats": {
                 "original_elements": self._count_total_elements(),
@@ -320,25 +333,183 @@ Only return the JSON object, nothing else."""
         Returns:
             Dictionary with answer and reasoning
         """
-        # Simplify schema - only include essential fields for reasoning
-        # This prevents Pro from getting overwhelmed by verbose metadata
-        simplified_elements = []
-        for elem in filtered_schema.get("elements", []):
-            simplified_elements.append({
+        # Build batches to stay under token limits
+        batches = self._build_reasoning_batches(filtered_schema.get("elements", []))
+        all_elements = []
+        reasonings = []
+        summaries = []
+
+        for batch in batches:
+            result = self._reason_with_pro_batch(question, batch, filtered_schema.get("elements", []))
+            all_elements.extend(result.get("elements", []))
+            if result.get("reasoning"):
+                reasonings.append(result["reasoning"])
+            if result.get("answer_summary"):
+                summaries.append(result["answer_summary"])
+
+        # Deduplicate by element_id while preserving order
+        seen_ids = set()
+        deduped_elements = []
+        for elem in all_elements:
+            eid = elem.get("element_id")
+            if eid and eid not in seen_ids:
+                seen_ids.add(eid)
+                deduped_elements.append(elem)
+
+        return {
+            "elements": deduped_elements,
+            "reasoning": "\n".join(reasonings),
+            "answer_summary": "\n".join(summaries)
+        }
+
+    def _rehydrate_elements(
+        self,
+        filtered_elements: List[Dict[str, Any]],
+        pro_elements: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """
+        Rehydrate Pro-selected element IDs with full local metadata.
+
+        Args:
+            filtered_elements: Elements sent to Pro (with content/bboxes)
+            pro_elements: Elements returned by Pro (IDs + short notes)
+
+        Returns:
+            List of enriched elements with bbox/content for provenance
+        """
+        element_lookup = {
+            elem.get("element_id"): elem
+            for elem in filtered_elements
+            if elem.get("element_id")
+        }
+
+        hydrated: List[Dict[str, Any]] = []
+        missing_ids: List[str] = []
+
+        for elem in pro_elements or []:
+            elem_id = elem.get("element_id")
+            if not elem_id:
+                continue
+
+            base = element_lookup.get(elem_id)
+            if not base:
+                missing_ids.append(elem_id)
+                continue
+
+            hydrated_elem = {**base}
+            if "relevance" in elem:
+                hydrated_elem["pro_relevance"] = elem["relevance"]
+            if "justification" in elem:
+                hydrated_elem["pro_justification"] = elem["justification"]
+
+            hydrated.append(hydrated_elem)
+
+        if missing_ids:
+            self.logger.warning(
+                f"Pro returned element IDs not found in filtered context: {missing_ids}"
+            )
+
+        return hydrated
+
+    def _build_reasoning_batches(
+        self,
+        elements: List[Dict[str, Any]],
+        content_char_limit: int = MAX_CONTENT_CHARS_PER_ELEMENT,
+        max_total_chars: int = MAX_TOTAL_CHARS_PER_BATCH,
+        max_elements: int = MAX_ELEMENTS_PER_BATCH
+    ) -> List[List[Dict[str, Any]]]:
+        """
+        Build batches of elements to keep context under token limits.
+
+        Args:
+            elements: Full filtered elements with content/bboxes
+            content_char_limit: Trim each element's content to this many chars
+            max_total_chars: Max total chars per batch
+            max_elements: Max elements per batch
+        """
+        batches: List[List[Dict[str, Any]]] = []
+        current: List[Dict[str, Any]] = []
+        current_chars = 0
+
+        for elem in elements:
+            trimmed_content = (elem.get("content") or "")[:content_char_limit]
+            approx_len = len(trimmed_content)
+            simplified = {
                 "element_id": elem.get("element_id"),
                 "type": elem.get("type"),
-                "content": elem.get("content"),  # This is the key field!
-                "page_number": elem.get("page_number"),
-                "bbox_pixel": elem.get("bbox_pixel"),
-                "bbox_pdf": elem.get("bbox_pdf")
-            })
+                "content": trimmed_content,
+                "page_number": elem.get("page_number")
+            }
 
-        simplified_schema = {"elements": simplified_elements}
+            # Decide if we need a new batch
+            would_exceed = (
+                len(current) >= max_elements or
+                current_chars + approx_len > max_total_chars
+            )
+            if would_exceed and current:
+                batches.append(current)
+                current = []
+                current_chars = 0
+
+            current.append(simplified)
+            current_chars += approx_len
+
+        if current:
+            batches.append(current)
+
+        return batches
+
+    def _reason_with_pro_batch(
+        self,
+        question: str,
+        batch_elements: List[Dict[str, Any]],
+        full_filtered_elements: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Run Pro on a single batch with retry using a compact prompt if needed.
+        """
+        result, truncated = self._invoke_pro(question, batch_elements, compact=False)
+        if result is None or truncated:
+            # Retry once with compact content
+            compact_batch = self._build_reasoning_batches(
+                batch_elements,
+                content_char_limit=COMPACT_CONTENT_CHARS_PER_ELEMENT,
+                max_total_chars=MAX_TOTAL_CHARS_PER_BATCH // 2,
+                max_elements=max(20, MAX_ELEMENTS_PER_BATCH // 2)
+            )[0]
+            result, _ = self._invoke_pro(question, compact_batch, compact=True)
+
+        if not result:
+            return {
+                "elements": [],
+                "reasoning": "Pro reasoning failed to produce a valid response.",
+                "answer_summary": ""
+            }
+
+        hydrated_elements = self._rehydrate_elements(
+            full_filtered_elements,
+            result.get("elements", [])
+        )
+
+        return {
+            "elements": hydrated_elements,
+            "reasoning": result.get("reasoning", ""),
+            "answer_summary": result.get("answer_summary", "")
+        }
+
+    def _invoke_pro(
+        self,
+        question: str,
+        batch_elements: List[Dict[str, Any]],
+        compact: bool = False
+    ) -> Tuple[Optional[Dict[str, Any]], bool]:
+        """
+        Invoke Pro on a batch. Returns (result_dict_or_None, truncated_flag).
+        """
+        simplified_schema = {"elements": batch_elements}
         schema_json = json.dumps(simplified_schema, indent=2)
 
-        # Debug logging
-        self.logger.info(f"Sending {len(simplified_elements)} elements to Pro for reasoning")
-        self.logger.debug(f"Element types being sent: {[e.get('type') for e in simplified_elements]}")
+        brevity_instruction = "Keep answer_summary under 80 words. Keep reasoning under 60 words." if compact else "Keep answer_summary concise. Keep reasoning under 100 words."
 
         prompt = f"""You are analyzing an electronic health record (EHR) to answer a specific question.
 
@@ -351,8 +522,6 @@ Each element has:
 - type: Semantic element type (e.g., medication_table, lab_results_table)
 - content: THE ACTUAL EXTRACTED TEXT/DATA - THIS IS WHERE THE ANSWER IS!
 - page_number: Page where element appears
-- bbox_pixel: Pixel coordinates for traceability
-- bbox_pdf: PDF coordinates for traceability
 
 FILTERED SCHEMA:
 {schema_json}
@@ -360,19 +529,15 @@ FILTERED SCHEMA:
 USER QUESTION: {question}
 
 IMPORTANT INSTRUCTIONS:
-1. READ THE "content" FIELD of each element - that's where the actual data is!
+1. READ THE \"content\" FIELD of each element - that's where the actual data is!
 2. For tables (medication_table, lab_results_table, etc.), the content field contains the full table data
 3. Don't just look at element types - READ THE CONTENT!
 4. Extract the actual answer from the content and present it clearly
+5. OUTPUT MUST BE TINY: Only return element_id(s) for matched items. DO NOT repeat content, bbox, or page info.
+6. Keep any relevance note extremely short (<= 10 words).
+7. {brevity_instruction}
 
 TASK: Find ALL elements that answer the question and provide a clear natural language answer.
-
-For "answer_summary", extract the ACTUAL DATA from the content fields and present it in a clear, readable format.
-
-Examples:
-- For medications: List each medication with dosage
-- For lab results: List the key values
-- For vital signs: List BP, HR, Temp, etc.
 
 Return your answer as a JSON object:
 
@@ -380,26 +545,20 @@ Return your answer as a JSON object:
     "elements": [
         {{
             "element_id": "E_1234",
-            "type": "medication_table",
-            "content": "aspirin (aspirin 81 mg oral tablet) - Take 1 tab(s) oral daily",
-            "page_number": 7,
-            "bbox_pixel": [68, 95, 424, 110],
-            "bbox_pdf": [24.48, 752.4, 152.64, 757.8],
-            "relevance": "Contains medication list with dosages"
+            "relevance": "Medication table listing"
         }}
     ],
     "reasoning": "Brief explanation of where the answer was found",
-    "answer_summary": "CLEAR NATURAL LANGUAGE ANSWER with the actual extracted data formatted for readability. For example: 'The patient is taking 8 medications: 1) Aspirin 81mg daily, 2) Atorvastatin 80mg nightly, 3) Cephalexin 500mg twice daily...'"
+    "answer_summary": "Clear answer extracted from the content (concise)."
 }}
 
 If no relevant elements are found, return empty elements list with explanation in reasoning.
 
 Only return the JSON object, nothing else."""
 
-        # Use structured output to FORCE valid JSON
         generation_config = GenerationConfig(
             temperature=0.2,
-            max_output_tokens=65536,
+            max_output_tokens=PRO_MAX_OUTPUT_TOKENS_COMPACT if compact else PRO_MAX_OUTPUT_TOKENS,
             response_mime_type="application/json",
             response_schema={
                 "type": "object",
@@ -410,20 +569,10 @@ Only return the JSON object, nothing else."""
                             "type": "object",
                             "properties": {
                                 "element_id": {"type": "string"},
-                                "type": {"type": "string"},
-                                "content": {"type": "string"},
-                                "page_number": {"type": "integer"},
-                                "bbox_pixel": {
-                                    "type": "array",
-                                    "items": {"type": "number"}
-                                },
-                                "bbox_pdf": {
-                                    "type": "array",
-                                    "items": {"type": "number"}
-                                },
-                                "relevance": {"type": "string"}
+                                "relevance": {"type": "string"},
+                                "justification": {"type": "string"}
                             },
-                            "required": ["element_id", "type", "content", "page_number"]
+                            "required": ["element_id"]
                         }
                     },
                     "reasoning": {"type": "string"},
@@ -438,19 +587,35 @@ Only return the JSON object, nothing else."""
             generation_config=generation_config
         )
 
+        # Detect truncation if finish_reason indicates token limit
+        finish_reason = self._extract_finish_reason(response)
+        truncated = finish_reason and ("MAX_TOKENS" in finish_reason or "LENGTH" in finish_reason)
+
         # Parse JSON response
         try:
-            result = json.loads(response.text)
-            return result
+            raw_result = json.loads(getattr(response, "text", ""))
+            return raw_result, truncated
         except json.JSONDecodeError as e:
             self.logger.error(f"JSON parsing failed: {e}")
-            self.logger.error(f"Response length: {len(response.text)} chars")
-            # Return a fallback response with error info
-            return {
-                "elements": [],
-                "reasoning": f"Response parsing error: {str(e)}. The model response may have been truncated.",
-                "answer_summary": "Unable to generate answer due to response parsing error. Please try a more specific query."
-            }
+            self.logger.error(f"Response length: {len(getattr(response, 'text', ''))} chars")
+            return None, truncated
+
+    def _extract_finish_reason(self, response: Any) -> Optional[str]:
+        """Extract finish_reason from Vertex response if present."""
+        if hasattr(response, "finish_reason"):
+            return str(response.finish_reason)
+
+        candidate = None
+        if hasattr(response, "candidates") and response.candidates:
+            candidate = response.candidates[0]
+
+        if candidate and hasattr(candidate, "finish_reason"):
+            fr = candidate.finish_reason
+            if hasattr(fr, "name"):
+                return fr.name
+            return str(fr)
+
+        return None
 
     def _count_total_elements(self) -> int:
         """Count total elements in schema."""
