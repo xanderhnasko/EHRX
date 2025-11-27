@@ -6,14 +6,18 @@ Deploy behind Cloud Run/uvicorn as needed.
 """
 
 import os
+import logging
 import tempfile
 import uuid
+import json
 from pathlib import Path
 from typing import Optional
+from threading import Lock
+from collections import OrderedDict
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 from dotenv import load_dotenv
 
 from ehrx.db.config import DBConfig
@@ -27,6 +31,12 @@ from ehrx.agent.query import HybridQueryAgent
 
 load_dotenv()
 
+# Basic logging so pipeline logs show up in Cloud Run
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+
 app = FastAPI(title="PDF2EHR API")
 
 db_config = DBConfig.from_env()
@@ -37,9 +47,39 @@ if not GCS_BUCKET:
     raise RuntimeError("GCS_BUCKET env var is required")
 gcs = GCSClient(GCS_BUCKET)
 
-# Serve frontend static assets if present (will remain inert until frontend is added)
-if Path("static").exists():
-    app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+class SchemaCache:
+    """Tiny thread-safe LRU for JSON schema blobs keyed by storage URL."""
+
+    def __init__(self, max_size: int = 128):
+        self.max_size = max_size
+        self._lock = Lock()
+        self._data: OrderedDict[str, dict] = OrderedDict()
+
+    def get(self, key: str) -> Optional[dict]:
+        with self._lock:
+            if key not in self._data:
+                return None
+            self._data.move_to_end(key)
+            return self._data[key]
+
+    def set(self, key: str, value: dict) -> None:
+        with self._lock:
+            if key in self._data:
+                self._data.move_to_end(key)
+            self._data[key] = value
+            if len(self._data) > self.max_size:
+                self._data.popitem(last=False)
+
+
+SCHEMA_CACHE = SchemaCache(
+    max_size=int(os.getenv("SCHEMA_CACHE_SIZE", "128"))
+)
+
+class QueryRequest(BaseModel):
+    document_id: str
+    question: str
+    kind: str | None = "enhanced"
 
 
 @app.on_event("startup")
@@ -104,6 +144,12 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
         enhanced_path = output_dir / f"{document['document_id']}_enhanced.json"
         index_path = output_dir / f"{document['document_id']}_index.json"
 
+        # Save enhanced/index files locally before upload
+        with open(enhanced_path, "w") as f:
+            json.dump(enhanced_doc, f, indent=2)
+        with open(index_path, "w") as f:
+            json.dump(index, f, indent=2)
+
         full_url = gcs.upload_file(full_path, f"extractions/{document_id}/{full_path.name}")
         enhanced_url = gcs.upload_file(enhanced_path, f"extractions/{document_id}/{enhanced_path.name}")
         index_url = gcs.upload_file(index_path, f"extractions/{document_id}/{index_path.name}")
@@ -138,27 +184,47 @@ def get_document(document_id: str):
     return {"document": doc, "extractions": extractions}
 
 
+@app.get("/healthz")
+@app.get("/api/healthz")
+@app.get("/")
+def health():
+    return {"status": "ok"}
+
+
 @app.post("/query")
-def query_document(document_id: str, kind: str = "enhanced", question: str = ""):
+@app.post("/api/query")
+def query_document(payload: QueryRequest):
     """Run a query against an extraction (prefers enhanced)."""
-    if not question:
+    if not payload.question:
         raise HTTPException(status_code=400, detail="Question is required")
     try:
-        doc_uuid = uuid.UUID(document_id)
+        doc_uuid = uuid.UUID(payload.document_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid document_id")
 
     extractions = db.get_extractions(doc_uuid)
-    by_kind = {e["kind"]: e for e in extractions}
-    extraction = by_kind.get(kind) or by_kind.get("enhanced") or by_kind.get("full")
+    # Deduplicate by kind, preferring newest (get_extractions is ordered DESC)
+    by_kind = {}
+    for e in extractions:
+        if e["kind"] not in by_kind:
+            by_kind[e["kind"]] = e
+
+    extraction = by_kind.get(payload.kind) or by_kind.get("enhanced") or by_kind.get("full")
     if not extraction:
         raise HTTPException(status_code=404, detail="No extraction available for document")
 
-    with tempfile.TemporaryDirectory() as td:
-        json_path = Path(td) / "schema.json"
-        gcs.download_to_path(extraction["storage_url"], json_path)
+    cache_key = extraction["storage_url"]
+    schema = SCHEMA_CACHE.get(cache_key)
 
-        agent = HybridQueryAgent(schema_path=str(json_path), vlm_config=VLMConfig.from_env())
-        result = agent.query(question)
+    if not schema:
+        with tempfile.TemporaryDirectory() as td:
+            json_path = Path(td) / "schema.json"
+            gcs.download_to_path(extraction["storage_url"], json_path)
+            with open(json_path, "r") as f:
+                schema = json.load(f)
+            SCHEMA_CACHE.set(cache_key, schema)
+
+    agent = HybridQueryAgent(schema=schema, vlm_config=VLMConfig.from_env())
+    result = agent.query(payload.question)
 
     return JSONResponse(result)

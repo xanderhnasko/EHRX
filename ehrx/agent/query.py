@@ -67,6 +67,7 @@ class HybridQueryAgent:
     def __init__(
         self,
         schema_path: Optional[str] = None,
+        schema: Optional[Dict[str, Any]] = None,
         vlm_config: Optional[VLMConfig] = None
     ):
         """
@@ -74,10 +75,11 @@ class HybridQueryAgent:
 
         Args:
             schema_path: Path to schema JSON file (can be set later)
+            schema: Preloaded schema dictionary (bypass file load)
             vlm_config: VLM configuration (defaults to from_env())
         """
         self.schema_path = schema_path
-        self.schema = None
+        self.schema = schema
         self.vlm_config = vlm_config or VLMConfig.from_env()
         self.logger = logging.getLogger(__name__)
 
@@ -91,8 +93,8 @@ class HybridQueryAgent:
         self.flash_model = GenerativeModel(model_name="gemini-2.5-flash")
         self.pro_model = GenerativeModel(model_name="gemini-2.5-pro")
 
-        # Load schema if provided
-        if schema_path:
+        # Load schema if provided and not already set
+        if schema_path and self.schema is None:
             self.load_schema(schema_path)
 
     def load_schema(self, schema_path: str) -> None:

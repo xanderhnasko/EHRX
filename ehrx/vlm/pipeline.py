@@ -257,7 +257,9 @@ class DocumentPipeline:
 
         # Build VLM request
         vlm_request = VLMRequest(
-            context=doc_context
+            context=doc_context,
+            max_tokens=self.vlm_config.max_tokens,
+            temperature=self.vlm_config.temperature
         )
 
         # Call VLM for element extraction
