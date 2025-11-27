@@ -12,6 +12,8 @@ import uuid
 import json
 from pathlib import Path
 from typing import Optional
+from threading import Lock
+from collections import OrderedDict
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
@@ -44,6 +46,35 @@ GCS_BUCKET = os.getenv("GCS_BUCKET")
 if not GCS_BUCKET:
     raise RuntimeError("GCS_BUCKET env var is required")
 gcs = GCSClient(GCS_BUCKET)
+
+
+class SchemaCache:
+    """Tiny thread-safe LRU for JSON schema blobs keyed by storage URL."""
+
+    def __init__(self, max_size: int = 128):
+        self.max_size = max_size
+        self._lock = Lock()
+        self._data: OrderedDict[str, dict] = OrderedDict()
+
+    def get(self, key: str) -> Optional[dict]:
+        with self._lock:
+            if key not in self._data:
+                return None
+            self._data.move_to_end(key)
+            return self._data[key]
+
+    def set(self, key: str, value: dict) -> None:
+        with self._lock:
+            if key in self._data:
+                self._data.move_to_end(key)
+            self._data[key] = value
+            if len(self._data) > self.max_size:
+                self._data.popitem(last=False)
+
+
+SCHEMA_CACHE = SchemaCache(
+    max_size=int(os.getenv("SCHEMA_CACHE_SIZE", "128"))
+)
 
 class QueryRequest(BaseModel):
     document_id: str
@@ -182,11 +213,18 @@ def query_document(payload: QueryRequest):
     if not extraction:
         raise HTTPException(status_code=404, detail="No extraction available for document")
 
-    with tempfile.TemporaryDirectory() as td:
-        json_path = Path(td) / "schema.json"
-        gcs.download_to_path(extraction["storage_url"], json_path)
+    cache_key = extraction["storage_url"]
+    schema = SCHEMA_CACHE.get(cache_key)
 
-        agent = HybridQueryAgent(schema_path=str(json_path), vlm_config=VLMConfig.from_env())
-        result = agent.query(payload.question)
+    if not schema:
+        with tempfile.TemporaryDirectory() as td:
+            json_path = Path(td) / "schema.json"
+            gcs.download_to_path(extraction["storage_url"], json_path)
+            with open(json_path, "r") as f:
+                schema = json.load(f)
+            SCHEMA_CACHE.set(cache_key, schema)
+
+    agent = HybridQueryAgent(schema=schema, vlm_config=VLMConfig.from_env())
+    result = agent.query(payload.question)
 
     return JSONResponse(result)
