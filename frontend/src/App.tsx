@@ -31,6 +31,18 @@ type ExtractionResponse = {
   };
 };
 
+type DocumentRecord = {
+  id: string;
+  original_filename?: string;
+  storage_url?: string;
+  created_at?: string;
+};
+
+type DocumentResponse = {
+  document: DocumentRecord;
+  extractions: Array<{ kind: string; storage_url: string; created_at?: string }>;
+};
+
 const api = {
   upload: async (file: File): Promise<{ document_id: string }> => {
     const formData = new FormData();
@@ -67,6 +79,15 @@ const api = {
     if (!res.ok) {
       const text = await res.text();
       throw new Error(text || 'Query failed');
+    }
+    return res.json();
+  },
+
+  getDocument: async (docId: string): Promise<DocumentResponse> => {
+    const res = await fetch(`${API_BASE}/documents/${docId}`, { method: 'GET' });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || 'Document lookup failed');
     }
     return res.json();
   },
@@ -155,7 +176,7 @@ const SectionViewer = ({ activeTab }: { activeTab: Tab }) => {
       </div>
       <div className="p-6 text-sm text-slate-600 flex-1">
         <p className="mb-2 font-medium text-slate-700">No data yet.</p>
-        <p className="text-slate-500">Upload a PDF and run extraction to view structured content here.</p>
+        <p className="text-slate-500">Upload or load a document to populate this section.</p>
       </div>
     </div>
   );
@@ -163,13 +184,15 @@ const SectionViewer = ({ activeTab }: { activeTab: Tab }) => {
 
 const DashboardView = ({
   docId,
-  extraction,
+  docMeta,
   onUpload,
+  onLoadExisting,
   processing,
 }: {
   docId: string;
-  extraction: ExtractionResponse | null;
+  docMeta: DocumentResponse | null;
   onUpload: (f: File) => void;
+  onLoadExisting: (id: string) => void;
   processing: boolean;
 }) => {
   const [messages, setMessages] = useState<
@@ -179,11 +202,14 @@ const DashboardView = ({
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('Summary');
   const [chatOpen, setChatOpen] = useState(true);
+  const [existingId, setExistingId] = useState('');
+
+  const docReady = !!(docMeta && docMeta.extractions && docMeta.extractions.length > 0);
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    if (!docId) {
-      setMessages((prev) => [...prev, { role: 'assistant', content: 'Upload and extract a document before querying.' }]);
+    if (!docReady || !docId) {
+      setMessages((prev) => [...prev, { role: 'assistant', content: 'Load a document with an extraction before querying.' }]);
       return;
     }
     const q = input.trim();
@@ -215,9 +241,8 @@ const DashboardView = ({
     }
   };
 
-  // Seed a helpful message when extraction completes
   React.useEffect(() => {
-    if (extraction && messages.length === 0) {
+    if (docReady && messages.length === 0) {
       setMessages([
         {
           role: 'assistant',
@@ -225,7 +250,7 @@ const DashboardView = ({
         },
       ]);
     }
-  }, [extraction, messages.length]);
+  }, [docReady, messages.length]);
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-64px)] p-4 lg:p-6">
@@ -233,7 +258,7 @@ const DashboardView = ({
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Document</p>
-            <p className="text-sm text-slate-700">{docId ? `ID: ${docId}` : 'No document uploaded yet'}</p>
+            <p className="text-sm text-slate-700">{docId ? `ID: ${docId}` : 'No document loaded yet'}</p>
           </div>
           {processing && (
             <div className="flex items-center gap-2 text-blue-600 text-sm">
@@ -246,14 +271,37 @@ const DashboardView = ({
         <UploadCard onUpload={onUpload} />
 
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex-1">
+              <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Load existing document</p>
+              <p className="text-sm text-slate-600 mt-1">Paste a document ID to query without re-uploading.</p>
+              <input
+                type="text"
+                value={existingId}
+                onChange={(e) => setExistingId(e.target.value)}
+                placeholder="Document UUID"
+                className="mt-2 w-full sm:w-96 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+              />
+            </div>
+            <button
+              onClick={() => existingId && onLoadExisting(existingId.trim())}
+              disabled={!existingId || processing}
+              className="mt-3 sm:mt-0 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-slate-900 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Load
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Extraction status</p>
-              {extraction ? (
+              {docReady ? (
                 <>
                   <p className="text-sm text-slate-800 mt-1">Ready for queries.</p>
                   <p className="text-xs text-slate-500 mt-1">
-                    Artifacts: {Object.keys(extraction.extractions).join(', ')}
+                    Artifacts: {docMeta?.extractions?.map((e) => e.kind).join(', ') || 'available'}
                   </p>
                 </>
               ) : processing ? (
@@ -283,6 +331,19 @@ const DashboardView = ({
           </div>
           <div className="p-4">
             <SectionViewer activeTab={activeTab} />
+            {!docReady && (
+              <p className="text-xs text-slate-500 mt-2">
+                Upload or load an existing document to view structured content here.
+              </p>
+            )}
+            {docReady && docMeta?.document && (
+              <div className="mt-3 text-xs text-slate-500 space-y-1">
+                <div className="font-semibold text-slate-600">Document info</div>
+                <div>ID: {docMeta.document.id}</div>
+                {docMeta.document.original_filename && <div>File: {docMeta.document.original_filename}</div>}
+                {docMeta.document.created_at && <div>Created: {docMeta.document.created_at}</div>}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -293,7 +354,7 @@ const DashboardView = ({
             <div>
               <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Chat</p>
               <p className="text-sm text-slate-700">
-                {docId ? 'Ask about this record' : 'Upload a document to enable queries'}
+                {docReady ? 'Ask about this record' : 'Upload or load a document to enable queries'}
               </p>
             </div>
             <button
@@ -307,7 +368,7 @@ const DashboardView = ({
           <div className="flex-1 overflow-y-auto p-4 space-y-6 scroll-smooth">
             {messages.length === 0 && (
               <div className="text-sm text-slate-500 border border-dashed border-slate-200 rounded-lg p-4">
-                No messages yet. Upload a PDF and ask a question to get started.
+                No messages yet. Upload or load a document and ask a question to get started.
               </div>
             )}
             {messages.map((m, idx) => (
@@ -388,13 +449,13 @@ const DashboardView = ({
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder={docId ? 'Ask a question (e.g., medications?)' : 'Upload and extract before querying'}
+                placeholder={docReady ? 'Ask a question (e.g., medications?)' : 'Upload or load before querying'}
                 disabled={isLoading || processing}
                 className="w-full pl-4 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400 text-sm shadow-inner disabled:opacity-60"
               />
               <button
                 onClick={handleSend}
-                disabled={isLoading || !input.trim() || processing || !docId}
+                disabled={isLoading || !input.trim() || processing || !docReady}
                 className="absolute right-2 top-2 bottom-2 aspect-square bg-slate-900 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
               >
                 <Send className="w-4 h-4" />
@@ -421,22 +482,44 @@ const DashboardView = ({
 
 export default function App() {
   const [docId, setDocId] = useState<string>('');
+  const [docMeta, setDocMeta] = useState<DocumentResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
-  const [extraction, setExtraction] = useState<ExtractionResponse | null>(null);
+
+  const selectDocFromMeta = (meta: DocumentResponse | null) => {
+    if (!meta || !meta.extractions || meta.extractions.length === 0) return;
+  };
 
   const handleUpload = async (file: File) => {
     try {
       setError(null);
       setProcessing(true);
-      setExtraction(null);
+      setDocMeta(null);
       const uploadRes = await api.upload(file);
       setDocId(uploadRes.document_id);
-      const extractionRes = await api.extract(uploadRes.document_id);
-      setExtraction(extractionRes);
+      await api.extract(uploadRes.document_id);
+      const meta = await api.getDocument(uploadRes.document_id);
+      setDocMeta(meta);
+      selectDocFromMeta(meta);
     } catch (e: any) {
       console.error(e);
       setError(e?.message || 'Error processing document.');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleLoadExisting = async (id: string) => {
+    try {
+      setError(null);
+      setProcessing(true);
+      const meta = await api.getDocument(id);
+      setDocId(id);
+      setDocMeta(meta);
+      selectDocFromMeta(meta);
+    } catch (e: any) {
+      console.error(e);
+      setError(e?.message || 'Unable to load document.');
     } finally {
       setProcessing(false);
     }
@@ -447,7 +530,7 @@ export default function App() {
       <Header />
 
       <main className="flex-1 flex flex-col relative">
-        <DashboardView docId={docId} extraction={extraction} onUpload={handleUpload} processing={processing} />
+        <DashboardView docId={docId} docMeta={docMeta} onUpload={handleUpload} onLoadExisting={handleLoadExisting} processing={processing} />
 
         {error && (
           <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white border border-amber-300 text-amber-700 px-4 py-3 rounded-lg shadow-lg text-sm flex items-center gap-2">
