@@ -163,10 +163,12 @@ const SectionViewer = ({ activeTab }: { activeTab: Tab }) => {
 
 const DashboardView = ({
   docId,
+  extraction,
   onUpload,
   processing,
 }: {
   docId: string;
+  extraction: ExtractionResponse | null;
   onUpload: (f: File) => void;
   processing: boolean;
 }) => {
@@ -213,6 +215,18 @@ const DashboardView = ({
     }
   };
 
+  // Seed a helpful message when extraction completes
+  React.useEffect(() => {
+    if (extraction && messages.length === 0) {
+      setMessages([
+        {
+          role: 'assistant',
+          content: 'Extraction is ready. Ask a question about this document (e.g., medications, diagnoses, vitals).',
+        },
+      ]);
+    }
+  }, [extraction, messages.length]);
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-64px)] p-4 lg:p-6">
       <div className="flex-1 flex flex-col gap-6 overflow-y-auto">
@@ -230,6 +244,26 @@ const DashboardView = ({
         </div>
 
         <UploadCard onUpload={onUpload} />
+
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Extraction status</p>
+              {extraction ? (
+                <>
+                  <p className="text-sm text-slate-800 mt-1">Ready for queries.</p>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Artifacts: {Object.keys(extraction.extractions).join(', ')}
+                  </p>
+                </>
+              ) : processing ? (
+                <p className="text-sm text-slate-600 mt-1">Running pipeline…</p>
+              ) : (
+                <p className="text-sm text-slate-600 mt-1">Upload a PDF to start extraction.</p>
+              )}
+            </div>
+          </div>
+        </div>
 
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
           <div className="p-4 border-b border-slate-100 flex gap-2 overflow-x-auto">
@@ -389,14 +423,17 @@ export default function App() {
   const [docId, setDocId] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [extraction, setExtraction] = useState<ExtractionResponse | null>(null);
 
   const handleUpload = async (file: File) => {
     try {
       setError(null);
       setProcessing(true);
+      setExtraction(null);
       const uploadRes = await api.upload(file);
       setDocId(uploadRes.document_id);
-      await api.extract(uploadRes.document_id);
+      const extractionRes = await api.extract(uploadRes.document_id);
+      setExtraction(extractionRes);
     } catch (e: any) {
       console.error(e);
       setError(e?.message || 'Error processing document.');
@@ -410,7 +447,7 @@ export default function App() {
       <Header />
 
       <main className="flex-1 flex flex-col relative">
-        <DashboardView docId={docId} onUpload={handleUpload} processing={processing} />
+        <DashboardView docId={docId} extraction={extraction} onUpload={handleUpload} processing={processing} />
 
         {error && (
           <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white border border-amber-300 text-amber-700 px-4 py-3 rounded-lg shadow-lg text-sm flex items-center gap-2">
