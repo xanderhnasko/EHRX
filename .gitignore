@@ -73,9 +73,13 @@ temp/
 .tmp/
 .claude/
 
+# frontend
+node_modules/
+
 
 SENSITIVE_ehr1_copy.pdf
 SENSITIVE_ehr2_copy.pdf
 test_output
 .env
 .secrets
+
