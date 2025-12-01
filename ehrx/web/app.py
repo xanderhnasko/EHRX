@@ -16,6 +16,7 @@ from threading import Lock
 from collections import OrderedDict
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -38,6 +39,17 @@ logging.basicConfig(
 )
 
 app = FastAPI(title="PDF2EHR API")
+
+# CORS for local dev and deployed frontend (set FRONTEND_ORIGINS as comma-separated list)
+allowed_origins = os.getenv("FRONTEND_ORIGINS", "http://localhost:5173", "https://pdf2ehr-api3-3bf3r3croq-uw.a.run.app").split(",")
+allowed_origins = [o.strip() for o in allowed_origins if o.strip()]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 db_config = DBConfig.from_env()
 db = DB(db_config)

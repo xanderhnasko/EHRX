@@ -83,3 +83,4 @@ test_output
 .env
 .secrets
 
+frontend/.env.local
