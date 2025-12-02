@@ -12,6 +12,8 @@ type MatchedElement = {
   bbox: number[];
   text: string;
   image_url?: string; // optional future hook for page images
+  page_width_px?: number;
+  page_height_px?: number;
 };
 
 type QueryResponse = {
@@ -562,9 +564,7 @@ const AnalysisArea = ({
                   {ev.image_url ? (
                     <div className="mt-2">
                       <div className="text-xs text-slate-500 mb-1">Preview</div>
-                      <div className="relative">
-                        <img src={ev.image_url} alt="Page preview" className="max-h-96 rounded border border-slate-200" />
-                      </div>
+                      <BBoxPreview ev={ev} />
                     </div>
                   ) : (
                     <p className="text-xs text-slate-500">No page image available.</p>
@@ -770,3 +770,47 @@ export default function App() {
     </div>
   );
 }
+// Helper to render bbox overlay on a loaded image
+const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const [size, setSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
+
+  const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    setSize({ w: e.currentTarget.clientWidth, h: e.currentTarget.clientHeight });
+  };
+
+  const bbox = ev.bbox || [];
+  const hasDims = ev.page_width_px && ev.page_height_px && bbox.length === 4 && size.w > 0 && size.h > 0;
+
+  let overlayStyle: React.CSSProperties | null = null;
+  if (hasDims) {
+    const scaleX = size.w / (ev.page_width_px as number);
+    const scaleY = size.h / (ev.page_height_px as number);
+    const [x0, y0, x1, y1] = bbox;
+    overlayStyle = {
+      left: x0 * scaleX,
+      top: y0 * scaleY,
+      width: (x1 - x0) * scaleX,
+      height: (y1 - y0) * scaleY,
+    };
+  }
+
+  return (
+    <div className="relative inline-block">
+      <img
+        ref={imgRef}
+        src={ev.image_url}
+        alt="Page preview"
+        className="max-h-96 rounded border border-slate-200"
+        onLoad={handleLoad}
+        onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
+      />
+      {overlayStyle && (
+        <div
+          className="absolute border-2 border-red-500/80 bg-red-500/10 rounded-sm pointer-events-none"
+          style={overlayStyle}
+        />
+      )}
+    </div>
+  );
+};

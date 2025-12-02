@@ -183,6 +183,9 @@ class HybridQueryAgent:
             el_id = el.get("element_id")
             base = element_index.get(el_id, {})
             bbox_source = base.get("bbox_pixel") or base.get("bbox_norm") or base.get("bbox")
+            page_key = None
+            if "page_number" in base and base.get("page_number") is not None:
+                page_key = str(int(base.get("page_number")))
             matched_elements.append(
                 {
                     "element_id": el_id,
@@ -193,6 +196,7 @@ class HybridQueryAgent:
                     "type": base.get("type"),
                     "subdoc_type": base.get("subdoc_type"),
                     "subdoc_title": base.get("subdoc_title"),
+                    "page_key": page_key,
                 }
             )
 

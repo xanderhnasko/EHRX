@@ -173,7 +173,18 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
         # Upload page images (public for frontend previews)
         page_images_dir = output_dir / "pages"
         page_image_map = {}
+        page_dim_map = {}
         if page_images_dir.exists():
+            # Capture page dimension map from document (pages contain page_info)
+            for page in document.get("pages", []):
+                info = page.get("page_info", {})
+                page_num = page.get("page_number")
+                if page_num:
+                    page_dim_map[str(int(page_num))] = {
+                        "width_px": info.get("width_px"),
+                        "height_px": info.get("height_px"),
+                    }
+
             for img_path in sorted(page_images_dir.glob("page-*.png")):
                 page_number = img_path.stem.split("-")[-1]
                 dest = f"extractions/{document_id}/pages/{img_path.name}"
@@ -189,6 +200,7 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
     metadata_common = {
         "index_url": index_url,
         "page_images": page_image_map,
+        "page_dimensions": page_dim_map if page_images_dir.exists() else {},
     }
     db.upsert_extraction(doc_uuid, "full", full_url, stats.get("total_pages"), stats.get("total_elements"), metadata_common)
     db.upsert_extraction(doc_uuid, "enhanced", enhanced_url, stats.get("total_pages"), stats.get("total_elements"), metadata_common)
@@ -265,12 +277,17 @@ def query_document(payload: QueryRequest):
     # Attach image URLs from extraction metadata if available
     meta = extraction.get("metadata") or {}
     page_images = meta.get("page_images") or {}
+    page_dims = meta.get("page_dimensions") or {}
     for el in result.get("matched_elements", []):
-        page = el.get("page")
-        if page is None:
+        page_key = el.get("page_key") or (str(el.get("page")) if el.get("page") is not None else None)
+        if not page_key:
             continue
-        img_url = page_images.get(str(page))
+        img_url = page_images.get(page_key)
         if img_url:
             el["image_url"] = img_url
+        dims = page_dims.get(page_key)
+        if dims:
+            el["page_width_px"] = dims.get("width_px")
+            el["page_height_px"] = dims.get("height_px")
 
     return JSONResponse(result)
