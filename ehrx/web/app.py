@@ -207,6 +207,8 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
                     page_dim_map[str(int(page_num))] = {
                         "width_px": info.get("width_px"),
                         "height_px": info.get("height_px"),
+                        "width_pdf": info.get("width_pdf"),
+                        "height_pdf": info.get("height_pdf"),
                     }
 
             for img_path in sorted(page_images_dir.glob("page-*.png")):
@@ -233,7 +235,12 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
                 if page_key not in page_dim_map:
                     w, h = _png_dimensions(img_path)
                     if w and h:
-                        page_dim_map[page_key] = {"width_px": w, "height_px": h}
+                        page_dim_map[page_key] = {
+                            "width_px": w,
+                            "height_px": h,
+                            "width_pdf": page_dim_map.get(page_key, {}).get("width_pdf") if page_key in page_dim_map else None,
+                            "height_pdf": page_dim_map.get(page_key, {}).get("height_pdf") if page_key in page_dim_map else None,
+                        }
                     else:
                         logging.warning(f"Failed to read dimensions for {img_path}")
         logging.info(
@@ -333,6 +340,8 @@ def query_document(payload: QueryRequest):
         if dims:
             el["page_width_px"] = dims.get("width_px")
             el["page_height_px"] = dims.get("height_px")
+            el["page_width_pdf"] = dims.get("width_pdf")
+            el["page_height_pdf"] = dims.get("height_pdf")
     logging.info(
         f"Query {payload.question[:50]}... matched {len(result.get('matched_elements', []))} elements; "
         f"with images={len([m for m in result.get('matched_elements', []) if m.get('image_url')])}"

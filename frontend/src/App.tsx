@@ -14,6 +14,8 @@ type MatchedElement = {
   image_url?: string;
   page_width_px?: number;
   page_height_px?: number;
+  page_width_pdf?: number;
+  page_height_pdf?: number;
   bbox_norm?: number[];
 };
 
@@ -808,24 +810,44 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
   const bbox = ev.bbox || [];
   const baseW = ev.page_width_px || natural.w;
   const baseH = ev.page_height_px || natural.h;
-  const hasDims = baseW && baseH && bbox.length === 4 && size.w > 0 && size.h > 0;
+  const pdfW = ev.page_width_pdf;
+  const pdfH = ev.page_height_pdf;
+
+  const hasDims = (baseW && baseH && bbox.length === 4 && size.w > 0 && size.h > 0) || (pdfW && pdfH && bbox.length === 4 && size.w > 0 && size.h > 0);
 
   let overlayStyle: React.CSSProperties | null = null;
   if (hasDims) {
     const [rawX0, rawY0, rawX1, rawY1] = bbox;
     const normalized = bbox.every((v) => typeof v === 'number' && v >= 0 && v <= 1);
-    const x0 = normalized ? rawX0 * (baseW as number) : rawX0;
-    const y0 = normalized ? rawY0 * (baseH as number) : rawY0;
-    const x1 = normalized ? rawX1 * (baseW as number) : rawX1;
-    const y1 = normalized ? rawY1 * (baseH as number) : rawY1;
-    const scaleX = size.w / (baseW as number);
-    const scaleY = size.h / (baseH as number);
-    overlayStyle = {
-      left: x0 * scaleX,
-      top: y0 * scaleY,
-      width: (x1 - x0) * scaleX,
-      height: (y1 - y0) * scaleY,
-    };
+    // If we have PDF dimensions, treat bbox as PDF coords (origin bottom-left) unless normalized.
+    if (!normalized && pdfW && pdfH) {
+      const scaleX = size.w / pdfW;
+      const scaleY = size.h / pdfH;
+      const x0 = rawX0;
+      const x1 = rawX1;
+      // Convert from PDF bottom-left to image top-left.
+      const y0 = pdfH - rawY1;
+      const y1 = pdfH - rawY0;
+      overlayStyle = {
+        left: x0 * scaleX,
+        top: y0 * scaleY,
+        width: (x1 - x0) * scaleX,
+        height: (y1 - y0) * scaleY,
+      };
+    } else {
+      const x0 = normalized ? rawX0 * (baseW as number) : rawX0;
+      const y0 = normalized ? rawY0 * (baseH as number) : rawY0;
+      const x1 = normalized ? rawX1 * (baseW as number) : rawX1;
+      const y1 = normalized ? rawY1 * (baseH as number) : rawY1;
+      const scaleX = size.w / (baseW as number);
+      const scaleY = size.h / (baseH as number);
+      overlayStyle = {
+        left: x0 * scaleX,
+        top: y0 * scaleY,
+        width: (x1 - x0) * scaleX,
+        height: (y1 - y0) * scaleY,
+      };
+    }
   }
 
   return (
