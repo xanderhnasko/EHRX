@@ -10,8 +10,7 @@ from typing import Optional
 from google.cloud import storage
 from datetime import timedelta
 from google.api_core import exceptions as gcs_exceptions
-import google.auth
-from google.auth import iam
+from google.auth import iam, impersonated_credentials, credentials as google_auth_credentials
 from google.auth.transport.requests import Request
 
 
@@ -54,12 +53,19 @@ class GCSClient:
         if not signer_email:
             raise RuntimeError("No service account email available for signing URLs")
 
-        # Choose signing strategy: use private key if available, otherwise IAM SignBlob.
-        iam_signer = None
-        if hasattr(self._credentials, "sign_bytes") and callable(getattr(self._credentials, "sign_bytes", None)):
-            iam_signer = self._credentials
+        # Choose signing strategy:
+        # - Use native signing credentials if available.
+        # - Otherwise, impersonate the signer email to get Credentials that implement sign_bytes.
+        if isinstance(self._credentials, google_auth_credentials.Signing):
+            signing_credentials = self._credentials
         else:
-            iam_signer = iam.Signer(self._request, self._credentials, signer_email)
+            signing_credentials = impersonated_credentials.Credentials(
+                source_credentials=self._credentials,
+                target_principal=signer_email,
+                target_scopes=["https://www.googleapis.com/auth/devstorage.read_only"],
+                lifetime=300,
+            )
+            signing_credentials.refresh(self._request)
 
         return blob.generate_signed_url(
             version="v4",
@@ -68,8 +74,7 @@ class GCSClient:
             response_disposition="inline",
             response_type=content_type,
             service_account_email=signer_email,
-            access_token=getattr(self._credentials, "token", None),
-            iam_signer=iam_signer,
+            credentials=signing_credentials,
         )
 
     def upload_bytes(self, data: bytes, dest_blob: str, content_type: Optional[str] = None) -> str:
