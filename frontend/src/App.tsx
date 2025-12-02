@@ -1014,21 +1014,11 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
     (Array.isArray(ev.bbox) && ev.bbox.length === 4 && ev.bbox) ||
     (Array.isArray(ev.bbox_norm) && ev.bbox_norm.length === 4 && ev.bbox_norm) ||
     null;
-  // When bboxSource comes from bbox_norm, treat it as PDF coords (bottom-left origin).
-  const bboxIsPdfSpaceExplicit =
+  // Only treat as PDF-space when we're explicitly using bbox_norm (bottom-left origin).
+  const bboxIsPdfSpace =
     !(Array.isArray(ev.bbox) && ev.bbox.length === 4) &&
     Array.isArray(ev.bbox_norm) &&
     ev.bbox_norm.length === 4;
-
-  // Heuristic: if bbox numbers are comfortably within PDF point bounds, treat as PDF space.
-  const bboxLooksPdf =
-    !!(ev.page_width_pdf && ev.page_height_pdf && bboxSource) &&
-    bboxSource.every((v, i) =>
-      typeof v === 'number' &&
-      v >= 0 &&
-      (i % 2 === 0 ? v <= ev.page_width_pdf! * 1.05 : v <= ev.page_height_pdf! * 1.05)
-    );
-  const bboxIsPdfSpace = bboxIsPdfSpaceExplicit || bboxLooksPdf;
 
   // Convert whatever bbox space we have into pixel coords using top-left origin (to match <img>)
   let overlayStyle: React.CSSProperties | null = null;
