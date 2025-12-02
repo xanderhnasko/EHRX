@@ -237,11 +237,13 @@ const DocumentsTab = ({
   recentDocs,
   onLoadExisting,
   processing,
+  processingStep,
 }: {
   onUpload: (f: File) => void;
   recentDocs: RecentDoc[];
   onLoadExisting: (id: string) => void;
   processing: boolean;
+  processingStep: string | null;
 }) => {
   const [existingId, setExistingId] = useState('');
 
@@ -253,6 +255,12 @@ const DocumentsTab = ({
       <div className="w-full lg:w-1/3 bg-white rounded-xl border border-slate-200 shadow-sm p-4">
         <h3 className="text-sm font-semibold text-slate-800 mb-2">Recent documents</h3>
         <p className="text-xs text-slate-500 mb-3">Load without re-uploading.</p>
+        {processing && (
+          <div className="mb-3 text-xs text-blue-600 flex items-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span>Processing: {processingStep || 'working...'}</span>
+          </div>
+        )}
         <div className="space-y-2 max-h-[400px] overflow-y-auto">
           {recentDocs.length === 0 && <p className="text-sm text-slate-500">No recent documents yet.</p>}
           {recentDocs.map((d) => (
@@ -295,14 +303,12 @@ const AnalysisTab = ({
   processing,
   onQuery,
   recentQueries,
-  onReplayQuery,
 }: {
   docId: string;
   docMeta: DocumentResponse | null;
   processing: boolean;
-  onQuery: (question: string) => Promise<void>;
+  onQuery: (question: string) => Promise<QueryResponse>;
   recentQueries: RecentQuery[];
-  onReplayQuery: (rq: RecentQuery) => void;
 }) => {
   const [messages, setMessages] = useState<
     { role: 'user' | 'assistant'; content: string; reasoning?: string; evidence?: MatchedElement[] }[]
@@ -336,20 +342,28 @@ const AnalysisTab = ({
     setInput('');
     setMessages((prev) => [...prev, { role: 'user', content: q }]);
     setIsLoading(true);
-    await onQuery(q)
-      .then((res: any) => {
-        // onQuery already handled API; result is attached via event below (set externally)
-      })
-      .catch((err: any) => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'assistant',
-            content: err?.message || 'Error querying the document. Ensure the backend is reachable.',
-          },
-        ]);
-      })
-      .finally(() => setIsLoading(false));
+    try {
+      const res = await onQuery(q);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: res.answer_summary,
+          reasoning: res.reasoning,
+          evidence: res.matched_elements,
+        },
+      ]);
+    } catch (err: any) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: err?.message || 'Error querying the document. Ensure the backend is reachable.',
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReplay = (rq: RecentQuery) => {
@@ -595,6 +609,7 @@ export default function App() {
   const [docMeta, setDocMeta] = useState<DocumentResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [processingStep, setProcessingStep] = useState<string | null>(null);
   const [recentDocs, setRecentDocs] = useState<RecentDoc[]>([]);
   const [recentQueries, setRecentQueries] = useState<RecentQuery[]>([]);
 
@@ -622,10 +637,13 @@ export default function App() {
     try {
       setError(null);
       setProcessing(true);
+      setProcessingStep('Uploading');
       setDocMeta(null);
       const uploadRes = await api.upload(file);
       setDocId(uploadRes.document_id);
+      setProcessingStep('Extracting');
       await api.extract(uploadRes.document_id);
+      setProcessingStep('Fetching extraction');
       const meta = await api.getDocument(uploadRes.document_id);
       setDocMeta(meta);
       updateRecents(meta);
@@ -635,6 +653,7 @@ export default function App() {
       setError(e?.message || 'Error processing document.');
     } finally {
       setProcessing(false);
+      setProcessingStep(null);
     }
   };
 
@@ -642,6 +661,7 @@ export default function App() {
     try {
       setError(null);
       setProcessing(true);
+      setProcessingStep('Loading document');
       const meta = await api.getDocument(id);
       setDocId(id);
       setDocMeta(meta);
@@ -652,6 +672,7 @@ export default function App() {
       setError(e?.message || 'Unable to load document.');
     } finally {
       setProcessing(false);
+      setProcessingStep(null);
     }
   };
 
@@ -668,7 +689,6 @@ export default function App() {
       };
       return [next, ...prev.filter((q) => !(q.docId === docId && q.question === question))].slice(0, 20);
     });
-    // Append to messages via local effect: handled in AnalysisTab by replaying recent queries, or by returning result here
     return res;
   };
 
@@ -702,7 +722,13 @@ export default function App() {
       <main className="flex-1 flex flex-col relative">
         {activeTab === 'documents' && (
           <div className="p-4 lg:p-6">
-            <DocumentsTab onUpload={handleUpload} recentDocs={recentDocs} onLoadExisting={handleLoadExisting} processing={processing} />
+            <DocumentsTab
+              onUpload={handleUpload}
+              recentDocs={recentDocs}
+              onLoadExisting={handleLoadExisting}
+              processing={processing}
+              processingStep={processingStep}
+            />
           </div>
         )}
         {activeTab === 'analysis' && (
