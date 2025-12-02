@@ -991,67 +991,102 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
     console.warn('Image failed to load', ev.image_url, e);
   };
 
-  const bbox = ev.bbox || [];
+  // Keep image size in sync with viewport changes (bbox alignment depends on rendered size)
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+    const updateSize = () => setSize({ w: img.clientWidth, h: img.clientHeight });
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(img);
+    window.addEventListener('resize', updateSize);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateSize);
+    };
+  }, [ev.image_url]);
+
   // Prefer the actual PNG dimensions, since bboxes originate from the rasterized page.
   const baseW = natural.w || ev.page_width_px || 0;
   const baseH = natural.h || ev.page_height_px || 0;
 
-  // Simplify: treat bboxes as pixel coords (or normalized to pixel) in image space.
+  const bboxSource =
+    (Array.isArray(ev.bbox) && ev.bbox.length === 4 && ev.bbox) ||
+    (Array.isArray(ev.bbox_norm) && ev.bbox_norm.length === 4 && ev.bbox_norm) ||
+    null;
+  // When bboxSource comes from bbox_norm, treat it as PDF coords (bottom-left origin).
+  const bboxIsPdfSpace =
+    !(Array.isArray(ev.bbox) && ev.bbox.length === 4) &&
+    Array.isArray(ev.bbox_norm) &&
+    ev.bbox_norm.length === 4;
+
+  // Convert whatever bbox space we have into pixel coords using top-left origin (to match <img>)
   let overlayStyle: React.CSSProperties | null = null;
-  if (bbox.length === 4 && size.w > 0 && size.h > 0 && baseW > 0 && baseH > 0) {
-    const [rawX0, rawY0, rawX1, rawY1] = bbox;
-    const normalized = bbox.every((v) => typeof v === "number" && v >= 0 && v <= 1);
-    const toPx = (v: number, dim: number) => (normalized ? v * dim : v);
+  if (bboxSource && size.w > 0 && size.h > 0 && baseW > 0 && baseH > 0) {
+    const [r0, r1, r2, r3] = bboxSource.map((v) => Number(v) || 0);
+    const normalized = bboxSource.every((v) => typeof v === "number" && v >= 0 && v <= 1);
+
+    let x0 = r0;
+    let y0 = r1;
+    let x1 = r2;
+    let y1 = r3;
+
+    if (normalized) {
+      x0 = r0 * baseW;
+      y0 = r1 * baseH;
+      x1 = r2 * baseW;
+      y1 = r3 * baseH;
+    } else if (bboxIsPdfSpace && ev.page_width_pdf && ev.page_height_pdf) {
+      // PDF coords are bottom-left; convert to pixels and flip Y
+      const scaleX = baseW / ev.page_width_pdf;
+      const scaleY = baseH / ev.page_height_pdf;
+      x0 = r0 * scaleX;
+      x1 = r2 * scaleX;
+      y0 = (ev.page_height_pdf - r3) * scaleY;
+      y1 = (ev.page_height_pdf - r1) * scaleY;
+    }
+
+    if (x1 < x0) [x0, x1] = [x1, x0];
+    if (y1 < y0) [y0, y1] = [y1, y0];
+
+    // Slightly pad to favor recall over precision and clamp to image bounds
+    const pad = Math.max(2, Math.min(baseW, baseH) * 0.0025);
+    x0 = Math.max(0, x0 - pad);
+    y0 = Math.max(0, y0 - pad);
+    x1 = Math.min(baseW, x1 + pad);
+    y1 = Math.min(baseH, y1 + pad);
 
     const scaleX = size.w / baseW;
     const scaleY = size.h / baseH;
 
-    // Try both origin conventions and pick the one that stays on-image; prefer top-left if both valid.
-    const candidates = [
-      {
-        left: toPx(rawX0, baseW) * scaleX,
-        top: toPx(rawY0, baseH) * scaleY,
-        width: (toPx(rawX1, baseW) - toPx(rawX0, baseW)) * scaleX,
-        height: (toPx(rawY1, baseH) - toPx(rawY0, baseH)) * scaleY,
-        mode: "top-left",
-      },
-      {
-        left: toPx(rawX0, baseW) * scaleX,
-        top: (baseH - toPx(rawY1, baseH)) * scaleY,
-        width: (toPx(rawX1, baseW) - toPx(rawX0, baseW)) * scaleX,
-        height: (toPx(rawY1, baseH) - toPx(rawY0, baseH)) * scaleY,
-        mode: "bottom-left",
-      },
-    ];
-
-    const withinBounds = (c: { left: number; top: number; width: number; height: number }) =>
-      c.width > 0 &&
-      c.height > 0 &&
-      c.left >= -8 &&
-      c.top >= -8 &&
-      c.left + c.width <= size.w + 8 &&
-      c.top + c.height <= size.h + 8;
-
-    const valid = candidates.filter(withinBounds);
-    overlayStyle = valid.find((c) => c.mode === "top-left") || valid[0] || candidates[0];
+    overlayStyle = {
+      left: x0 * scaleX,
+      top: y0 * scaleY,
+      width: Math.max(1, (x1 - x0) * scaleX),
+      height: Math.max(1, (y1 - y0) * scaleY),
+    };
   }
 
   return (
-    <div className="relative inline-block bg-slate-100 p-2 rounded-md border border-slate-200">
-      <img
-        ref={imgRef}
-        src={ev.image_url}
-        alt="Page preview"
-        className="max-h-[70vh] max-w-[90vw] rounded border border-slate-200 shadow-sm block"
-        onLoad={handleLoad}
-        onError={handleError}
-      />
-      {overlayStyle && (
-        <div
-          className="absolute border-2 border-red-500/80 bg-red-500/10 rounded-sm pointer-events-none"
-          style={overlayStyle}
+    <div className="inline-block rounded-md border border-slate-200 bg-slate-100 p-2">
+      <div className="relative">
+        <img
+          ref={imgRef}
+          src={ev.image_url}
+          alt="Page preview"
+          className="block max-h-[70vh] max-w-[90vw] rounded border border-slate-200 shadow-sm"
+          onLoad={handleLoad}
+          onError={handleError}
         />
-      )}
+        {overlayStyle && (
+          <div className="pointer-events-none absolute inset-0">
+            <div
+              className="absolute border-2 border-red-500/80 bg-red-500/10 rounded-sm"
+              style={overlayStyle}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
