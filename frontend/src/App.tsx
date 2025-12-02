@@ -1068,7 +1068,7 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
     const currW = x1 - x0;
     const currH = y1 - y0;
     const targetW = Math.max(currW + baseW * 0.05, currW * 3.5, baseW * 0.18);
-    const targetH = Math.max(currH + baseH * 0.08, currH * 3.5, baseH * 0.12);
+    const targetH = Math.max(currH + baseH * 0.12, currH * 4, baseH * 0.20);
     const cx = (x0 + x1) / 2;
     const cy = (y0 + y1) / 2;
     x0 = Math.max(0, cx - targetW / 2);
