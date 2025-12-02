@@ -11,9 +11,10 @@ type MatchedElement = {
   page: number;
   bbox: number[];
   text: string;
-  image_url?: string; // optional future hook for page images
+  image_url?: string;
   page_width_px?: number;
   page_height_px?: number;
+  bbox_norm?: number[];
 };
 
 type QueryResponse = {
@@ -799,7 +800,8 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
   };
 
   const bbox = ev.bbox || [];
-  const hasDims = ev.page_width_px && ev.page_height_px && bbox.length === 4 && size.w > 0 && size.h > 0;
+  const hasDims =
+    ev.page_width_px && ev.page_height_px && bbox.length === 4 && size.w > 0 && size.h > 0;
 
   let overlayStyle: React.CSSProperties | null = null;
   if (hasDims) {

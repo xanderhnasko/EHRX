@@ -188,18 +188,15 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
             for img_path in sorted(page_images_dir.glob("page-*.png")):
                 page_number = img_path.stem.split("-")[-1]
                 dest = f"extractions/{document_id}/pages/{img_path.name}"
-                gs_url = gcs.upload_file(img_path, dest, make_public=False)
-                # Prefer signed URLs (works without public ACL)
+                gcs.upload_file(img_path, dest, make_public=False)
+                # Always try signed URL; if it fails, fall back to https://storage.googleapis.com/bucket/key
                 try:
                     signed_url = gcs.generate_signed_url(dest, expiration_seconds=7 * 24 * 3600)
                     page_image_map[str(int(page_number))] = signed_url
                 except Exception:
-                    https_url = gs_url
-                    if gs_url.startswith("gs://"):
-                        bucket = gcs.bucket.name
-                        key = gs_url.replace("gs://", "").split("/", 1)[1]
-                        https_url = f"https://storage.googleapis.com/{bucket}/{key}"
-                    page_image_map[str(int(page_number))] = https_url
+                    bucket = gcs.bucket.name
+                    key = dest
+                    page_image_map[str(int(page_number))] = f"https://storage.googleapis.com/{bucket}/{key}"
 
     stats = document.get("processing_stats", {})
     metadata_common = {

@@ -197,6 +197,7 @@ class HybridQueryAgent:
                     "subdoc_type": base.get("subdoc_type"),
                     "subdoc_title": base.get("subdoc_title"),
                     "page_key": page_key,
+                    "bbox_norm": base.get("bbox_pdf"),
                 }
             )
 
