@@ -1,0 +1,16 @@
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://pdf2ehr-api3-3bf3r3croq-uw.a.run.app/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/documents/*"
+  to = "https://pdf2ehr-api3-3bf3r3croq-uw.a.run.app/documents/:splat"
+  status = 200
+  force = true

@@ -5,9 +5,8 @@ import { Upload, Send, Activity, Loader2, CheckCircle2, BoxSelect } from 'lucide
  * API base: set VITE_API_URL in your env (.env.local) for dev.
  * Fallback is the current Cloud Run host.
  */
-const API_BASE =
-  (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
-  'https://pdf2ehr-api3-3bf3r3croq-uw.a.run.app';
+const envBase = (import.meta.env.VITE_API_URL as string | undefined)?.trim() || '';
+const API_BASE = envBase ? envBase.replace(/\/$/, '') : '';
 
 type MatchedElement = {
   page: number;
