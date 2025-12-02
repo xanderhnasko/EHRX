@@ -162,9 +162,43 @@ class HybridQueryAgent:
         if reasoning_text and len(reasoning_text) > REASONING_MAX_CHARS:
             reasoning_text = reasoning_text[:REASONING_MAX_CHARS] + "..."
 
+        # Enrich matched elements with provenance (page/bbox/text) from filtered_schema
+        element_index = {
+            elem.get("element_id"): elem
+            for elem in filtered_schema.get("elements", [])
+            if elem.get("element_id")
+        }
+
+        def _coerce_bbox(bbox_val: Any) -> list:
+            if isinstance(bbox_val, list):
+                return bbox_val
+            if isinstance(bbox_val, dict):
+                ordered = [bbox_val.get(k) for k in ("x1", "y1", "x2", "y2") if k in bbox_val]
+                if all(v is not None for v in ordered):
+                    return ordered
+            return []
+
+        matched_elements = []
+        for el in answer.get("elements", []):
+            el_id = el.get("element_id")
+            base = element_index.get(el_id, {})
+            bbox_source = base.get("bbox_pixel") or base.get("bbox_norm") or base.get("bbox")
+            matched_elements.append(
+                {
+                    "element_id": el_id,
+                    "relevance": el.get("relevance") or el.get("justification"),
+                    "text": base.get("content") or base.get("text"),
+                    "page": base.get("page_number"),
+                    "bbox": _coerce_bbox(bbox_source),
+                    "type": base.get("type"),
+                    "subdoc_type": base.get("subdoc_type"),
+                    "subdoc_title": base.get("subdoc_title"),
+                }
+            )
+
         return {
             "question": question,
-            "matched_elements": answer.get("elements", []),
+            "matched_elements": matched_elements,
             "reasoning": reasoning_text,
             "answer_summary": answer.get("answer_summary", ""),
             "filter_stats": {
