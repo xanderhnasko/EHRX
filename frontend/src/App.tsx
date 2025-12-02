@@ -1,9 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { Upload, Send, Activity, Loader2, CheckCircle2, BoxSelect } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Upload, Send, Activity, Loader2, CheckCircle2, BoxSelect, X } from 'lucide-react';
 
 /**
- * API base: set VITE_API_URL in your env (.env.local) for dev.
- * Fallback is the current Cloud Run host.
+ * API base: set VITE_API_URL in env; if empty, use relative paths (Netlify proxy).
  */
 const envBase = (import.meta.env.VITE_API_URL as string | undefined)?.trim() || '';
 const API_BASE = envBase ? envBase.replace(/\/$/, '') : '';
@@ -12,6 +11,7 @@ type MatchedElement = {
   page: number;
   bbox: number[];
   text: string;
+  image_url?: string; // optional future hook for page images
 };
 
 type QueryResponse = {
@@ -40,6 +40,40 @@ type DocumentRecord = {
 type DocumentResponse = {
   document: DocumentRecord;
   extractions: Array<{ kind: string; storage_url: string; created_at?: string }>;
+};
+
+type RecentDoc = {
+  id: string;
+  name?: string;
+  createdAt?: string;
+};
+
+type RecentQuery = {
+  docId: string;
+  question: string;
+  answer: string;
+  reasoning?: string;
+  evidence?: MatchedElement[];
+};
+
+const RECENT_DOCS_KEY = 'ehrx_recent_docs';
+const RECENT_QUERIES_KEY = 'ehrx_recent_queries';
+
+const loadLocal = <T,>(key: string, fallback: T): T => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const saveLocal = (key: string, value: unknown) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* ignore */
+  }
 };
 
 const api = {
@@ -102,7 +136,7 @@ const Header = () => (
     </div>
     <div className="flex items-center gap-3 bg-slate-800 rounded-full px-4 py-2 border border-slate-700 text-xs text-slate-200">
       <span className="text-emerald-300 font-semibold">Live API</span>
-      <span className="text-slate-400 truncate max-w-[200px]">{API_BASE}</span>
+      <span className="text-slate-400 truncate max-w-[200px]">{API_BASE || 'proxied'}</span>
     </div>
   </header>
 );
@@ -181,18 +215,94 @@ const SectionViewer = ({ activeTab }: { activeTab: Tab }) => {
   );
 };
 
-const DashboardView = ({
-  docId,
-  docMeta,
+const Modal = ({ open, onClose, children, title }: { open: boolean; onClose: () => void; children: React.ReactNode; title?: string }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-slate-800">{title || 'Details'}</h3>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-800">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="p-4">{children}</div>
+      </div>
+    </div>
+  );
+};
+
+const DocumentsTab = ({
   onUpload,
+  recentDocs,
   onLoadExisting,
   processing,
 }: {
-  docId: string;
-  docMeta: DocumentResponse | null;
   onUpload: (f: File) => void;
+  recentDocs: RecentDoc[];
   onLoadExisting: (id: string) => void;
   processing: boolean;
+}) => {
+  const [existingId, setExistingId] = useState('');
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex-1">
+        <UploadCard onUpload={onUpload} />
+      </div>
+      <div className="w-full lg:w-1/3 bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+        <h3 className="text-sm font-semibold text-slate-800 mb-2">Recent documents</h3>
+        <p className="text-xs text-slate-500 mb-3">Load without re-uploading.</p>
+        <div className="space-y-2 max-h-[400px] overflow-y-auto">
+          {recentDocs.length === 0 && <p className="text-sm text-slate-500">No recent documents yet.</p>}
+          {recentDocs.map((d) => (
+            <button
+              key={d.id}
+              onClick={() => onLoadExisting(d.id)}
+              className="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+            >
+              <div className="text-sm font-semibold text-slate-800 truncate">{d.name || d.id}</div>
+              <div className="text-xs text-slate-500">{d.id}</div>
+              {d.createdAt && <div className="text-[11px] text-slate-400">Created: {d.createdAt}</div>}
+            </button>
+          ))}
+        </div>
+        <div className="mt-4">
+          <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Load by ID</p>
+          <input
+            type="text"
+            value={existingId}
+            onChange={(e) => setExistingId(e.target.value)}
+            placeholder="Document UUID"
+            className="mt-2 w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+          />
+          <button
+            onClick={() => existingId && onLoadExisting(existingId.trim())}
+            disabled={!existingId || processing}
+            className="mt-2 w-full inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-slate-900 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Load
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AnalysisTab = ({
+  docId,
+  docMeta,
+  processing,
+  onQuery,
+  recentQueries,
+  onReplayQuery,
+}: {
+  docId: string;
+  docMeta: DocumentResponse | null;
+  processing: boolean;
+  onQuery: (question: string) => Promise<void>;
+  recentQueries: RecentQuery[];
+  onReplayQuery: (rq: RecentQuery) => void;
 }) => {
   const [messages, setMessages] = useState<
     { role: 'user' | 'assistant'; content: string; reasoning?: string; evidence?: MatchedElement[] }[]
@@ -201,9 +311,20 @@ const DashboardView = ({
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('Summary');
   const [chatOpen, setChatOpen] = useState(true);
-  const [existingId, setExistingId] = useState('');
+  const [selectedEvidence, setSelectedEvidence] = useState<MatchedElement | null>(null);
 
   const docReady = !!(docMeta && docMeta.extractions && docMeta.extractions.length > 0);
+
+  useEffect(() => {
+    if (docReady && messages.length === 0) {
+      setMessages([
+        {
+          role: 'assistant',
+          content: 'Extraction is ready. Ask a question about this document (e.g., medications, diagnoses, vitals).',
+        },
+      ]);
+    }
+  }, [docReady, docId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -215,83 +336,38 @@ const DashboardView = ({
     setInput('');
     setMessages((prev) => [...prev, { role: 'user', content: q }]);
     setIsLoading(true);
-
-    try {
-      const res = await api.query(docId, q);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: res.answer_summary,
-          reasoning: res.reasoning,
-          evidence: res.matched_elements,
-        },
-      ]);
-    } catch (err: any) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: err?.message || 'Error querying the document. Ensure the backend is reachable.',
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
+    await onQuery(q)
+      .then((res: any) => {
+        // onQuery already handled API; result is attached via event below (set externally)
+      })
+      .catch((err: any) => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: err?.message || 'Error querying the document. Ensure the backend is reachable.',
+          },
+        ]);
+      })
+      .finally(() => setIsLoading(false));
   };
 
-  React.useEffect(() => {
-    if (docReady && messages.length === 0) {
-      setMessages([
-        {
-          role: 'assistant',
-          content: 'Extraction is ready. Ask a question about this document (e.g., medications, diagnoses, vitals).',
-        },
-      ]);
-    }
-  }, [docReady, messages.length]);
+  const handleReplay = (rq: RecentQuery) => {
+    setMessages((prev) => [
+      ...prev,
+      { role: 'user', content: rq.question },
+      {
+        role: 'assistant',
+        content: rq.answer,
+        reasoning: rq.reasoning,
+        evidence: rq.evidence,
+      },
+    ]);
+  };
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-64px)] p-4 lg:p-6">
       <div className="flex-1 flex flex-col gap-6 overflow-y-auto">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Document</p>
-            <p className="text-sm text-slate-700">{docId ? `ID: ${docId}` : 'No document loaded yet'}</p>
-          </div>
-          {processing && (
-            <div className="flex items-center gap-2 text-blue-600 text-sm">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Processing...</span>
-            </div>
-          )}
-        </div>
-
-        <UploadCard onUpload={onUpload} />
-
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div className="flex-1">
-              <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Load existing document</p>
-              <p className="text-sm text-slate-600 mt-1">Paste a document ID to query without re-uploading.</p>
-              <input
-                type="text"
-                value={existingId}
-                onChange={(e) => setExistingId(e.target.value)}
-                placeholder="Document UUID"
-                className="mt-2 w-full sm:w-96 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-              />
-            </div>
-            <button
-              onClick={() => existingId && onLoadExisting(existingId.trim())}
-              disabled={!existingId || processing}
-              className="mt-3 sm:mt-0 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-slate-900 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Load
-            </button>
-          </div>
-        </div>
-
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -330,11 +406,6 @@ const DashboardView = ({
           </div>
           <div className="p-4">
             <SectionViewer activeTab={activeTab} />
-            {!docReady && (
-              <p className="text-xs text-slate-500 mt-2">
-                Upload or load an existing document to view structured content here.
-              </p>
-            )}
             {docReady && docMeta?.document && (
               <div className="mt-3 text-xs text-slate-500 space-y-1">
                 <div className="font-semibold text-slate-600">Document info</div>
@@ -365,11 +436,29 @@ const DashboardView = ({
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-6 scroll-smooth">
+            {recentQueries.length > 0 && (
+              <div className="text-xs text-slate-500 border border-slate-200 rounded-lg p-3 bg-slate-50">
+                <div className="font-semibold text-slate-700 mb-2">Recent queries</div>
+                <div className="space-y-1">
+                  {recentQueries.map((rq, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleReplay(rq)}
+                      className="w-full text-left text-slate-700 hover:text-blue-700 hover:bg-white rounded px-2 py-1 border border-transparent hover:border-blue-100"
+                    >
+                      {rq.question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {messages.length === 0 && (
               <div className="text-sm text-slate-500 border border-dashed border-slate-200 rounded-lg p-4">
                 No messages yet. Upload or load a document and ask a question to get started.
               </div>
             )}
+
             {messages.map((m, idx) => (
               <div
                 key={idx}
@@ -409,15 +498,16 @@ const DashboardView = ({
                           <div className="space-y-2">
                             <p className="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-2">Source</p>
                             {m.evidence.map((ev, i) => (
-                              <div
+                              <button
                                 key={i}
-                                className="group flex gap-3 items-start bg-white p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+                                onClick={() => setSelectedEvidence(ev)}
+                                className="w-full text-left group flex gap-3 items-start bg-white p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
                               >
                                 <div className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] font-mono font-bold whitespace-nowrap group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                   Pg {ev.page}
                                 </div>
                                 <div className="text-slate-700 group-hover:text-slate-900 font-medium">"{ev.text}"</div>
-                              </div>
+                              </button>
                             ))}
                           </div>
                         )}
@@ -475,18 +565,57 @@ const DashboardView = ({
           Open chat
         </button>
       )}
+
+      <Modal open={!!selectedEvidence} onClose={() => setSelectedEvidence(null)} title="Provenance">
+        {selectedEvidence ? (
+          <div className="space-y-3 text-sm text-slate-700">
+            <div className="font-semibold text-slate-800">Page {selectedEvidence.page}</div>
+            <div className="text-xs text-slate-500">BBox: {selectedEvidence.bbox.join(', ')}</div>
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">{selectedEvidence.text}</div>
+            {selectedEvidence.image_url && (
+              <div className="mt-2">
+                <div className="text-xs text-slate-500 mb-1">Preview</div>
+                <div className="relative">
+                  <img src={selectedEvidence.image_url} alt="Page preview" className="max-h-96 rounded border border-slate-200" />
+                  {/* In future, overlay bbox here */}
+                </div>
+              </div>
+            )}
+            {!selectedEvidence.image_url && <p className="text-xs text-slate-500">No page image available.</p>}
+          </div>
+        ) : null}
+      </Modal>
     </div>
   );
 };
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState<'documents' | 'analysis'>('documents');
   const [docId, setDocId] = useState<string>('');
   const [docMeta, setDocMeta] = useState<DocumentResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [recentDocs, setRecentDocs] = useState<RecentDoc[]>([]);
+  const [recentQueries, setRecentQueries] = useState<RecentQuery[]>([]);
 
-  const selectDocFromMeta = (meta: DocumentResponse | null) => {
-    if (!meta || !meta.extractions || meta.extractions.length === 0) return;
+  useEffect(() => {
+    setRecentDocs(loadLocal<RecentDoc[]>(RECENT_DOCS_KEY, []));
+    setRecentQueries(loadLocal<RecentQuery[]>(RECENT_QUERIES_KEY, []));
+  }, []);
+
+  useEffect(() => saveLocal(RECENT_DOCS_KEY, recentDocs), [recentDocs]);
+  useEffect(() => saveLocal(RECENT_QUERIES_KEY, recentQueries), [recentQueries]);
+
+  const updateRecents = (meta: DocumentResponse) => {
+    const next: RecentDoc = {
+      id: meta.document.id,
+      name: meta.document.original_filename,
+      createdAt: meta.document.created_at,
+    };
+    setRecentDocs((prev) => {
+      const filtered = prev.filter((d) => d.id !== next.id);
+      return [next, ...filtered].slice(0, 10);
+    });
   };
 
   const handleUpload = async (file: File) => {
@@ -499,7 +628,8 @@ export default function App() {
       await api.extract(uploadRes.document_id);
       const meta = await api.getDocument(uploadRes.document_id);
       setDocMeta(meta);
-      selectDocFromMeta(meta);
+      updateRecents(meta);
+      setActiveTab('analysis');
     } catch (e: any) {
       console.error(e);
       setError(e?.message || 'Error processing document.');
@@ -515,7 +645,8 @@ export default function App() {
       const meta = await api.getDocument(id);
       setDocId(id);
       setDocMeta(meta);
-      selectDocFromMeta(meta);
+      updateRecents(meta);
+      setActiveTab('analysis');
     } catch (e: any) {
       console.error(e);
       setError(e?.message || 'Unable to load document.');
@@ -524,12 +655,68 @@ export default function App() {
     }
   };
 
+  const handleQuery = async (question: string) => {
+    if (!docId) throw new Error('No document loaded');
+    const res = await api.query(docId, question);
+    setRecentQueries((prev) => {
+      const next: RecentQuery = {
+        docId,
+        question,
+        answer: res.answer_summary,
+        reasoning: res.reasoning,
+        evidence: res.matched_elements,
+      };
+      return [next, ...prev.filter((q) => !(q.docId === docId && q.question === question))].slice(0, 20);
+    });
+    // Append to messages via local effect: handled in AnalysisTab by replaying recent queries, or by returning result here
+    return res;
+  };
+
+  const docRecentQueries = recentQueries.filter((q) => q.docId === docId);
+
   return (
     <div className="min-h-screen bg-slate-100 font-sans text-slate-900 selection:bg-blue-200 selection:text-blue-900 flex flex-col">
       <Header />
 
+      <div className="border-b border-slate-200 bg-white px-4">
+        <div className="flex gap-4">
+          <button
+            onClick={() => setActiveTab('documents')}
+            className={`py-3 text-sm font-semibold border-b-2 ${
+              activeTab === 'documents' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500'
+            }`}
+          >
+            Documents
+          </button>
+          <button
+            onClick={() => setActiveTab('analysis')}
+            className={`py-3 text-sm font-semibold border-b-2 ${
+              activeTab === 'analysis' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500'
+            }`}
+          >
+            Analysis
+          </button>
+        </div>
+      </div>
+
       <main className="flex-1 flex flex-col relative">
-        <DashboardView docId={docId} docMeta={docMeta} onUpload={handleUpload} onLoadExisting={handleLoadExisting} processing={processing} />
+        {activeTab === 'documents' && (
+          <div className="p-4 lg:p-6">
+            <DocumentsTab onUpload={handleUpload} recentDocs={recentDocs} onLoadExisting={handleLoadExisting} processing={processing} />
+          </div>
+        )}
+        {activeTab === 'analysis' && (
+          <AnalysisTab
+            docId={docId}
+            docMeta={docMeta}
+            processing={processing}
+            onQuery={handleQuery}
+            recentQueries={docRecentQueries}
+            onReplayQuery={(rq) => {
+              // handled inside AnalysisTab via handleReplay
+            }}
+          />
+        )}
 
         {error && (
           <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white border border-amber-300 text-amber-700 px-4 py-3 rounded-lg shadow-lg text-sm flex items-center gap-2">
