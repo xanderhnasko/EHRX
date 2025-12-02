@@ -194,7 +194,12 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
                     signed_url = gcs.generate_signed_url(dest, expiration_seconds=7 * 24 * 3600)
                     page_image_map[str(int(page_number))] = signed_url
                 except Exception:
-                    page_image_map[str(int(page_number))] = gs_url
+                    https_url = gs_url
+                    if gs_url.startswith("gs://"):
+                        bucket = gcs.bucket.name
+                        key = gs_url.replace("gs://", "").split("/", 1)[1]
+                        https_url = f"https://storage.googleapis.com/{bucket}/{key}"
+                    page_image_map[str(int(page_number))] = https_url
 
     stats = document.get("processing_stats", {})
     metadata_common = {

@@ -305,6 +305,25 @@ const AnalysisArea = ({
   };
 
   const handleReplay = (rq: RecentQuery) => {
+    // If evidence lacks image_url, enrich from docMeta metadata
+    const pageImages =
+      docMeta?.extractions?.find((e) => e.metadata && e.metadata.page_images)?.metadata?.page_images || {};
+    const pageDims =
+      docMeta?.extractions?.find((e) => e.metadata && e.metadata.page_dimensions)?.metadata?.page_dimensions || {};
+
+    const evidence =
+      rq.evidence?.map((ev) => {
+        const pageKey = ev.page ? String(ev.page) : ev.page_key ? String(ev.page_key) : '';
+        const maybeImg = ev.image_url || (pageKey ? pageImages[pageKey] : undefined);
+        const dims = pageKey ? pageDims[pageKey] : undefined;
+        return {
+          ...ev,
+          image_url: maybeImg || ev.image_url,
+          page_width_px: ev.page_width_px || dims?.width_px,
+          page_height_px: ev.page_height_px || dims?.height_px,
+        };
+      }) || rq.evidence;
+
     setMessages((prev) => [
       ...prev,
       { role: 'user', content: rq.question },
@@ -312,7 +331,7 @@ const AnalysisArea = ({
         role: 'assistant',
         content: rq.answer,
         reasoning: rq.reasoning,
-        evidence: rq.evidence,
+        evidence,
       },
     ]);
   };
