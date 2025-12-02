@@ -244,7 +244,7 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
     metadata_common = {
         "index_url": index_url,
         "page_images": page_image_map,
-        "page_dimensions": page_dim_map if page_images_dir.exists() else {},
+        "page_dimensions": page_dim_map,
     }
     db.upsert_extraction(doc_uuid, "full", full_url, stats.get("total_pages"), stats.get("total_elements"), metadata_common)
     db.upsert_extraction(doc_uuid, "enhanced", enhanced_url, stats.get("total_pages"), stats.get("total_elements"), metadata_common)
