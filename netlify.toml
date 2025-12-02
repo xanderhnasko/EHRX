@@ -10,7 +10,19 @@
   force = true
 
 [[redirects]]
+  from = "/api"
+  to = "https://pdf2ehr-api3-3bf3r3croq-uw.a.run.app/api"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/documents/*"
   to = "https://pdf2ehr-api3-3bf3r3croq-uw.a.run.app/documents/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/documents"
+  to = "https://pdf2ehr-api3-3bf3r3croq-uw.a.run.app/documents"
   status = 200
   force = true
