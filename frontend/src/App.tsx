@@ -816,18 +816,37 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
   if (bbox.length === 4 && size.w > 0 && size.h > 0 && baseW > 0 && baseH > 0) {
     const [rawX0, rawY0, rawX1, rawY1] = bbox;
     const normalized = bbox.every((v) => typeof v === "number" && v >= 0 && v <= 1);
-    const x0 = normalized ? rawX0 * baseW : rawX0;
-    const y0 = normalized ? rawY0 * baseH : rawY0;
-    const x1 = normalized ? rawX1 * baseW : rawX1;
-    const y1 = normalized ? rawY1 * baseH : rawY1;
+    const toPx = (v: number, dim: number) => (normalized ? v * dim : v);
+
     const scaleX = size.w / baseW;
     const scaleY = size.h / baseH;
-    overlayStyle = {
-      left: x0 * scaleX,
-      top: y0 * scaleY,
-      width: (x1 - x0) * scaleX,
-      height: (y1 - y0) * scaleY,
-    };
+
+    const candidates = [
+      // Assume top-left origin (most likely)
+      {
+        left: toPx(rawX0, baseW) * scaleX,
+        top: toPx(rawY0, baseH) * scaleY,
+        width: (toPx(rawX1, baseW) - toPx(rawX0, baseW)) * scaleX,
+        height: (toPx(rawY1, baseH) - toPx(rawY0, baseH)) * scaleY,
+      },
+      // Assume bottom-left origin (invert Y)
+      {
+        left: toPx(rawX0, baseW) * scaleX,
+        top: (baseH - toPx(rawY1, baseH)) * scaleY,
+        width: (toPx(rawX1, baseW) - toPx(rawX0, baseW)) * scaleX,
+        height: (toPx(rawY1, baseH) - toPx(rawY0, baseH)) * scaleY,
+      },
+    ];
+
+    const withinBounds = (c: { left: number; top: number; width: number; height: number }) =>
+      c.width > 0 &&
+      c.height > 0 &&
+      c.left >= -8 &&
+      c.top >= -8 &&
+      c.left + c.width <= size.w + 8 &&
+      c.top + c.height <= size.h + 8;
+
+    overlayStyle = candidates.find(withinBounds) || candidates[0];
   }
 
   return (
