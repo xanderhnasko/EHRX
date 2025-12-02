@@ -75,6 +75,7 @@ temp/
 
 # frontend
 node_modules/
+!/frontend/package-lock.json
 
 
 SENSITIVE_ehr1_copy.pdf
