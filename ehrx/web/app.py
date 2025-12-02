@@ -62,6 +62,8 @@ if not GCS_BUCKET:
     raise RuntimeError("GCS_BUCKET env var is required")
 gcs = GCSClient(GCS_BUCKET)
 
+PAGE_IMAGES_PUBLIC = os.getenv("PAGE_IMAGES_PUBLIC", "false").lower() == "true"
+
 
 class SchemaCache:
     """Tiny thread-safe LRU for JSON schema blobs keyed by storage URL."""
@@ -170,7 +172,7 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
         enhanced_url = gcs.upload_file(enhanced_path, f"extractions/{document_id}/{enhanced_path.name}")
         index_url = gcs.upload_file(index_path, f"extractions/{document_id}/{index_path.name}")
 
-        # Upload page images (public for frontend previews)
+        # Upload page images (signed URLs; optional public mode via PAGE_IMAGES_PUBLIC)
         page_images_dir = output_dir / "pages"
         page_image_map = {}
         page_dim_map = {}
@@ -188,14 +190,22 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
             for img_path in sorted(page_images_dir.glob("page-*.png")):
                 page_number = img_path.stem.split("-")[-1]
                 dest = f"extractions/{document_id}/pages/{img_path.name}"
-                gcs.upload_file(img_path, dest, make_public=False)
-                # Try signed URL; if it fails, do not set image_url to avoid 403
-                try:
-                    signed_url = gcs.generate_signed_url(dest, expiration_seconds=7 * 24 * 3600, content_type="image/png")
-                    page_image_map[str(int(page_number))] = signed_url
-                except Exception as e:
-                    logging.warning(f"Failed to sign page image {dest}: {e}")
-                    continue
+                if PAGE_IMAGES_PUBLIC:
+                    public_url = gcs.upload_file(img_path, dest, make_public=True, return_public_url=True)
+                    page_image_map[str(int(page_number))] = public_url
+                else:
+                    gcs.upload_file(img_path, dest, make_public=False)
+                    # Try signed URL; if it fails, optionally fallback to public by toggling env
+                    try:
+                        signed_url = gcs.generate_signed_url(
+                            dest,
+                            expiration_seconds=7 * 24 * 3600,
+                            content_type="image/png"
+                        )
+                        page_image_map[str(int(page_number))] = signed_url
+                    except Exception as e:
+                        logging.warning(f"Failed to sign page image {dest}: {e}")
+                        continue
         logging.info(
             f"Page images uploaded for doc {document_id}: count={len(page_image_map)}, dims={len(page_dim_map)}"
         )

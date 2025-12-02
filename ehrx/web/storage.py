@@ -28,7 +28,7 @@ class GCSClient:
         )
         self._request = Request()
 
-    def upload_file(self, local_path: Path, dest_blob: str, make_public: bool = False) -> str:
+    def upload_file(self, local_path: Path, dest_blob: str, make_public: bool = False, return_public_url: bool = False) -> str:
         blob = self.bucket.blob(dest_blob)
         blob.upload_from_filename(local_path)
         if make_public:
@@ -37,6 +37,8 @@ class GCSClient:
             except gcs_exceptions.GoogleAPICallError:
                 # If we cannot make public (e.g., policy), just return gs:// URL
                 pass
+        if make_public and return_public_url:
+            return blob.public_url
         return f"gs://{self.bucket.name}/{dest_blob}"
 
     def generate_signed_url(self, dest_blob: str, expiration_seconds: int = 7 * 24 * 3600, content_type: str | None = None) -> str:
