@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Optional
 
 from google.cloud import storage
+from datetime import timedelta
+from google.api_core import exceptions as gcs_exceptions
 
 
 class GCSClient:
@@ -20,8 +22,16 @@ class GCSClient:
         blob = self.bucket.blob(dest_blob)
         blob.upload_from_filename(local_path)
         if make_public:
-            blob.make_public()
+            try:
+                blob.make_public()
+            except gcs_exceptions.GoogleAPICallError:
+                # If we cannot make public (e.g., policy), just return gs:// URL
+                pass
         return f"gs://{self.bucket.name}/{dest_blob}"
+
+    def generate_signed_url(self, dest_blob: str, expiration_seconds: int = 7 * 24 * 3600) -> str:
+        blob = self.bucket.blob(dest_blob)
+        return blob.generate_signed_url(expiration=timedelta(seconds=expiration_seconds))
 
     def upload_bytes(self, data: bytes, dest_blob: str, content_type: Optional[str] = None) -> str:
         blob = self.bucket.blob(dest_blob)
