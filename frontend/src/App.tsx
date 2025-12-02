@@ -1020,7 +1020,7 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
     Array.isArray(ev.bbox_norm) &&
     ev.bbox_norm.length === 4;
 
-  // Convert whatever bbox space we have into pixel coords using top-left origin (to match <img>)
+  // Convert bbox into pixel coords using top-left origin (to match <img>)
   let overlayStyle: React.CSSProperties | null = null;
   if (bboxSource && size.w > 0 && size.h > 0 && baseW > 0 && baseH > 0) {
     const [r0, r1, r2, r3] = bboxSource.map((v) => Number(v) || 0);
@@ -1044,17 +1044,26 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
       y0 = r1 * baseH;
       x1 = r2 * baseW;
       y1 = r3 * baseH;
+    } else {
+      // Raw pixel coords from VLM appear to use bottom-left origin; flip to top-left.
+      y0 = baseH - r3;
+      y1 = baseH - r1;
     }
 
     if (x1 < x0) [x0, x1] = [x1, x0];
     if (y1 < y0) [y0, y1] = [y1, y0];
 
-    // Slightly pad to favor recall over precision and clamp to image bounds
-    const pad = Math.max(2, Math.min(baseW, baseH) * 0.0025);
-    x0 = Math.max(0, x0 - pad);
-    y0 = Math.max(0, y0 - pad);
-    x1 = Math.min(baseW, x1 + pad);
-    y1 = Math.min(baseH, y1 + pad);
+    // Aggressive expansion to favor recall (sections often extend beyond the header bbox)
+    const currW = x1 - x0;
+    const currH = y1 - y0;
+    const targetW = Math.max(currW + baseW * 0.04, currW * 3, baseW * 0.12);
+    const targetH = Math.max(currH + baseH * 0.06, currH * 3, baseH * 0.08);
+    const cx = (x0 + x1) / 2;
+    const cy = (y0 + y1) / 2;
+    x0 = Math.max(0, cx - targetW / 2);
+    x1 = Math.min(baseW, cx + targetW / 2);
+    y0 = Math.max(0, cy - targetH / 2);
+    y1 = Math.min(baseH, cy + targetH / 2);
 
     const scaleX = size.w / baseW;
     const scaleY = size.h / baseH;
