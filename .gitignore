@@ -53,6 +53,7 @@ output/
 *.jpeg
 *.csv
 *.jsonl
+*.json
 !configs/*.yaml
 !configs/*.json
 
