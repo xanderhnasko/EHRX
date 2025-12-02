@@ -808,8 +808,9 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
   };
 
   const bbox = ev.bbox || [];
-  const baseW = ev.page_width_px || natural.w;
-  const baseH = ev.page_height_px || natural.h;
+  // Prefer the actual PNG dimensions, since bboxes originate from the rasterized page.
+  const baseW = natural.w || ev.page_width_px || 0;
+  const baseH = natural.h || ev.page_height_px || 0;
 
   // Simplify: treat bboxes as pixel coords (or normalized to pixel) in image space.
   let overlayStyle: React.CSSProperties | null = null;
@@ -821,20 +822,21 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
     const scaleX = size.w / baseW;
     const scaleY = size.h / baseH;
 
+    // Try both origin conventions and pick the one that stays on-image; prefer top-left if both valid.
     const candidates = [
-      // Assume top-left origin (most likely)
       {
         left: toPx(rawX0, baseW) * scaleX,
         top: toPx(rawY0, baseH) * scaleY,
         width: (toPx(rawX1, baseW) - toPx(rawX0, baseW)) * scaleX,
         height: (toPx(rawY1, baseH) - toPx(rawY0, baseH)) * scaleY,
+        mode: "top-left",
       },
-      // Assume bottom-left origin (invert Y)
       {
         left: toPx(rawX0, baseW) * scaleX,
         top: (baseH - toPx(rawY1, baseH)) * scaleY,
         width: (toPx(rawX1, baseW) - toPx(rawX0, baseW)) * scaleX,
         height: (toPx(rawY1, baseH) - toPx(rawY0, baseH)) * scaleY,
+        mode: "bottom-left",
       },
     ];
 
@@ -846,7 +848,8 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
       c.left + c.width <= size.w + 8 &&
       c.top + c.height <= size.h + 8;
 
-    overlayStyle = candidates.find(withinBounds) || candidates[0];
+    const valid = candidates.filter(withinBounds);
+    overlayStyle = valid.find((c) => c.mode === "top-left") || valid[0] || candidates[0];
   }
 
   return (
