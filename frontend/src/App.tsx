@@ -306,6 +306,7 @@ const AnalysisArea = ({
   };
 
   const handleReplay = (rq: RecentQuery) => {
+    console.debug('Replaying cached query', rq.question);
     // If evidence lacks image_url, enrich from docMeta metadata
     const pageImages =
       docMeta?.extractions?.find((e) => e.metadata && e.metadata.page_images)?.metadata?.page_images || {};
@@ -798,6 +799,9 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     setSize({ w: e.currentTarget.clientWidth, h: e.currentTarget.clientHeight });
   };
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.warn('Image failed to load', ev.image_url, e);
+  };
 
   const bbox = ev.bbox || [];
   const hasDims =
@@ -824,7 +828,7 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
         alt="Page preview"
         className="max-h-96 rounded border border-slate-200"
         onLoad={handleLoad}
-        onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
+        onError={handleError}
       />
       {overlayStyle && (
         <div

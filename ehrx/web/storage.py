@@ -29,9 +29,15 @@ class GCSClient:
                 pass
         return f"gs://{self.bucket.name}/{dest_blob}"
 
-    def generate_signed_url(self, dest_blob: str, expiration_seconds: int = 7 * 24 * 3600) -> str:
+    def generate_signed_url(self, dest_blob: str, expiration_seconds: int = 7 * 24 * 3600, content_type: str | None = None) -> str:
         blob = self.bucket.blob(dest_blob)
-        return blob.generate_signed_url(expiration=timedelta(seconds=expiration_seconds))
+        return blob.generate_signed_url(
+            version="v4",
+            expiration=timedelta(seconds=expiration_seconds),
+            method="GET",
+            response_disposition="inline",
+            response_type=content_type,
+        )
 
     def upload_bytes(self, data: bytes, dest_blob: str, content_type: Optional[str] = None) -> str:
         blob = self.bucket.blob(dest_blob)

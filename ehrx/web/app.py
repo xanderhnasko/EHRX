@@ -189,14 +189,16 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
                 page_number = img_path.stem.split("-")[-1]
                 dest = f"extractions/{document_id}/pages/{img_path.name}"
                 gcs.upload_file(img_path, dest, make_public=False)
-                # Always try signed URL; if it fails, fall back to https://storage.googleapis.com/bucket/key
+                # Try signed URL; if it fails, do not set image_url to avoid 403
                 try:
-                    signed_url = gcs.generate_signed_url(dest, expiration_seconds=7 * 24 * 3600)
+                    signed_url = gcs.generate_signed_url(dest, expiration_seconds=7 * 24 * 3600, content_type="image/png")
                     page_image_map[str(int(page_number))] = signed_url
-                except Exception:
-                    bucket = gcs.bucket.name
-                    key = dest
-                    page_image_map[str(int(page_number))] = f"https://storage.googleapis.com/{bucket}/{key}"
+                except Exception as e:
+                    logging.warning(f"Failed to sign page image {dest}: {e}")
+                    continue
+        logging.info(
+            f"Page images uploaded for doc {document_id}: count={len(page_image_map)}, dims={len(page_dim_map)}"
+        )
 
     stats = document.get("processing_stats", {})
     metadata_common = {
@@ -291,5 +293,9 @@ def query_document(payload: QueryRequest):
         if dims:
             el["page_width_px"] = dims.get("width_px")
             el["page_height_px"] = dims.get("height_px")
+    logging.info(
+        f"Query {payload.question[:50]}... matched {len(result.get('matched_elements', []))} elements; "
+        f"with images={len([m for m in result.get('matched_elements', []) if m.get('image_url')])}"
+    )
 
     return JSONResponse(result)
