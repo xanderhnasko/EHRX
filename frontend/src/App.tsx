@@ -612,6 +612,7 @@ export default function App() {
 
   const handleUpload = async (file: File) => {
     try {
+      setDocModalOpen(false);
       setError(null);
       setProcessing(true);
       setProcessingStep('Uploading');
@@ -636,6 +637,7 @@ export default function App() {
 
   const handleLoadExisting = async (id: string) => {
     try {
+      setDocModalOpen(false);
       setError(null);
       setProcessing(true);
       setProcessingStep('Loading document');
@@ -730,8 +732,19 @@ export default function App() {
                 <button
                   key={d.id}
                   onClick={() => handleLoadExisting(d.id)}
-                  className="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                  className="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-colors relative"
                 >
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setRecentDocs((prev) => prev.filter((x) => x.id !== d.id));
+                    }}
+                    className="absolute top-2 right-2 text-slate-400 hover:text-slate-700"
+                    aria-label="Remove from recent"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
                   <div className="text-sm font-semibold text-slate-800 truncate">{d.name || d.id}</div>
                   <div className="text-xs text-slate-500">{d.id}</div>
                   {d.createdAt && <div className="text-[11px] text-slate-400">Created: {d.createdAt}</div>}
