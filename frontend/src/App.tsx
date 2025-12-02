@@ -452,6 +452,7 @@ const AnalysisArea = ({
                       )}
                       {m.evidence && m.evidence.length > 0 && (
                         <button
+                          type="button"
                           onClick={() => {
                             setSelectedEvidenceList(m.evidence || null);
                             setEvidenceIndex(0);
