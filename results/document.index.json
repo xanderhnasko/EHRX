@@ -1,0 +1,33 @@
+{
+  "doc_id": "SENSITIVE_ehr2_copy",
+  "manifest": {
+    "pages": 0,
+    "detector": "detectron2",
+    "ocr": "tesseract",
+    "created_at": "2025-11-12T02:38:33.465356",
+    "column_layout": {
+      "column_count": 3,
+      "boundaries": [
+        0.0,
+        295.1713020324707,
+        788.8046061197916,
+        1700
+      ],
+      "page_width": 1700
+    },
+    "stats": {
+      "total_elements": 12,
+      "z_order_range": [
+        0,
+        11
+      ],
+      "elements_by_type": {
+        "text_block": 12
+      },
+      "processing_time_seconds": 0
+    },
+    "doc_id": "SENSITIVE_ehr2_copy"
+  },
+  "hierarchy": [],
+  "labels_used": []
+}

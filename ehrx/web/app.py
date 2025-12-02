@@ -348,3 +348,260 @@ def query_document(payload: QueryRequest):
     )
 
     return JSONResponse(result)
+
+
+@app.get("/api/documents/{document_id}/structured-data")
+def get_structured_data(document_id: str, kind: str = "enhanced"):
+    """
+    Extract structured data for frontend tabs (Summary, Meds, Labs, Procedures).
+
+    This endpoint processes the document schema and extracts:
+    - Summary: Document-level summary
+    - Medications: Parsed medication data with drug name, dosage, frequency, dates
+    - Labs: Parsed lab data with test name, date ordered, reason
+    - Procedures: Parsed procedure data with name, date, purpose, results
+    """
+    try:
+        doc_uuid = uuid.UUID(document_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid document_id")
+
+    extractions = db.get_extractions(doc_uuid)
+    by_kind = {}
+    for e in extractions:
+        if e["kind"] not in by_kind:
+            by_kind[e["kind"]] = e
+
+    extraction = by_kind.get(kind) or by_kind.get("enhanced") or by_kind.get("full")
+    if not extraction:
+        raise HTTPException(status_code=404, detail="No extraction available for document")
+
+    cache_key = extraction["storage_url"]
+    schema = SCHEMA_CACHE.get(cache_key)
+
+    if not schema:
+        with tempfile.TemporaryDirectory() as td:
+            json_path = Path(td) / "schema.json"
+            gcs.download_to_path(extraction["storage_url"], json_path)
+            with open(json_path, "r") as f:
+                schema = json.load(f)
+            SCHEMA_CACHE.set(cache_key, schema)
+
+    # Extract structured data
+    structured_data = {
+        "summary": None,
+        "medications": [],
+        "labs": [],
+        "procedures": []
+    }
+
+    # Extract summary from document_summary field
+    if "document_summary" in schema:
+        summary_elem = schema["document_summary"]
+        structured_data["summary"] = summary_elem.get("content", "No summary available")
+
+    # Extract medications, labs, and procedures from sub_documents or pages
+    if "sub_documents" in schema:
+        for subdoc in schema.get("sub_documents", []):
+            subdoc_type = subdoc.get("type", "")
+
+            # Extract medications
+            if subdoc_type == "medications":
+                for page in subdoc.get("pages", []):
+                    for element in page.get("elements", []):
+                        if element.get("type") in ["medication_table", "clinical_paragraph"]:
+                            # Parse medication data using Gemini
+                            med_data = _parse_medication_element(element.get("content", ""))
+                            if med_data:
+                                structured_data["medications"].extend(med_data)
+
+            # Extract labs
+            elif subdoc_type == "laboratory_results":
+                for page in subdoc.get("pages", []):
+                    for element in page.get("elements", []):
+                        if element.get("type") in ["lab_results_table", "clinical_paragraph"]:
+                            # Parse lab data using Gemini
+                            lab_data = _parse_lab_element(element.get("content", ""))
+                            if lab_data:
+                                structured_data["labs"].extend(lab_data)
+
+            # Extract procedures
+            elif subdoc_type == "procedures":
+                for page in subdoc.get("pages", []):
+                    for element in page.get("elements", []):
+                        if element.get("type") in ["clinical_paragraph", "section_header", "general_table"]:
+                            # Parse procedure data using Gemini
+                            proc_data = _parse_procedure_element(element.get("content", ""))
+                            if proc_data:
+                                structured_data["procedures"].extend(proc_data)
+
+    # Fallback: if no sub_documents, scan all pages
+    else:
+        for page in schema.get("pages", []):
+            for element in page.get("elements", []):
+                elem_type = element.get("type", "")
+                content = element.get("content", "")
+
+                if elem_type == "medication_table":
+                    med_data = _parse_medication_element(content)
+                    if med_data:
+                        structured_data["medications"].extend(med_data)
+
+                elif elem_type == "lab_results_table":
+                    lab_data = _parse_lab_element(content)
+                    if lab_data:
+                        structured_data["labs"].extend(lab_data)
+
+    return JSONResponse(structured_data)
+
+
+def _parse_medication_element(content: str) -> list:
+    """Parse medication element content into structured format."""
+    if not content or len(content) < 10:
+        return []
+
+    try:
+        from vertexai.generative_models import GenerativeModel, GenerationConfig
+
+        prompt = f"""Extract medication information from this clinical text.
+
+TEXT:
+{content[:2000]}
+
+Extract ALL medications mentioned. For each medication, provide:
+- drug_name: Name of the medication
+- dosage: Dosage (e.g., "500mg", "10 units")
+- frequency: How often taken (e.g., "twice daily", "as needed")
+- start_date: Start date if mentioned (or null)
+- end_date: End date if mentioned (or null)
+- notes: Any additional relevant information
+
+Return as JSON array:
+[
+  {{
+    "drug_name": "string",
+    "dosage": "string or null",
+    "frequency": "string or null",
+    "start_date": "string or null",
+    "end_date": "string or null",
+    "notes": "string or null"
+  }}
+]
+
+If no medications found, return empty array [].
+Only return the JSON array, nothing else."""
+
+        model = GenerativeModel(model_name="gemini-2.5-flash")
+        generation_config = GenerationConfig(
+            temperature=0.1,
+            max_output_tokens=2048,
+            response_mime_type="application/json"
+        )
+
+        response = model.generate_content(prompt, generation_config=generation_config)
+        result = json.loads(response.text)
+        return result if isinstance(result, list) else []
+
+    except Exception as e:
+        logging.error(f"Failed to parse medication element: {e}")
+        return []
+
+
+def _parse_lab_element(content: str) -> list:
+    """Parse lab element content into structured format."""
+    if not content or len(content) < 10:
+        return []
+
+    try:
+        from vertexai.generative_models import GenerativeModel, GenerationConfig
+
+        prompt = f"""Extract laboratory test information from this clinical text.
+
+TEXT:
+{content[:2000]}
+
+Extract ALL lab tests mentioned. For each test, provide:
+- test_name: Name of the lab test
+- date_ordered: Date the test was ordered (or null)
+- result: Test result if available (or null)
+- reason: Reason for ordering if mentioned (or null)
+- notes: Any additional relevant information
+
+Return as JSON array:
+[
+  {{
+    "test_name": "string",
+    "date_ordered": "string or null",
+    "result": "string or null",
+    "reason": "string or null",
+    "notes": "string or null"
+  }}
+]
+
+If no lab tests found, return empty array [].
+Only return the JSON array, nothing else."""
+
+        model = GenerativeModel(model_name="gemini-2.5-flash")
+        generation_config = GenerationConfig(
+            temperature=0.1,
+            max_output_tokens=2048,
+            response_mime_type="application/json"
+        )
+
+        response = model.generate_content(prompt, generation_config=generation_config)
+        result = json.loads(response.text)
+        return result if isinstance(result, list) else []
+
+    except Exception as e:
+        logging.error(f"Failed to parse lab element: {e}")
+        return []
+
+
+def _parse_procedure_element(content: str) -> list:
+    """Parse procedure element content into structured format."""
+    if not content or len(content) < 10:
+        return []
+
+    try:
+        from vertexai.generative_models import GenerativeModel, GenerationConfig
+
+        prompt = f"""Extract procedure information from this clinical text.
+
+TEXT:
+{content[:2000]}
+
+Extract ALL procedures mentioned. For each procedure, provide:
+- procedure_name: Name/type of the procedure
+- date: Date the procedure was performed (or null)
+- purpose: Purpose/indication for the procedure (or null)
+- result: Result or outcome if mentioned (or null)
+- notes: Any additional relevant information
+
+Return as JSON array:
+[
+  {{
+    "procedure_name": "string",
+    "date": "string or null",
+    "purpose": "string or null",
+    "result": "string or null",
+    "notes": "string or null"
+  }}
+]
+
+If no procedures found, return empty array [].
+Only return the JSON array, nothing else."""
+
+        model = GenerativeModel(model_name="gemini-2.5-flash")
+        generation_config = GenerationConfig(
+            temperature=0.1,
+            max_output_tokens=2048,
+            response_mime_type="application/json"
+        )
+
+        response = model.generate_content(prompt, generation_config=generation_config)
+        result = json.loads(response.text)
+        return result if isinstance(result, list) else []
+
+    except Exception as e:
+        logging.error(f"Failed to parse procedure element: {e}")
+        return []

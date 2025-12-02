@@ -1,0 +1,2590 @@
+{
+  "document_id": "Comprehensive Adult History And Physical_1763269518",
+  "source_pdf": "SampleEHR_docs/Comprehensive Adult History And Physical.pdf",
+  "total_pages": 6,
+  "pages": [
+    {
+      "page_number": 1,
+      "elements": [
+        {
+          "element_id": "E_0001",
+          "type": "document_header",
+          "content": "Comprehensive Adult History and Physical",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            320.0,
+            94.0,
+            679.0,
+            109.0
+          ],
+          "bbox_pdf": [
+            115.2,
+            752.76,
+            244.44,
+            758.16
+          ],
+          "needs_review": false
+        },
+        {
+          "element_id": "E_0002",
+          "type": "page_metadata",
+          "content": "(Sample Summative H&P by M2 Student)",
+          "confidence": {
+            "overall": 0.9460000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.85
+          },
+          "bbox_pixel": [
+            350.0,
+            113.0,
+            649.0,
+            126.0
+          ],
+          "bbox_pdf": [
+            126.0,
+            746.64,
+            233.64000000000001,
+            751.32
+          ],
+          "needs_review": false
+        },
+        {
+          "element_id": "E_0003",
+          "type": "clinical_paragraph",
+          "content": "This sample summative H&P was written by a second-year medical student from UCF COM Class of 2020 at the end of COP-2. While not perfect, it best exemplifies the documentation skills students are expected and able to acquire by the end of P-2: organization, thoroughness, relevance, chronology, integrated topic review, documentation of references, etc.\nFor additional H&P samples go to P-2 Webcourses home page and click on the COP/Portfolio Resources page.",
+          "confidence": {
+            "overall": 0.926,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.75
+          },
+          "bbox_pixel": [
+            120.0,
+            148.0,
+            879.0,
+            289.0
+          ],
+          "bbox_pdf": [
+            43.2,
+            687.96,
+            316.44,
+            738.72
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "null",
+            "clinical_domain": "null",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0004",
+          "type": "section_header",
+          "content": "Chief Complaint:",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            328.0,
+            258.0,
+            341.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            669.24,
+            92.88000000000001,
+            673.92
+          ],
+          "needs_review": false
+        },
+        {
+          "element_id": "E_0005",
+          "type": "clinical_paragraph",
+          "content": "\"I got lightheadedness and felt too weak to walk\"",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            269.0,
+            328.0,
+            650.0,
+            341.0
+          ],
+          "bbox_pdf": [
+            96.84,
+            669.24,
+            234.0,
+            673.92
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "symptoms",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0006",
+          "type": "section_header",
+          "content": "Source and Setting:",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            359.0,
+            277.0,
+            372.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            658.0799999999999,
+            99.72,
+            662.76
+          ],
+          "needs_review": false
+        },
+        {
+          "element_id": "E_0007",
+          "type": "clinical_paragraph",
+          "content": "Patient reported in an in-patient setting on Day 2 of his hospitalization.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            288.0,
+            359.0,
+            800.0,
+            372.0
+          ],
+          "bbox_pdf": [
+            103.68,
+            658.0799999999999,
+            288.0,
+            662.76
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "administrative",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0008",
+          "type": "section_header",
+          "content": "History of Present Illness:",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            390.0,
+            320.0,
+            403.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            646.92,
+            115.2,
+            651.6
+          ],
+          "needs_review": false
+        },
+        {
+          "element_id": "E_0009",
+          "type": "clinical_paragraph",
+          "content": "Patient is a 48 year-old well-nourished Hispanic male with a 2-month history of Rheumatoid Arthritis and strong family history of autoimmune diseases presenting after an episode of lightheadedness and muscle weakness.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            412.0,
+            879.0,
+            453.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            628.92,
+            316.44,
+            643.6800000000001
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "demographics",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0010",
+          "type": "clinical_paragraph",
+          "content": "Patient began experiencing symptoms 4 months ago (November 2017). At that time he experienced fatigue and joint pain in the knees and hands. He was diagnosed with Rheumatoid Arthritis. He was given a short course of corticosteroids at that time that alleviated his symptoms. He was also started on methotrexate at that time. However, he felt that the medication was ineffective and stopped after 2 weeks.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            469.0,
+            879.0,
+            551.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            593.64,
+            316.44,
+            623.16
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "symptoms",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0011",
+          "type": "clinical_paragraph",
+          "content": "For the past two months, the patient has been experiencing worsening symptoms. He has been experiencing progressively worsening headaches accompanied with lightheadedness, light and sound sensitivity, nausea, and vomiting. He reports no loss of consciousness associated with the headaches. No convulsion, change of vision, or loss of continence. When the headaches began 2 months ago, they would last about half of a day and occur approximately once per week. They increased in frequency and duration and over the last month have been almost daily and lasted most of the day. He is unable to eat during headaches. Concurrently, the patient is experiencing worsening joint pain in the knees and hands. The pain is constant, accompanied by swollen and hot joints, and not alleviated by NSAIDS. Also in the last two months, he has experienced a dry mouth that makes swallowing food difficult and a burning sensation in his eyes.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            567.0,
+            879.0,
+            730.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            529.2,
+            316.44,
+            587.88
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "symptoms",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0012",
+          "type": "clinical_paragraph",
+          "content": "In the last month, the patient has been experiencing night sweats, chills, and subjective fevers almost every night. This has impacted his sleep significantly, and he has not been able to sleep more than 4 consecutive hours in over one month. Three days ago, the patient was at work when a headache came on, he felt particularly light headed and weak. His left work early on that day. In the last three days the patient has had a constant headache and lightheadedness, and felt unable to eat. When he has tried to eat, he has vomited immediately after eating. He has had no changes to his bowel movements. No blood in the stool or urine. The joint pain has returned to a 10/10 in severity in the past 3 days. The patient has felt too weak to walk or leave the bedroom. He was brought to the hospital by his sister, a nurse, after two days being unable to leave bed. At this time, his sister noticed a facial rash in the pre-auricular area that extended over the eyelids and bridge of the nose",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            746.0,
+            879.0,
+            910.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            464.4,
+            316.44,
+            523.44
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "symptoms",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        }
+      ],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 13.550364971160889,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:05:31.893983"
+      },
+      "error": null
+    },
+    {
+      "page_number": 2,
+      "elements": [
+        {
+          "element_id": "E_0001",
+          "type": "clinical_paragraph",
+          "content": "as well as cervical lymphadenopathy. The patient was unaware of these findings and did not know how long the rash or lymphadenopathy had been present for. At the time of the physical exam, the rash was limited to the pre-auricular area.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            92.0,
+            879.0,
+            140.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            741.6,
+            316.44,
+            758.88
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "general_medicine",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0002",
+          "type": "clinical_paragraph",
+          "content": "During the course of the past four months the patient reports a 36 pound unintentional weight loss and significant decrease to his muscle mass. He has been experiencing early satiety and nausea when he does eat. He reports no loss of sensation, pain, temperature, vibration. He does report clumsiness, especially of the hands. He also reports a depressed mood and frustration with being unable to work during his illness.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            155.0,
+            879.0,
+            240.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            705.6,
+            316.44,
+            736.2
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "general_medicine",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0003",
+          "type": "section_header",
+          "content": "Past Medical History:",
+          "confidence": {
+            "overall": 0.988,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            260.0,
+            300.0,
+            274.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            693.36,
+            108.0,
+            698.4
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "general_medicine",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0004",
+          "type": "list_items",
+          "content": "- Rheumatoid Arthritis, diagnosed January 2018. Patient was diagnosed when he presented to the emergency room with joint pain in the hands and knees. He was treated with corticosteroids and methotrexate. The patient reported that the corticosteroids helped his symptoms significantly. He only continued on the methotrexate for 2 weeks, as he did not feel it helped with his symptoms.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            284.0,
+            879.0,
+            353.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            664.92,
+            316.44,
+            689.76
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "rheumatology",
+            "cross_references": [],
+            "requires_validation": true
+          }
+        },
+        {
+          "element_id": "E_0005",
+          "type": "list_items",
+          "content": "- Up to date with vaccinations, including yearly influenza vaccine",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            356.0,
+            703.0,
+            370.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            658.8,
+            253.08,
+            663.84
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "preventive_care",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0006",
+          "type": "section_header",
+          "content": "Surgical History:",
+          "confidence": {
+            "overall": 0.988,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            385.0,
+            270.0,
+            399.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            648.36,
+            97.2,
+            653.4
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "surgery",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0007",
+          "type": "list_items",
+          "content": "-Nasal artery cauterization and clip placement - 2011",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            409.0,
+            562.0,
+            423.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            639.72,
+            202.32,
+            644.76
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "surgery",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0008",
+          "type": "section_header",
+          "content": "Medications:",
+          "confidence": {
+            "overall": 0.988,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            438.0,
+            248.0,
+            452.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            629.28,
+            89.28,
+            634.3199999999999
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "pharmacology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0009",
+          "type": "list_items",
+          "content": "- Ibuprofen PRN for headaches and joint pain.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            462.0,
+            490.0,
+            476.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            620.64,
+            176.4,
+            625.6800000000001
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "pharmacology",
+            "cross_references": [],
+            "requires_validation": true
+          }
+        },
+        {
+          "element_id": "E_0010",
+          "type": "clinical_paragraph",
+          "content": "Allergies: No known drug allergies. No known environmental, food, or seasonal allergies.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            491.0,
+            807.0,
+            505.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            610.2,
+            290.52000000000004,
+            615.24
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "allergies",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0011",
+          "type": "section_header",
+          "content": "Family History:",
+          "confidence": {
+            "overall": 0.988,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            520.0,
+            266.0,
+            534.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            599.76,
+            95.76,
+            604.8
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "genetics",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0012",
+          "type": "list_items",
+          "content": "Father - Living aged 74- HTN",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            544.0,
+            380.0,
+            558.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            591.12,
+            136.8,
+            596.16
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "genetics",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0013",
+          "type": "list_items",
+          "content": "Mother- living aged 72 - Hypothyroidism",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            561.0,
+            480.0,
+            575.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            585.0,
+            172.8,
+            590.04
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "genetics",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0014",
+          "type": "list_items",
+          "content": "Brother - living aged 44 \u2013 Vitiligo",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            578.0,
+            430.0,
+            592.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            578.88,
+            154.8,
+            583.92
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "genetics",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0015",
+          "type": "list_items",
+          "content": "Sister - living aged 40 \u2013 No known chronic health issues",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            595.0,
+            590.0,
+            609.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            572.76,
+            212.4,
+            577.8
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "genetics",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0016",
+          "type": "list_items",
+          "content": "2 sons - living, aged 27 and 24 \u2013 No known chronic health issues",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            612.0,
+            640.0,
+            626.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            566.64,
+            230.4,
+            571.68
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "genetics",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0017",
+          "type": "section_header",
+          "content": "Social History:",
+          "confidence": {
+            "overall": 0.988,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            641.0,
+            270.0,
+            655.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            556.2,
+            97.2,
+            561.24
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "social_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0018",
+          "type": "clinical_paragraph",
+          "content": "Patient is a high school graduate, working as an electrician, living with his wife of 25 years and 2 dogs. Patient feels safe and well-cared for in his home. He works as an electrician, a job with daily physical exertion that requires climbing ladders and the lifting of heavy objects. These aspects of his job have been impacted with his lightheadedness and muscle pain and weakness. Patient is concerned about having to miss additional work due to his illness. Patient denies any history of smoking. Patient reports previously drinking alcohol socially -1-2 beers, 1-2 times per month - however has ceased alcohol intake since the onset of symptoms 4 months ago. Patient denies any recreational drug use. Patient denies any exercise, though he feels that physically exerted every day at his job. Patient reports a well-rounded non-vegetarian diet of mostly home cooked meals of meat and vegetables. Patient is sexually active with his wife and reports a happy and monogamous relationship.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            665.0,
+            879.0,
+            811.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            500.03999999999996,
+            316.44,
+            552.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "social_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0019",
+          "type": "section_header",
+          "content": "Review of Systems:",
+          "confidence": {
+            "overall": 0.988,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            826.0,
+            290.0,
+            840.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            489.59999999999997,
+            104.4,
+            494.64
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "review_of_systems",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0020",
+          "type": "list_items",
+          "content": "-Skin: Positive for facial in the pre-auricular area, see HPI. Negative for photosensitivity, easy bruising, skin discoloration, new or changing moles, ulcers, hair loss, or dry or brittle nails, or dry skin.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            850.0,
+            879.0,
+            898.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            468.71999999999997,
+            316.44,
+            486.0
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "dermatology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0021",
+          "type": "list_items",
+          "content": "-Hematopoietic: Positive for fatigue, lightheadedness, headaches, enlarged non-tender lymph",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            901.0,
+            828.0,
+            915.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            462.59999999999997,
+            298.08,
+            467.64
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "hematology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        }
+      ],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 23.23362398147583,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:05:55.146438"
+      },
+      "error": null
+    },
+    {
+      "page_number": 3,
+      "elements": [
+        {
+          "element_id": "E_0001",
+          "type": "clinical_paragraph",
+          "content": "nodes. Negative for tinnitus, fainting.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            92.0,
+            460.0,
+            107.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            753.48,
+            165.6,
+            758.88
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "neurology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0002",
+          "type": "list_items",
+          "content": "-Head and Face: No pain, traumatic injury, ptosis, loss of sensation.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            109.0,
+            690.0,
+            124.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            747.36,
+            248.4,
+            752.76
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "neurology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0003",
+          "type": "list_items",
+          "content": "-Ears: No changes to hearing, discharge from ears.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            126.0,
+            526.0,
+            141.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            741.24,
+            189.36,
+            746.64
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "otolaryngology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0004",
+          "type": "list_items",
+          "content": "-Eyes: Positive for burning sensation, See HPI. No changes to vision, inflammation, infections,\ndouble vision, tearing.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            143.0,
+            825.0,
+            172.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            730.08,
+            297.0,
+            740.52
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "ophthalmology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0005",
+          "type": "list_items",
+          "content": "-Mouth and Throat: See HPI, positive for dry mouth and dysphagia. No dental problems,\nhoarseness, or bleeding gums.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            174.0,
+            825.0,
+            203.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            718.92,
+            297.0,
+            729.36
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "otolaryngology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0006",
+          "type": "list_items",
+          "content": "-Nose and Sinus: No discharge, epistaxis, sinus pain, obstruction.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            205.0,
+            686.0,
+            220.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            712.8,
+            246.96,
+            718.2
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "otolaryngology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0007",
+          "type": "list_items",
+          "content": "-Respiratory: No cough, sputum, dyspnea, wheezing.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            222.0,
+            579.0,
+            237.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            706.68,
+            208.44,
+            712.08
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "pulmonology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0008",
+          "type": "list_items",
+          "content": "-Cardiovascular: No chest pain, dyspnea, swelling of extremities, hypertension, exercise intolerance,\nor palpitations.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            239.0,
+            825.0,
+            268.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            695.52,
+            297.0,
+            705.96
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "cardiology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0009",
+          "type": "list_items",
+          "content": "-Gastrointestinal: Positive for anorexia, decreased appetite, nausea, vomiting. No PICA, heartburn,\nchange in bowel habits or bowel texture. No blood in the stool.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            270.0,
+            825.0,
+            299.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            684.36,
+            297.0,
+            694.8
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "gastroenterology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0010",
+          "type": "list_items",
+          "content": "-Genital Tract: No discharge, pain, pruritus, history of sexually transmitted infections.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            301.0,
+            825.0,
+            316.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            678.24,
+            297.0,
+            683.64
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "genitourinary",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0011",
+          "type": "list_items",
+          "content": "-MSK: Positive for painful, hot, and tender joints with subjective swelling. See HPI",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            318.0,
+            825.0,
+            333.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            672.12,
+            297.0,
+            677.52
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "musculoskeletal",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0012",
+          "type": "list_items",
+          "content": "-Nervous System: See HPI regarding recent lightheadedness. No tremor, ataxia, difficulty speaking,\nloss of sensation, seizures, changes in memory.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            335.0,
+            825.0,
+            364.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            660.96,
+            297.0,
+            671.4
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "neurology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0013",
+          "type": "list_items",
+          "content": "-Endocrine: See HPI regarding fatigue. No tremor, heat or cold intolerance, polyuria, polydipsia,\ngoiter.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            366.0,
+            825.0,
+            395.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            649.8,
+            297.0,
+            660.24
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "endocrinology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0014",
+          "type": "list_items",
+          "content": "-Psychological: Positive for depressed mood. No nervousness, phobia, insomnia, memory loss,\ndisorientation.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            397.0,
+            825.0,
+            426.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            638.64,
+            297.0,
+            649.0799999999999
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "psychiatry",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0015",
+          "type": "section_header",
+          "content": "Physical Exam:",
+          "confidence": {
+            "overall": 0.99,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.99
+          },
+          "bbox_pixel": [
+            118.0,
+            450.0,
+            280.0,
+            465.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            624.6,
+            100.8,
+            630.0
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "general_medicine",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0016",
+          "type": "vital_signs_table",
+          "content": "Vitals: T 98.5, HR 68, BP 126/85, RR 16.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            472.0,
+            560.0,
+            487.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            616.6800000000001,
+            201.6,
+            622.0799999999999
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "vitals",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0017",
+          "type": "clinical_paragraph",
+          "content": "General Appearance: Patient is a ill-appearing, well-nourished man in no acute distress.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            489.0,
+            825.0,
+            504.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            610.56,
+            297.0,
+            615.96
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "general_medicine",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0018",
+          "type": "clinical_paragraph",
+          "content": "Skin: Macular rash in the pre-auricular area. No pallor. Normal texture, normal turgor, warm, dry.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            506.0,
+            825.0,
+            521.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            604.44,
+            297.0,
+            609.84
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "dermatology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0019",
+          "type": "clinical_paragraph",
+          "content": "Eyes: Normal pink mucosa with no signs of pallor, no scleral icterus.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            523.0,
+            709.0,
+            538.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            598.3199999999999,
+            255.24,
+            603.72
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "ophthalmology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0020",
+          "type": "clinical_paragraph",
+          "content": "Neck: Lymphadenopathy in the anterior cervical chain and supraclavicular chain. Lymph nodes\nwere 4-5 mm and not fixed. No Lymphadenopathy in posterior cervical chain. No thyromegaly.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            540.0,
+            825.0,
+            569.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            587.16,
+            297.0,
+            597.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "otolaryngology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0021",
+          "type": "clinical_paragraph",
+          "content": "Heart: PMI non-displaced and heart of normal size; no thrill or heaves, RRR, S1S2 with no S3 or S4.\nNo murmurs, rubs, or gallops.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            571.0,
+            825.0,
+            600.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            576.0,
+            297.0,
+            586.44
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "cardiology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0022",
+          "type": "clinical_paragraph",
+          "content": "Lungs: No increased work of breathing, lungs clear to auscultation bilaterally, no wheezes or\ncrackles.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            602.0,
+            825.0,
+            631.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            564.84,
+            297.0,
+            575.28
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "pulmonology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0023",
+          "type": "clinical_paragraph",
+          "content": "Extremities: Normal capillary refill, no edema, clubbing, cyanosis",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            633.0,
+            709.0,
+            648.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            558.72,
+            255.24,
+            564.12
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "musculoskeletal",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0024",
+          "type": "clinical_paragraph",
+          "content": "Abdomen: Non-distended, no scars, normoactive bowel sounds, no bruits, non-tender to palpation,\nno hepatosplenomegaly, no masses",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            650.0,
+            825.0,
+            679.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            547.56,
+            297.0,
+            558.0
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "gastroenterology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0025",
+          "type": "clinical_paragraph",
+          "content": "Neuro: Alert and oriented X 3. Strength of biceps, triceps, hand grip, finger spread, hip flexion, knee\nflexion, and knee extension 4/5 bilaterally. Cranial Nerves II-XII were grossly intact. Tandem gait\nwas normal symmetric. Sensation intact to light touch and sharp vs dull on distal arms and legs.\nProprioception intact.",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            681.0,
+            825.0,
+            740.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            525.5999999999999,
+            297.0,
+            546.84
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "neurology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0026",
+          "type": "section_header",
+          "content": "Pertinent Diagnostic Tests:",
+          "confidence": {
+            "overall": 0.99,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.99
+          },
+          "bbox_pixel": [
+            118.0,
+            770.0,
+            387.0,
+            785.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            509.4,
+            139.32,
+            514.8
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "laboratory",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0027",
+          "type": "list_items",
+          "content": "January 8 2018:",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            792.0,
+            290.0,
+            807.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            501.47999999999996,
+            104.4,
+            506.88
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "laboratory",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0028",
+          "type": "list_items",
+          "content": "- Autoimmune:",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            810.0,
+            270.0,
+            825.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            495.0,
+            97.2,
+            500.4
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "laboratory",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0029",
+          "type": "list_items",
+          "content": "Positive ANA (>1:640)",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            173.0,
+            834.0,
+            420.0,
+            849.0
+          ],
+          "bbox_pdf": [
+            62.28,
+            486.36,
+            151.20000000000002,
+            491.76
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "laboratory",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0030",
+          "type": "list_items",
+          "content": "Positive Rheumatoid Factor (70, Normal <20)",
+          "confidence": {
+            "overall": 0.972,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            173.0,
+            856.0,
+            600.0,
+            871.0
+          ],
+          "bbox_pdf": [
+            62.28,
+            478.44,
+            216.0,
+            483.84
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "laboratory",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        }
+      ],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 26.800169229507446,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:06:21.980195"
+      },
+      "error": null
+    },
+    {
+      "page_number": 4,
+      "elements": [],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 27.724785089492798,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:06:49.726723"
+      },
+      "error": null
+    },
+    {
+      "page_number": 5,
+      "elements": [
+        {
+          "element_id": "E_0001",
+          "type": "section_header",
+          "content": "Assessment and Plan:",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            92.0,
+            389.0,
+            110.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            752.4,
+            140.04,
+            758.88
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "general_clinical",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0002",
+          "type": "clinical_paragraph",
+          "content": "Differential diagnosis includes:",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            118.0,
+            120.0,
+            390.0,
+            134.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            743.76,
+            140.4,
+            748.8
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "diagnosis",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0003",
+          "type": "list_items",
+          "content": "\u2022 Most Likely: Sj\u00f6grens Syndrome",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            146.0,
+            397.0,
+            160.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            734.4,
+            142.92000000000002,
+            739.44
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "diagnosis",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0004",
+          "type": "assessment_plan",
+          "content": "Assessment: The patient has a personal history of autoimmune disease and a positive HLA genotype. He was diagnosed with Rheumatoid arthritis 2 months ago. His presenting symptom of bilateral joint pain in the knees and fingers paired with a positive RF, CCP, and decreased CD4 count made this diagnosis very likely. Sj\u00f6grens Syndrome is very heavily associated with Rheumatoid Arthritis, estimated prevalence between 17-30% in those with previously diagnosed Rheumatoid Arthritis. The patient's laboratory and imaging studies, including a positive SS-A, neck CT showing chronic enlargement of the Parotid Gland, paired with the symptom of dry mouth and a burning sensation of the eye, a possible manifestation of dry eyes, are suggestive of Sj\u00f6grens Syndrome. Another possible cause of the burning sensation is trigeminal neuralgia, a neurological manifestation of Sjogren's syndrome. However, this patient also presents with some of rarer manifestations of Sj\u00f6grens Syndrome. According to UpToDate: Clinical manifestations of Sj\u00f6gren's syndrome: Extraglandular disease, normochromic normocytic anemia can be seen in up to 20% of sjogrens patients. Further, \u201cPatients with SS may exhibit abnormal counts in any cell line, and patients with cytopenia often have involvement of more than one cell line\u201d3. This hematologic manifestation of disease accounts for many of the abnormal blood tests including the anemia and leukopenia. This anemia could be the underlying cause of the lightheadedness and muscle weakness. Further, a more rare manifestation of Sj\u00f6grens Syndrome, is autonomic neuropathy3. Autonomic neuropathy manifests as headache, lightheadedness, early satiety, vomiting, weight loss, and sweating abnormalities. The patient's headaches with lightheadedness, as well as his GI symptoms and night sweats can be explained by the neurological manifestations of Sj\u00f6gren's syndrome. Finally, autoimmune diseases are often associated with cutaneous manifestations. Some of these, such as the malar rash of lupus are well defined, while others are ill defined. The pre-auricular rash can be seen as an atypical cutaneous presentation of Sjogren's syndrome.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            174.0,
+            879.0,
+            569.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            587.16,
+            316.44,
+            729.36
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "diagnosis",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0005",
+          "type": "assessment_plan",
+          "content": "Plan: A Schirmer test would help differentiate if the burning sensation in the eyes is due to dry eyes or another cause, possibly trigeminal neuralgia. Acutely, the patient should be started on corticosteroids to treat the acute symptoms of Sj\u00f6grens syndrome. Long term, hydrochloroquine or an immunosuppressant may want to be considered. This should help with the joint pain and constitutional symptoms. Monitoring of RBC and WBC should be continued to make sure they return to normal ranges after this acute event.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            583.0,
+            879.0,
+            677.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            548.28,
+            316.44,
+            582.12
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "planned",
+            "clinical_domain": "treatment_plan",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0006",
+          "type": "list_items",
+          "content": "\u2022 Alternative: Systemic Lupus Erythematosus (SLE)",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            690.0,
+            609.0,
+            704.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            538.56,
+            219.24,
+            543.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "diagnosis",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0007",
+          "type": "assessment_plan",
+          "content": "Assessment: SLE is another very possible diagnosis. The history of autoimmune diseases, paired with the SS-A and dsDNA can point us towards a diagnosis of Lupus. The anemia and leukopenia can also be accounted for by SLE. However, SLE would not explain the dry mouth and burning eyes, nor would it explain the parotid gland involvement. However, the macular rash in the pre-auricular area, which the sister described as extending over the eyelids and bridge of the nose, does sound suspicious of the malar rash. However, at the time of physical exam, the rash was only seen in the pre-auricular area. The patient denies any photosensitivity. While SLE cannot be ruled out at this time, Sjogren's Syndrome accounts for a more global diagnosis of the patient's symptoms.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            718.0,
+            879.0,
+            840.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            489.59999999999997,
+            316.44,
+            533.52
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "diagnosis",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0008",
+          "type": "assessment_plan",
+          "content": "Plan: Continue to monitor kidney function, as SS-a in Lupus increases the risk of Lupus Nephritis. Treatment for acute exacerbation is still corticosteroids.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            854.0,
+            879.0,
+            884.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            473.76,
+            316.44,
+            484.56
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "planned",
+            "clinical_domain": "treatment_plan",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        }
+      ],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 16.66192102432251,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:07:06.416574"
+      },
+      "error": null
+    },
+    {
+      "page_number": 6,
+      "elements": [
+        {
+          "element_id": "E_0001",
+          "type": "list_items",
+          "content": "Do Not Miss: B-Cell Lymphoma",
+          "confidence": {
+            "overall": 0.966,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            118.0,
+            92.0,
+            403.0,
+            108.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            753.12,
+            145.08,
+            758.88
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "diagnosis",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0002",
+          "type": "assessment_plan",
+          "content": "Assessment: Patients with both Rheumatoid Arthritis and Sj\u00f6grens syndrome have an increased risk of B-Cell lymphoma. This patient is experiencing night sweats, unintentional weight loss, subjective fever, and lymphadenopathy. He also has enlargement of the Parotid gland. The severity of this diagnosis makes it a do not miss in the differential. However, the small size of the lymph nodes, 4-5 mm, and the nature, not-fixed, makes this diagnosis less likely. Further, while the patient is experiencing Leukopenia, it is not extreme. We would expect a much lower WBC if this were a lymphoma.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            124.0,
+            879.0,
+            244.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            704.16,
+            316.44,
+            747.36
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "diagnosis",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0003",
+          "type": "assessment_plan",
+          "content": "Plan: Biopsy of the parotid gland and/or cervical lymph nodes to rule out lymphoma.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            118.0,
+            258.0,
+            769.0,
+            274.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            693.36,
+            276.84000000000003,
+            699.12
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "planned",
+            "clinical_domain": "procedure",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0004",
+          "type": "section_header",
+          "content": "Sources:",
+          "confidence": {
+            "overall": 0.9520000000000001,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.8
+          },
+          "bbox_pixel": [
+            118.0,
+            330.0,
+            200.0,
+            346.0
+          ],
+          "bbox_pdf": [
+            42.480000000000004,
+            667.44,
+            72.0,
+            673.2
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": null,
+            "clinical_domain": null,
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0005",
+          "type": "list_items",
+          "content": "1. Chai J, Logigian EL. Neurological manifestations of primary Sjogren's syndrome. Curr Opin Neurol. 2010;23(5):509-513.",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            142.0,
+            365.0,
+            706.0,
+            395.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            649.8,
+            254.16,
+            660.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "research_literature",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0006",
+          "type": "list_items",
+          "content": "2. Garc\u00eda-Carrasco, Mario et al. \"Serologic Features of Primary Sj\u00f6gren's Syndrome: Clinical and Prognostic Correlation.\" International journal of clinical rheumatology 7.6 (2012): 651-659. PMC. Web. 2 Mar. 2018.",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            142.0,
+            399.0,
+            879.0,
+            444.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            632.16,
+            316.44,
+            648.36
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "research_literature",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0007",
+          "type": "list_items",
+          "content": "3. UpToDate: Clinical manifestations of Sj\u00f6gren's syndrome: Extraglandular disease",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            142.0,
+            448.0,
+            800.0,
+            464.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            624.96,
+            288.0,
+            630.72
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "research_literature",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0008",
+          "type": "list_items",
+          "content": "4. Boling EP, Wen J, Reveille JD, Bias WB, Chused TM, Arnett FC. Primary Sjogren's syndrome and autoimmune hemolytic anemia in sisters. A family study. Am J Med. 1983;74(6):1066-1071.",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            142.0,
+            468.0,
+            879.0,
+            498.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            612.72,
+            316.44,
+            623.52
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "research_literature",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0009",
+          "type": "list_items",
+          "content": "5. Assimakopoulos SF, Michalopoulou S, Melachrinou M, et al. Primary Sjogren syndrome complicated by autoimmune hemolytic anemia and pure red cell aplasia. Am J Med Sci. 2007;334(6):493-496.",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            142.0,
+            502.0,
+            879.0,
+            532.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            600.48,
+            316.44,
+            611.28
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "research_literature",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0010",
+          "type": "list_items",
+          "content": "6. Johns Hopkins Jjogren's Syndrom Center: Neurological Complications",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            142.0,
+            536.0,
+            645.0,
+            552.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            593.28,
+            232.20000000000002,
+            599.04
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "research_literature",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0011",
+          "type": "list_items",
+          "content": "7. Lindvall B, Bengtsson A, Ernerudh J, Eriksson P. Subclinical myositis is common in primary Sjogren's syndrome and is not related to muscle pain. J Rheumatol. 2002;29(4):717-725.",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            142.0,
+            556.0,
+            879.0,
+            586.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            581.04,
+            316.44,
+            591.84
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "research_literature",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0012",
+          "type": "list_items",
+          "content": "8. Patel, Ruchika, and Anupama Shahane. \"The Epidemiology of Sj\u00f6gren's Syndrome.\" Clinical Epidemiology 6 (2014): 247-255. PMC. Web. 2 Mar. 2018.",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            142.0,
+            590.0,
+            879.0,
+            620.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            568.8,
+            316.44,
+            579.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "research_literature",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        }
+      ],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 16.882901906967163,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:07:23.331917"
+      },
+      "error": null
+    }
+  ],
+  "processing_stats": {
+    "total_pages": 6,
+    "processed_pages": 6,
+    "failed_pages": [],
+    "total_elements": 83,
+    "total_cost_usd": 0.0126066,
+    "processing_time_seconds": 125.03664588928223,
+    "start_time": "2025-11-15T21:05:18.298031",
+    "end_time": "2025-11-15T21:07:23.334684"
+  }
+}

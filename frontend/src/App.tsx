@@ -26,6 +26,38 @@ type QueryResponse = {
   matched_elements: MatchedElement[];
 };
 
+type Medication = {
+  drug_name: string;
+  dosage: string | null;
+  frequency: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  notes: string | null;
+};
+
+type Lab = {
+  test_name: string;
+  date_ordered: string | null;
+  result: string | null;
+  reason: string | null;
+  notes: string | null;
+};
+
+type Procedure = {
+  procedure_name: string;
+  date: string | null;
+  purpose: string | null;
+  result: string | null;
+  notes: string | null;
+};
+
+type StructuredData = {
+  summary: string | null;
+  medications: Medication[];
+  labs: Lab[];
+  procedures: Procedure[];
+};
+
 type ExtractionResponse = {
   document_id: string;
   extractions: {
@@ -129,6 +161,15 @@ const api = {
     }
     return res.json();
   },
+
+  getStructuredData: async (docId: string): Promise<StructuredData> => {
+    const res = await fetch(`${API_BASE}/api/documents/${docId}/structured-data`, { method: 'GET' });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || 'Failed to fetch structured data');
+    }
+    return res.json();
+  },
 };
 
 const Header = () => (
@@ -204,16 +245,141 @@ const UploadCard = ({ onUpload }: { onUpload: (f: File) => void }) => {
 const tabs = ['Summary', 'Meds', 'Labs', 'Procedures'] as const;
 type Tab = (typeof tabs)[number];
 
-const SectionViewer = ({ activeTab }: { activeTab: Tab }) => {
-  return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full overflow-hidden flex flex-col">
-      <div className="p-4 border-b border-slate-100 bg-slate-50">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Section</p>
-        <p className="text-sm text-slate-700 mt-1">{activeTab}</p>
+const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab; structuredData: StructuredData | null; loading: boolean }) => {
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full overflow-hidden flex flex-col">
+        <div className="p-6 text-sm text-slate-600 flex-1 flex items-center justify-center">
+          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+        </div>
       </div>
-      <div className="p-6 text-sm text-slate-600 flex-1">
-        <p className="mb-2 font-medium text-slate-700">No data yet.</p>
-        <p className="text-slate-500">Upload or load a document to populate this section.</p>
+    );
+  }
+
+  if (!structuredData) {
+    return (
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full overflow-hidden flex flex-col">
+        <div className="p-6 text-sm text-slate-600 flex-1">
+          <p className="mb-2 font-medium text-slate-700">No data yet.</p>
+          <p className="text-slate-500">Upload or load a document to populate this section.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[500px]">
+      <div className="overflow-y-auto p-4">
+        {activeTab === 'Summary' && (
+          <div className="text-sm text-slate-700 space-y-3">
+            {structuredData.summary ? (
+              <div className="whitespace-pre-wrap leading-relaxed">{structuredData.summary}</div>
+            ) : (
+              <p className="text-slate-500 italic">No summary available</p>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'Meds' && (
+          <div>
+            {structuredData.medications.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-200 text-sm">
+                  <thead className="bg-slate-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Drug Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Dosage</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Frequency</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Start Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">End Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-slate-200">
+                    {structuredData.medications.map((med, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50">
+                        <td className="px-4 py-3 text-slate-900 font-medium">{med.drug_name}</td>
+                        <td className="px-4 py-3 text-slate-700">{med.dosage || '—'}</td>
+                        <td className="px-4 py-3 text-slate-700">{med.frequency || '—'}</td>
+                        <td className="px-4 py-3 text-slate-700">{med.start_date || '—'}</td>
+                        <td className="px-4 py-3 text-slate-700">{med.end_date || '—'}</td>
+                        <td className="px-4 py-3 text-slate-600 text-xs">{med.notes || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-slate-500 italic text-sm">No medications documented</p>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'Labs' && (
+          <div>
+            {structuredData.labs.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-200 text-sm">
+                  <thead className="bg-slate-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Test Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Date Ordered</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Result</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Reason</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-slate-200">
+                    {structuredData.labs.map((lab, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50">
+                        <td className="px-4 py-3 text-slate-900 font-medium">{lab.test_name}</td>
+                        <td className="px-4 py-3 text-slate-700">{lab.date_ordered || '—'}</td>
+                        <td className="px-4 py-3 text-slate-700">{lab.result || '—'}</td>
+                        <td className="px-4 py-3 text-slate-700">{lab.reason || '—'}</td>
+                        <td className="px-4 py-3 text-slate-600 text-xs">{lab.notes || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-slate-500 italic text-sm">No lab tests documented</p>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'Procedures' && (
+          <div>
+            {structuredData.procedures.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-200 text-sm">
+                  <thead className="bg-slate-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Procedure Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Purpose</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Result</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-slate-200">
+                    {structuredData.procedures.map((proc, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50">
+                        <td className="px-4 py-3 text-slate-900 font-medium">{proc.procedure_name}</td>
+                        <td className="px-4 py-3 text-slate-700">{proc.date || '—'}</td>
+                        <td className="px-4 py-3 text-slate-700">{proc.purpose || '—'}</td>
+                        <td className="px-4 py-3 text-slate-700">{proc.result || '—'}</td>
+                        <td className="px-4 py-3 text-slate-600 text-xs">{proc.notes || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-slate-500 italic text-sm">No procedures documented</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -259,6 +425,8 @@ const AnalysisArea = ({
   const [selectedEvidenceList, setSelectedEvidenceList] = useState<MatchedElement[] | null>(null);
   const [evidenceIndex, setEvidenceIndex] = useState(0);
   const [openReasoning, setOpenReasoning] = useState<Set<number>>(new Set());
+  const [structuredData, setStructuredData] = useState<StructuredData | null>(null);
+  const [loadingStructuredData, setLoadingStructuredData] = useState(false);
 
   const docReady = !!(docMeta && docMeta.extractions && docMeta.extractions.length > 0);
 
@@ -272,6 +440,22 @@ const AnalysisArea = ({
       ]);
     }
   }, [docReady, docId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (docReady && docId) {
+      setLoadingStructuredData(true);
+      api.getStructuredData(docId)
+        .then((data) => {
+          setStructuredData(data);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch structured data:', err);
+        })
+        .finally(() => {
+          setLoadingStructuredData(false);
+        });
+    }
+  }, [docReady, docId]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -380,7 +564,7 @@ const AnalysisArea = ({
             ))}
           </div>
           <div className="p-4">
-            <SectionViewer activeTab={activeTab} />
+            <SectionViewer activeTab={activeTab} structuredData={structuredData} loading={loadingStructuredData} />
             {docReady && docMeta?.document && (
               <div className="mt-3 text-xs text-slate-500 space-y-1">
                 <div className="font-semibold text-slate-600">Document info</div>

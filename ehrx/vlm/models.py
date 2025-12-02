@@ -45,6 +45,9 @@ class ElementType(str, Enum):
     MARGIN_CONTENT = "margin_content"
     UNCATEGORIZED = "uncategorized"
 
+    # Document Summary (excluded from querying)
+    DOCUMENT_SUMMARY = "document_summary"
+
 
 class BoundingBox(BaseModel):
     """Bounding box coordinates in pixel space."""

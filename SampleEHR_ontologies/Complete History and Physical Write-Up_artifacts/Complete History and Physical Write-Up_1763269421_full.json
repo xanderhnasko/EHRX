@@ -1,0 +1,1904 @@
+{
+  "document_id": "Complete History and Physical Write-Up_1763269421",
+  "source_pdf": "SampleEHR_docs/Complete History and Physical Write-Up.pdf",
+  "total_pages": 4,
+  "pages": [
+    {
+      "page_number": 1,
+      "elements": [],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 29.555885076522827,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:04:11.215395"
+      },
+      "error": null
+    },
+    {
+      "page_number": 2,
+      "elements": [
+        {
+          "element_id": "E_0001",
+          "type": "list_items",
+          "content": "4) Last mammogram 1994, Flexible Sigmoidoscopy 1997",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            265.0,
+            90.0,
+            644.0,
+            104.0
+          ],
+          "bbox_pdf": [
+            95.4,
+            754.56,
+            231.84,
+            759.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "imaging",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0002",
+          "type": "section_header",
+          "content": "Systems Review",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            120.0,
+            280.0,
+            134.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            743.76,
+            100.8,
+            748.8
+          ],
+          "needs_review": false
+        },
+        {
+          "element_id": "E_0003",
+          "type": "list_items",
+          "content": "1.Constitutional: energy level generally good, weight is stable at 160 lbs, height 5'8\"",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            140.0,
+            709.0,
+            154.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            736.56,
+            255.24,
+            741.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "general_health",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0004",
+          "type": "list_items",
+          "content": "2.HEENT:",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            157.0,
+            220.0,
+            171.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            730.44,
+            79.2,
+            735.48
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "general_health",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0005",
+          "type": "list_items",
+          "content": "No headaches",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            204.0,
+            174.0,
+            310.0,
+            188.0
+          ],
+          "bbox_pdf": [
+            73.44,
+            724.3199999999999,
+            111.60000000000001,
+            729.36
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "neurology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0006",
+          "type": "list_items",
+          "content": "Eyes: wears reading glasses but thinks vision getting is worse, no diplopia or eye pain",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            204.0,
+            191.0,
+            709.0,
+            218.0
+          ],
+          "bbox_pdf": [
+            73.44,
+            713.52,
+            255.24,
+            723.24
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "ophthalmology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0007",
+          "type": "list_items",
+          "content": "Ears: hearing loss for many years, wears hearing aid now",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            204.0,
+            221.0,
+            605.0,
+            235.0
+          ],
+          "bbox_pdf": [
+            73.44,
+            707.4,
+            217.8,
+            712.44
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "otolaryngology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0008",
+          "type": "list_items",
+          "content": "Nose: no epistaxis or obstruction",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            204.0,
+            238.0,
+            444.0,
+            252.0
+          ],
+          "bbox_pdf": [
+            73.44,
+            701.28,
+            159.84,
+            706.3199999999999
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "otolaryngology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0009",
+          "type": "list_items",
+          "content": "No history of tonsillitis or tonsillectomy",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            204.0,
+            255.0,
+            490.0,
+            269.0
+          ],
+          "bbox_pdf": [
+            73.44,
+            695.16,
+            176.4,
+            700.2
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "otolaryngology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0010",
+          "type": "list_items",
+          "content": "Wears full set of dentures for more than 20 years, works well.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            204.0,
+            272.0,
+            673.0,
+            286.0
+          ],
+          "bbox_pdf": [
+            73.44,
+            689.04,
+            242.28,
+            694.08
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "dentistry",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0011",
+          "type": "list_items",
+          "content": "3.Respiratory: No history of pleurisy, cough, wheezing, asthma, hemoptysis, pulmonary emboli, pneumonia, TB or TB exposure",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            292.0,
+            709.0,
+            320.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            676.8,
+            255.24,
+            686.88
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "pulmonology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0012",
+          "type": "list_items",
+          "content": "4.Cardiac: See HPI",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            326.0,
+            332.0,
+            340.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            669.6,
+            119.52000000000001,
+            674.64
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "cardiology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0013",
+          "type": "list_items",
+          "content": "5. Vascular: No history of claudication, gangrene, deep vein thrombosis, aneurysm. Has chronic venous stasis skin changes for many years",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            346.0,
+            709.0,
+            374.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            657.36,
+            255.24,
+            667.44
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "vascular",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0014",
+          "type": "list_items",
+          "content": "6.G.I.: Admitted to CPMC in 1980 after two days of melena and hematemesis. Upper G.I. series was negative but endoscopy showed evidence of gastritis, presumed to be caused by ibuprofen intake. Her hematocrit was 24% on admission and she received four units of packed cells. Colonoscopy revealed multiple diverticuli. Since then her stool has been brown and consistently hematest negative when checked in clinic. Several months after this admission she was noted to be mildly jaundiced and had elevated liver enzymes, at this time it was realized that she contracted hepatitis B from the transfusions. Since then she has not had any evidence of chronic hepatitis.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            380.0,
+            709.0,
+            523.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            603.72,
+            255.24,
+            655.2
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "gastroenterology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0015",
+          "type": "list_items",
+          "content": "7.GU: History of several episodes of cystitis, most recently E Coli 3/1/90, treated with Bactrim. Reports dysuria in the 3 days prior to hospitalization. No fever, no hematuria. No history of sexually transmitted disease. Menarche was at 15, menstrual cycles were regular interval and duration, menopause occurred at 54. Seven pregnancies with 5 normal births and 2 miscarriages.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            529.0,
+            709.0,
+            612.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            571.68,
+            255.24,
+            601.56
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "genitourinary",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0016",
+          "type": "list_items",
+          "content": "8. Neuromuscular: Osteoarthritis of the both knees, shoulder, and hips for more than 20 years. Took ibruprofen until 1980, has taken acetaminophen since her GI bleed, with good relief of intermittent arthritis pain. There is no history of seizures, stroke, syncope, memory changes.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            618.0,
+            709.0,
+            680.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            547.2,
+            255.24,
+            569.52
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "musculoskeletal",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0017",
+          "type": "list_items",
+          "content": "9. Emotional: Denies history of depression, anxiety.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            686.0,
+            509.0,
+            700.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            540.0,
+            183.24,
+            545.04
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "psychiatry",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0018",
+          "type": "list_items",
+          "content": "10. Hematological: no known blood or clotting disorders.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            703.0,
+            560.0,
+            717.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            533.88,
+            201.6,
+            538.92
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "hematology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0019",
+          "type": "list_items",
+          "content": "11. Rheumatic: no history of gout, rheumatic arthritis, or lupus.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            720.0,
+            605.0,
+            734.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            527.76,
+            217.8,
+            532.8
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "rheumatology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0020",
+          "type": "list_items",
+          "content": "12. Endocrine: no know diabetes or thyroid disease.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            737.0,
+            570.0,
+            751.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            521.64,
+            205.20000000000002,
+            526.6800000000001
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "endocrinology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0021",
+          "type": "list_items",
+          "content": "13. Dermatological: no new rashes or pruitis.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            754.0,
+            520.0,
+            768.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            515.52,
+            187.20000000000002,
+            520.56
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "dermatology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0022",
+          "type": "section_header",
+          "content": "Personal History",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            790.0,
+            290.0,
+            804.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            502.56,
+            104.4,
+            507.59999999999997
+          ],
+          "needs_review": false
+        },
+        {
+          "element_id": "E_0023",
+          "type": "list_items",
+          "content": "1. Mrs. Johnson is widowed and lives with one of her daughters.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            810.0,
+            630.0,
+            824.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            495.36,
+            226.8,
+            500.4
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "social_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0024",
+          "type": "list_items",
+          "content": "2. Occupation: she worked as a nurse to age 67, is now retired.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            827.0,
+            640.0,
+            841.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            489.24,
+            230.4,
+            494.28
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "social_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0025",
+          "type": "list_items",
+          "content": "3. Habits: No cigarettes or alcohol. Does not follow any special diet.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            844.0,
+            650.0,
+            858.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            483.12,
+            234.0,
+            488.15999999999997
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "social_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0026",
+          "type": "list_items",
+          "content": "4. Born in South Carolina, came to New York in 1931. she has never been outside of the United States.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            861.0,
+            709.0,
+            875.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            477.0,
+            255.24,
+            482.03999999999996
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "social_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0027",
+          "type": "list_items",
+          "content": "5. Present environment: lives in a one bedroom apartment on the third floor of a building with and elevator. She has a home helper who comes 3 hours a day.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            878.0,
+            709.0,
+            905.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            466.2,
+            255.24,
+            475.92
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "social_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0028",
+          "type": "list_items",
+          "content": "6. Financial: Receives social security and Medicare, and is supported by her children.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            912.0,
+            709.0,
+            926.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            458.64,
+            255.24,
+            463.68
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "social_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0029",
+          "type": "list_items",
+          "content": "7. Psychosocial: The patient is generally an alert and active woman despite her arthritic symptoms. She understands that she is having a \"heart attack\" at the present time and she appears to be extremely anxious.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            933.0,
+            709.0,
+            960.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            446.4,
+            255.24,
+            456.12
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "psychiatry",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0030",
+          "type": "section_header",
+          "content": "Family History",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            979.0,
+            290.0,
+            993.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            434.52,
+            104.4,
+            439.56
+          ],
+          "needs_review": false
+        },
+        {
+          "element_id": "E_0031",
+          "type": "clinical_paragraph",
+          "content": "The patient was brought up by an aunt; her mother died at the age of 36 from kidney failure; her father died at the age of 41 in a car accident. Her husband died 9 years ago of seizures and pneumonia. She had one sister who died in childbirth.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            999.0,
+            709.0,
+            1041.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            417.24,
+            255.24,
+            432.36
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "family_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        }
+      ],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 27.240153789520264,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:04:38.483946"
+      },
+      "error": null
+    },
+    {
+      "page_number": 3,
+      "elements": [
+        {
+          "element_id": "E_0001",
+          "type": "clinical_paragraph",
+          "content": "She has 4 daughters (ages 60, 65, 56, 48) who are all healthy, and had a son who died at the age of 2 from pneumonia. She has 12 grandchildren, 6 great grandchildren and 4 great, great grandchildren. There is no known family history of hypertension, diabetes, or cancer.",
+          "confidence": {
+            "overall": 0.978,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            142.0,
+            92.0,
+            847.0,
+            133.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            744.12,
+            304.92,
+            758.88
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "historical",
+            "clinical_domain": "social_history",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0002",
+          "type": "section_header",
+          "content": "Physical Exam",
+          "confidence": {
+            "overall": 0.99,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.99
+          },
+          "bbox_pixel": [
+            142.0,
+            163.0,
+            272.0,
+            177.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            728.28,
+            97.92,
+            733.32
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0003",
+          "type": "list_items",
+          "content": "1. Vital Signs: temperature 100.2 Pulse 96 regular with occasional extra beat, respiration 24, blood pressure 180/100 lying down",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            190.0,
+            847.0,
+            217.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            713.88,
+            304.92,
+            723.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "vitals",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0004",
+          "type": "list_items",
+          "content": "2. Generally a well developed, slightly obese, elderly black woman sitting up in bed, breathing with slight difficulty. She complains of resolving chest pain.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            224.0,
+            847.0,
+            251.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            701.64,
+            304.92,
+            711.36
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0005",
+          "type": "list_items",
+          "content": "3. HEENT:",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            258.0,
+            220.0,
+            271.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            694.44,
+            79.2,
+            699.12
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0006",
+          "type": "clinical_paragraph",
+          "content": "Eyes: extraocular motions full, gross visual fields full to confrontation, conjunctiva clear. sclerae non-icteric, pulpils equal round and reactive to light and accomodation, fundi not well visualized due to possible presence of cataracts.",
+          "confidence": {
+            "overall": 0.966,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            206.0,
+            278.0,
+            847.0,
+            319.0
+          ],
+          "bbox_pdf": [
+            74.16,
+            677.16,
+            304.92,
+            691.92
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0007",
+          "type": "clinical_paragraph",
+          "content": "Ears: Hearing very poor bilaterally. Tympanic membrane landmarks well visualized.",
+          "confidence": {
+            "overall": 0.966,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            206.0,
+            326.0,
+            847.0,
+            353.0
+          ],
+          "bbox_pdf": [
+            74.16,
+            664.92,
+            304.92,
+            674.64
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0008",
+          "type": "clinical_paragraph",
+          "content": "Nose: No discharge, no obstruction, septum not deviated.",
+          "confidence": {
+            "overall": 0.966,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            206.0,
+            360.0,
+            605.0,
+            373.0
+          ],
+          "bbox_pdf": [
+            74.16,
+            657.72,
+            217.8,
+            662.4
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0009",
+          "type": "clinical_paragraph",
+          "content": "Mouth: Complete set of upper and lower dentures. Pharynx not injected, no exudates. Uvula moves up in midline. Normal gag reflex.",
+          "confidence": {
+            "overall": 0.966,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            206.0,
+            380.0,
+            847.0,
+            407.0
+          ],
+          "bbox_pdf": [
+            74.16,
+            645.48,
+            304.92,
+            655.2
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0010",
+          "type": "list_items",
+          "content": "4. Neck: jugular venous pressure 8cm, thyroid not palpable. No masses.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            414.0,
+            709.0,
+            427.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            638.28,
+            255.24,
+            642.96
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0011",
+          "type": "list_items",
+          "content": "5. Nodes: No adenopathy",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            444.0,
+            340.0,
+            457.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            627.48,
+            122.4,
+            632.16
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0012",
+          "type": "list_items",
+          "content": "6. Chest:",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            464.0,
+            210.0,
+            477.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            620.28,
+            75.60000000000001,
+            624.96
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0013",
+          "type": "clinical_paragraph",
+          "content": "Breasts: atrophic and symmetric, nontender, no masses or discharges. Lungs: bibasilar rales. No dullness to percussion. Diaphragm moves well with respiration. No rhonchi, wheezes or rubs.",
+          "confidence": {
+            "overall": 0.966,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            206.0,
+            484.0,
+            847.0,
+            525.0
+          ],
+          "bbox_pdf": [
+            74.16,
+            603.0,
+            304.92,
+            617.76
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0014",
+          "type": "list_items",
+          "content": "7. Heart: PMI at the 6th ICS, 1 cm lateral to MCL. No heaves or thrills. Regular rhythm with occasional extra beat. Normal S1, S2 narrowly split; positive S4 gallop. A grade II/VI systolic ejection murmur is heard at the left upper sternal border without radiation. Pulses are notable for sharp carotid upstrokes.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            532.0,
+            847.0,
+            600.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            576.0,
+            304.92,
+            600.48
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0015",
+          "type": "general_table",
+          "content": "Pulses: Carotid brachial radial femoral DP PT\nR 2+ 2+ 2+ 1+ 0\nL 2+ 2+ 2+ 1+ 0",
+          "confidence": {
+            "overall": 0.9520000000000001,
+            "extraction": 0.98,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            206.0,
+            607.0,
+            710.0,
+            648.0
+          ],
+          "bbox_pdf": [
+            74.16,
+            558.72,
+            255.60000000000002,
+            573.48
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0016",
+          "type": "list_items",
+          "content": "8. Spine: mild kyphosis, mobile, nontender, no costovertebral tenderness",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            655.0,
+            710.0,
+            668.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            551.52,
+            255.60000000000002,
+            556.2
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0017",
+          "type": "list_items",
+          "content": "9. Abdomen: soft, flat, bowel sounds present, no bruits. Nontender to palpation. Liver edge, spleen, kidney not felt. No masses. Liver span 10cm by percussion.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            675.0,
+            847.0,
+            702.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            539.28,
+            304.92,
+            549.0
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0018",
+          "type": "list_items",
+          "content": "10. Extremities: skin warm and smooth except for chronic venous stasis changes in both legs. 1+ edema to the knees, non-pitting and very tender to palpation. No clubbing nor cyanosis.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            709.0,
+            847.0,
+            750.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            522.0,
+            304.92,
+            536.76
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0019",
+          "type": "list_items",
+          "content": "11.Neurological: Awake, alert and fully oriented. Cranial nerves III-XII intact except for decreased hearing. Motor: Strength not tested, patient moves all extremities. Sensory: Grossly normal to touch and pin prick. Cerebellar: no tremor nor dysmetria. Reflexes symmetrical 1+ through out, no Babinski sign.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            757.0,
+            847.0,
+            825.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            495.0,
+            304.92,
+            519.48
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0020",
+          "type": "list_items",
+          "content": "12. Pelvic: deferred until patient more stable.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            832.0,
+            490.0,
+            845.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            487.8,
+            176.4,
+            492.47999999999996
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "planned",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0021",
+          "type": "list_items",
+          "content": "13. Rectal: Prominent external hemorrhoids. No masses felt. Stool brown, negative for blood",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            142.0,
+            852.0,
+            847.0,
+            879.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            475.56,
+            304.92,
+            485.28
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "physical_exam",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0022",
+          "type": "section_header",
+          "content": "Labs",
+          "confidence": {
+            "overall": 0.99,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.99
+          },
+          "bbox_pixel": [
+            142.0,
+            909.0,
+            187.0,
+            923.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            459.71999999999997,
+            67.32000000000001,
+            464.76
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "laboratory",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0023",
+          "type": "lab_results_table",
+          "content": "WBC 12,400 Hgb 12.0 Hct 38.0 MCV 80.0 Plts 218,000 Retic 1.3 Diff Na 143\nK4.1 C1 103 CO229 Glu 102 BUN 9 Creat 0.8; T bili 0.5 Dbili 0.1\nAlk Phos 155 AST 55 ALT 26 LDH 274 CPK 480, MB fraction positive,\nTroponin 25\nU/A Sp Gr 1.008 pH 6.5 2+ Alb many WBC many RBC 3+ bact\nABG pH 7.46 pCO234 PO284 O2Sat 98% (room air)\nEKG NSR 96, ST elevations I, AVL, V4-V6; rare unifocal VPC's\nCXR portable AP, probable cardiomegaly, mild PVC",
+          "confidence": {
+            "overall": 0.9520000000000001,
+            "extraction": 0.98,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            142.0,
+            936.0,
+            847.0,
+            1040.0
+          ],
+          "bbox_pdf": [
+            51.120000000000005,
+            417.59999999999997,
+            304.92,
+            455.03999999999996
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "laboratory",
+            "cross_references": [],
+            "requires_validation": true
+          }
+        }
+      ],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 23.813454151153564,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:05:02.310873"
+      },
+      "error": null
+    },
+    {
+      "page_number": 4,
+      "elements": [
+        {
+          "element_id": "E_0001",
+          "type": "clinical_paragraph",
+          "content": "(*Note: In the Physical Diagnosis Course the labs will not generally be a part of the write-ups, as the chart is not usually available to the students)",
+          "confidence": {
+            "overall": 0.9560000000000001,
+            "extraction": 0.99,
+            "classification": 0.95,
+            "clinical_context": 0.9
+          },
+          "bbox_pixel": [
+            100.0,
+            107.0,
+            727.0,
+            140.0
+          ],
+          "bbox_pdf": [
+            36.0,
+            741.6,
+            261.72,
+            753.48
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "general_clinical",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0002",
+          "type": "section_header",
+          "content": "Formulation",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            178.0,
+            250.0,
+            191.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            723.24,
+            90.0,
+            727.92
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "general_clinical",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0003",
+          "type": "clinical_paragraph",
+          "content": "This 83 year old woman with a history of congestive heart failure, and coronary artery disease risk factors of hypertension and post-menopausal state presents with substernal chest pain. On exam she was found to be in sinus tachycardia, with no JVD, but there are bibasilar rales and pedal edema, suggestive of some degree of congestive heart failure. There were EKG changes indicate an acute anterolateral myocardial infarction, and the labs shows elevation of CPK and troponin.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            147.0,
+            203.0,
+            688.0,
+            299.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            684.36,
+            247.68,
+            718.92
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "cardiology",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0004",
+          "type": "section_header",
+          "content": "Impression",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            329.0,
+            250.0,
+            342.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            668.88,
+            90.0,
+            673.56
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "general_clinical",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0005",
+          "type": "list_items",
+          "content": "1. Acute antelorateral myocardioal infarction, complicated by mild left ventricular dysfunction. Patient has received thrombolysis therapy.2. Hypertension3. Dysuria - 3+ bacteria in urine with pyuria",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            147.0,
+            354.0,
+            688.0,
+            410.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            644.4,
+            247.68,
+            664.56
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "diagnostics",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0006",
+          "type": "section_header",
+          "content": "Plan",
+          "confidence": {
+            "overall": 0.982,
+            "extraction": 0.99,
+            "classification": 0.99,
+            "clinical_context": 0.95
+          },
+          "bbox_pixel": [
+            147.0,
+            440.0,
+            190.0,
+            453.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            628.92,
+            68.4,
+            633.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "current",
+            "clinical_domain": "general_clinical",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        },
+        {
+          "element_id": "E_0007",
+          "type": "list_items",
+          "content": "1.Continue aspirin, heparin, nitrates, beta blockers, nasal oxygen. Follow serial physical exams, EKGs, and labs.2. Obtain echocardiogram to assess post MI heart function and murmurs heard on cardiac exam. If LV ejection fraction is preserved, to start early beta blocker therapy.3. Continue ACE inhibitor therapy, and monitor blood pressure.4. Dysuria and pyuria- probable recurrent cystitis, as she is afebrile and without costovertebral tenderness. Start Bactrim treatment for presumed uncomplicated urinary tract infection and follow up on urine culture result.",
+          "confidence": {
+            "overall": 0.984,
+            "extraction": 0.99,
+            "classification": 0.98,
+            "clinical_context": 0.98
+          },
+          "bbox_pixel": [
+            147.0,
+            465.0,
+            840.0,
+            559.0
+          ],
+          "bbox_pdf": [
+            52.92,
+            590.76,
+            302.40000000000003,
+            624.6
+          ],
+          "needs_review": false,
+          "clinical_metadata": {
+            "temporal_qualifier": "planned",
+            "clinical_domain": "treatment_plan",
+            "cross_references": [],
+            "requires_validation": false
+          }
+        }
+      ],
+      "page_info": {
+        "width_pdf": 612.0,
+        "height_pdf": 792.0,
+        "width_px": 1700,
+        "height_px": 2200,
+        "dpi": 200
+      },
+      "processing_metadata": {
+        "model_name": "gemini-2.5-flash",
+        "processing_time_seconds": 15.960012912750244,
+        "api_cost_usd": 0.0,
+        "timestamp": "2025-11-16T05:05:18.276735"
+      },
+      "error": null
+    }
+  ],
+  "processing_stats": {
+    "total_pages": 4,
+    "processed_pages": 4,
+    "failed_pages": [],
+    "total_elements": 61,
+    "total_cost_usd": 0.008230000000000001,
+    "processing_time_seconds": 96.68913316726685,
+    "start_time": "2025-11-15T21:03:41.588932",
+    "end_time": "2025-11-15T21:05:18.278065"
+  }
+}

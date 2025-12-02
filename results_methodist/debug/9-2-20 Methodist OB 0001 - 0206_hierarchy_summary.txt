@@ -1,0 +1,301 @@
+Hierarchical Structure Summary
+================================================================================
+Document ID: 9-2-20 Methodist OB 0001 - 0206
+Total Documents: 1
+Total Pages: 20
+Categories: Miscellaneous
+
+================================================================================
+
+Document: Unlabeled
+  Category: Miscellaneous
+  Pages: 0-19 (count: 20)
+  Sections: 13
+    [L2] 20200908082501228 RO1_52798189.pdi Please click on the link to see the imag
+        Page: 0
+        Children: 0 elements
+    [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 -inancial Number: 52798189
+        Page: 0
+        Children: 2 elements
+    [L2] ina Sh ASE eet EE IS SO SSRI Te Eartha 8 8 CHEE Se
+        Page: 1
+        Children: 4 elements
+    [L2] atient Name: SPEARMAN, IJAHLUN (iedical Record Number: 41878567 ‘Inancial Number: 52798189
+        Page: 3
+        Children: 2 elements
+    [L2] [Allergy Type: Allergy; Recorded On Behalf Of: Schindler,Margaret; Reaction Status: Active; Reviewed Date/Time: 4/27/2021 02:53 CDT; _ |Reviewed By: Busby ,Parker H; Category Drug;
+        Page: 4
+        Children: 0 elements
+    [L2] Patient Name: SPEARMAN, IJAHLUN Jiedical Record Number: 41878567 -—Inancial Number: 52798189
+        Page: 4
+        Children: 2 elements
+    [L2] ED Meds Validation CPOE form 09/02/20 22:31 CDT Performed by Shea , Jennifer , RN Entered on 09/02/20 22:31 CDT
+        Page: 5
+        Children: 0 elements
+    [L2] ED CPOE Meds Validation
+        Page: 5
+        Children: 0 elements
+    [L1] DOCUMENT NAME: SERVICE DATE/TIME: RESULT STATUS: PERFORMED INFORMATION: SIGNED INFORMATION:
+        Page: 5
+        Children: 0 elements
+      [L2] Interpretive Services
+          Page: 5
+          Children: 0 elements
+      [L2] BEEuUws i ~ wut Ye OST SEZ ew EOS ee Patient communication barriers-ST : Special Needs: Language: English Hearing : Normal Caregiver hearing : Caregiver not present Preferred language : English Caregiver preferred language : No primary caregiver ide!
+          Page: 5
+          Children: 2 elements
+      [L2] ED Triage
+          Page: 5
+          Children: 2 elements
+      [L2] 38654
+          Page: 5
+          Children: 1 elements
+      [L2] ED Triage Form Entered On: 09/02/2020 15:51 CDT Performed On: 09/02/2020 15:45 CDT by Hill , Stacy , RN
+          Page: 5
+          Children: 0 elements
+      [L2] Patient Name: SPEARMAN, IJAHLUN Jiedical Record Number: 41878567 -inancial Number: 52798189
+          Page: 5
+          Children: 0 elements
+      [L2] =D Triage Form -Text /2/2020 15:45 CDT \uth (Verified) fill ,Stacy ,RN (9/2/2020 15:45 CDT) dill ,Stacy ,RN (9/2/2020 15:45 CDT)
+          Page: 5
+          Children: 4 elements
+      [L2] SIRS Screen: Heart rate (pulse) > 90, Resp rate > 20 SIRS screen peds : N/A for age SIRS screen negative peds : N/A for age —
+          Page: 6
+          Children: 0 elements
+      [L2] SOB - Shortness of breath
+          Page: 6
+          Children: 0 elements
+      [L2] 38654
+          Page: 6
+          Children: 0 elements
+      [L2] Estimated Onset Date: Unspecified ; Created By: Schindler, Margaret; Reaction Status: Active ; Category: Drug ; Substance: NKA; Type: Allergy ; Updated By: Schindler, Margaret; Reviewed Date: 09/02/2020 15:51 CDT
+          Page: 6
+          Children: 0 elements
+      [L2] Date: 9/2/2020 ; Diagnosis Type: Reason For Visit ; Confirmation: Confirmed ; Clinical Dx: Cough ; Classification: Medical ; Clinical Service: _ Non- -Specified ; Code: PNED ;
+          Page: 6
+          Children: 0 elements
+      [L2] Probability: 0 ; Diagnosis Code: A00698CA-FOE6-4C64-94B5-685A7BCODE1E Date: 9/2/2020 ; Diagnosis Type: Reason For Visit ; Confirmation: Confirmed ; Clinical Dx: SOB - Shortness of breath ; Classification: Medical ; Clinical Service: Non-Specified ; Code: PNED ; Probability: 0 ; Diagnosis Code: 476A4569-4A67-41B5-B585-DO0EF4BB837E
+          Page: 6
+          Children: 0 elements
+      [L2] Patient Name: SPEARMAN, IJAHLUN (Medical Record Number: 41878567 ‘Inancial Number: 52798189
+          Page: 6
+          Children: 0 elements
+    [L1] Hill , Stacy , RN - 09/02/2020 15:45 CDT (As Of: 9/2/2020 3:51:32 PM CDT)
+        Page: 6
+        Children: 0 elements
+    [L1] (As Of: 9/2/2020 3:51:32 PM CDT)
+        Page: 6
+        Children: 1 elements
+      [L2] SZ SA Ew En ee eS ee eye omen” + Suicide thoughts currently : No Suicide attempt (past 6 months) :
+          Page: 7
+          Children: 0 elements
+      [L2] Pain Scale
+          Page: 7
+          Children: 1 elements
+      [L2] Pain Rating (Faces)
+          Page: 7
+          Children: 0 elements
+      [L2] wa Pain- primary smart template : Date/Time Score Loce No qualifying documentationNo qualifying documentati« Pain intensity (Rating/Faces): 7 Primary pain location: Chest Primary pain pattern : Constant Primary pain onset : Frequent Primary pain character : Aching Primary pain parameters : Anxiety, Muscle tension Primary pain behavioral cues : Grimacing Primary pain interventions : Diversion
+          Page: 7
+          Children: 0 elements
+      [L2] Respiratory Triage
+          Page: 7
+          Children: 1 elements
+      [L2] Breath Sounds Assessment Grid Right upper lobe : Clear Right middle lobe : Clear Right lower lobe : Clear Left upper lobe : Clear Left lower lobe : Clear
+          Page: 7
+          Children: 3 elements
+      [L2] Severe sepsis criteria: No criteria met at this time Severe sepsis criteria met: No Sepsis ST: NO DATA FOUND
+          Page: 7
+          Children: 0 elements
+      [L2] DCP GENERIC CODE Visit Reason: SOB Triage Date/Time : 9/2/2020 15:51 CDT
+          Page: 7
+          Children: 0 elements
+      [L2] 38654
+          Page: 7
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 -Iinancial Number: 52798189
+          Page: 7
+          Children: 5 elements
+      [L2] Tracking Acuity : OB-2-Semi-emergent Tracking Group : OBranch ED
+          Page: 8
+          Children: 0 elements
+      [L2] 38654
+          Page: 8
+          Children: 0 elements
+      [L2] Patient Name: SPEARMAN, IJAHLUN Medical Record Number: 41878567 Financial Number: 52798189
+          Page: 8
+          Children: 3 elements
+      [L2] oe EO ee Nee el el et 09/02/20 22: 23 CDT Performed by Shea , Jennifer , RN Entered on 09/02/20 22:25 CDT
+          Page: 9
+          Children: 0 elements
+      [L2] SIRS Screen
+          Page: 9
+          Children: 0 elements
+      [L2] SIRS screen peds SIRS screen negative peds
+          Page: 9
+          Children: 0 elements
+      [L2] ED Assessment Review
+          Page: 9
+          Children: 0 elements
+      [L2] ED Neurological fast tract review ED Respiratory fast tract review ED Cardiovascular fast tract review ED Skin fast tract review ED Gl fast tract review ED GU fast tract review Assessment Review focused EENT ED Musculoskeletal fast tract reviev lsolation/precautions? Pracecijra tilcar critarigq mat?
+          Page: 9
+          Children: 0 elements
+      [L2] Temp Heart Rate Resp Rate BP Sy 37.1 09/02 22:20 120 09/02 22:04 40 09/02 22:20173 09/02 22:20 37.3 09/02 22:04 118 09/02 21:30 60 09/02 22:04177 09/02 22:04 37.3 09/02 21:30 1380 09/02 18:45 40 09/02 21:30 160 09/02 21:30 122 09/02 17:46 32 09/02 20:09 181 09/02 20:09 118 09/02 22:20 34 09/02 18:45 161 09/02 18:45 128 09/02 20:09 32 09/02 17:46 161 09/02 17:46 WBC Band Neutrophils Glucose 4.0 09/02 18:55 97 09/02 18:55 Heart rate (pulse) > 90, Resp rate > 20 N/A for age
+          Page: 9
+          Children: 0 elements
+      [L2] Patient Name: SPEARMAN, IJAHLUN Medical Record Number: 41878567 Financial Number: 52798189
+          Page: 9
+          Children: 1 elements
+      [L2] epsis screening result Positive sepsis screen epsis Vitals/Resp/Cardiac Labs - ST BP Sys MAP O2 Sat Lactic Acic 173 09/02 22:20 134 09/02 22:20 99 09/02 22:04 2.7 09/02 21:00 177 09/02 22:04 138 09/02 22:04 100 09/02 21:30 4.1 09/02 17:25 160 09/02 21:30 120 09/02 21:30 100 09/02 20:09 181 09/02 20:09 139 09/02 20:09 100 09/02 18:45 161 09/02 18:45 125 09/02 18:45 100 09/02 17:46 161 09/02 17:46 125 09/02 17:46 127 09/02 15:45 epsis Renal/Hepatic/Heme Labs - ST Platelet Creatinine Total Bilirul INR PTT 370 09/02 18:55 1.53 09/02 18:55 0.3 09/02 18:55 evere sepsis criteria Lactate > 2 evere sepsis criteria met Yes, but previously documented on this visit epsis ST SEVERE SEPSIS Yes, but previously documented on this visit 09/02/2020 19:19:49 RIRAIA Ann antrlhaintin annrn 4
+          Page: 10
+          Children: 0 elements
+      [L2] Severe sepsis criteria Severe sepsis criteria met
+          Page: 10
+          Children: 0 elements
+      [L2] Sepsis ST
+          Page: 10
+          Children: 0 elements
+      [L2] Sepsis and antibiotic score
+          Page: 10
+          Children: 0 elements
+      [L2] Neurological / Psychosocial
+          Page: 10
+          Children: 1 elements
+      [L2] 38654
+          Page: 10
+          Children: 0 elements
+      [L2] SEVERE SEPSIS Yes, but previously documented o1 this visit 09/02/2020 19:19:49
+          Page: 10
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 =inancial Number: 52798189
+          Page: 10
+          Children: 2 elements
+      [L2] Oxygen delivery Oxygen liter amount Respiratory pattern Respirations Respiratory effort Retractions Thoracic assessment Tracheal assessment Breath Sounds Assessment Grid Right upper lobe: Clear Right middle lobe: Diminished Nasal 4AL/ Regt Laborer Good None No Tra
+          Page: 11
+          Children: 0 elements
+      [L2] 38654
+          Page: 11
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 =inancial Number: 52798189
+          Page: 11
+          Children: 2 elements
+      [L2] wea EOE ee Radial pulse, left: Normal Radial pulse, right: Normal Brachial pulse, left: Normal Brachial pulse, right: Normal Dorsalis pedis pulse, left: Normal Dorsalis pedis pulse, right: Norme
+          Page: 12
+          Children: 1 elements
+      [L2] ED Isolation/Precations
+          Page: 12
+          Children: 0 elements
+    [L1] DOCUMENT NAME: SERVICE DATE/TIME: RESULT STATUS: PERFORMED INFORMATION: SIGNED INFORMATION:
+        Page: 12
+        Children: 0 elements
+      [L2] LLY MAQOOUOSOINUIIL YT UITTt 09/02/20 18:45 CDT Performed by Watkins , Sherri R, RN Entered on 09/02/20 19:19 CDT
+          Page: 12
+          Children: 0 elements
+      [L2] 38654
+          Page: 12
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 -inancial Number: 52798189
+          Page: 12
+          Children: 2 elements
+      [L2] SIRS screen peds SIRS screen negative peds
+          Page: 13
+          Children: 0 elements
+      [L2] ED Assessment Review
+          Page: 13
+          Children: 0 elements
+      [L2] =D Neurological fast tract review Mee -D Respiratory fast tract review Assi -D Cardiovascular fast tract review As -D Skin fast tract review Meets | =D GI fast tract review Meets c -D GU fast tract review Meets Assessment Review focused EENT -D Musculoskeletal fast tract review Mi solation/precautions? Yes ~ressure ulcer criteria met? No
+          Page: 13
+          Children: 0 elements
+      [L2] Safety interventions
+          Page: 13
+          Children: 1 elements
+      [L2] Methodist/LeBonheur ID band on, Be in low position, Brakes locked, Call device/personal items within reach, Airway kit readily available, Bag/Mask/Suction at bedside, Checked for needs, Cardiopulmonary monitor w/alarms on/limits set, Oximeter with
+          Page: 13
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 =inancial Number: 52798189
+          Page: 13
+          Children: 2 elements
+      [L2] Severe sepsis criteria Severe sepsis criteria met
+          Page: 14
+          Children: 0 elements
+      [L2] Sepsis ST
+          Page: 14
+          Children: 0 elements
+      [L2] Sepsis and antibiotic score
+          Page: 14
+          Children: 0 elements
+      [L2] 38654
+          Page: 14
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 =inancial Number: 52798189
+          Page: 14
+          Children: 4 elements
+    [L1] DOCUMENT NAME: SERVICE DATE/TIME: RESULT STATUS: PERFORMED INFORMATION: SIGNED INFORMATION:
+        Page: 15
+        Children: 0 elements
+      [L2] CW AsoCoolIchit FOMeh 09/02/20 16:45 CDT Performed by Watkins , Sherri R, RN Entered on 09/02/20 17:04 CDT
+          Page: 15
+          Children: 0 elements
+      [L2] 38654
+          Page: 15
+          Children: 0 elements
+      [L2] Droplet Precautions
+          Page: 15
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 -inancial Number: 52798189
+          Page: 15
+          Children: 2 elements
+      [L2] ED Assessment Review
+          Page: 16
+          Children: 0 elements
+      [L2] Activity status Activity assistance Range of Motion Description
+          Page: 16
+          Children: 1 elements
+      [L2] Vietnodist/Lebonneur ID band on, bed in low position, Brakes locked, Call device/personal items within reach Up ad lib
+          Page: 16
+          Children: 0 elements
+      [L2] Independent Full motion, active
+          Page: 16
+          Children: 0 elements
+      [L2] Positive sepsis screen
+          Page: 16
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 =inancial Number: 52798189
+          Page: 16
+          Children: 1 elements
+      [L2] CVYolo ViIldalo/MGoVp/Udalulay Lavo ~ oO! Dr VYo WIAT UWe odal Lali FAUIU 178 09/02 15:45 127 09/02 15:45 98 09/02 15:45 epsis Renal/Hepatic/Heme Labs - ST Platelet Creatinine Total Bilirubit IAKID DTT
+          Page: 17
+          Children: 0 elements
+      [L2] Severe sepsis criteria Severe sepsis criteria met Sepsis ST
+          Page: 17
+          Children: 0 elements
+      [L2] Sepsis and antibiotic score
+          Page: 17
+          Children: 0 elements
+      [L2] Respiratory
+          Page: 17
+          Children: 1 elements
+      [L2] Patient Name: SPEARMAN, IJAHLUN Medical Record Number: 41878567 Financial Number: 52798189
+          Page: 17
+          Children: 2 elements
+      [L2] 38654
+          Page: 18
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Viedical Record Number: 41878567 -inancial Number: 52798189
+          Page: 18
+          Children: 2 elements
+      [L2] ED Procedures and Treatment Form 3 09/02/20 18:05 CDT Performed by Watkins , Sherri R, RN Entered on 09/02/20 18:07 CDT
+          Page: 19
+          Children: 0 elements
+      [L2] Procedures at Bedside
+          Page: 19
+          Children: 0 elements
+      [L2] Procedure type done
+          Page: 19
+          Children: 0 elements
+      [L2] -atient Name: SPEARMAN, IJAHLUN Jiedical Record Number: 41878567 -inancial Number: 52798189
+          Page: 19
+          Children: 0 elements
+
+--------------------------------------------------------------------------------
+

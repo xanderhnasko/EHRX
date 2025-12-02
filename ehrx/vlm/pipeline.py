@@ -16,8 +16,10 @@ from PIL import Image
 
 from ehrx.vlm.client import VLMClient
 from ehrx.vlm.config import VLMConfig
-from ehrx.vlm.models import VLMRequest, VLMResponse, ElementDetection, DocumentContext
+from ehrx.vlm.models import VLMRequest, VLMResponse, ElementDetection, DocumentContext, ElementType, BoundingBox, ConfidenceScores
 from ehrx.pdf.pager import PDFRasterizer, PageInfo, CoordinateMapper
+from vertexai.generative_models import GenerativeModel, GenerationConfig
+import vertexai
 
 
 logger = logging.getLogger(__name__)
@@ -210,6 +212,15 @@ class DocumentPipeline:
             "processing_stats": stats.to_dict()
         }
 
+        # Generate document summary after all pages are processed
+        summary_element = self._generate_document_summary(document)
+        if summary_element:
+            # Add summary to the document structure
+            document["document_summary"] = summary_element
+            self.logger.info("Document summary added to output")
+        else:
+            self.logger.warning("Failed to generate document summary, continuing without it")
+
         # Save final output
         output_path = output_dir / f"{document_id}_full.json"
         with open(output_path, 'w') as f:
@@ -395,3 +406,180 @@ class DocumentPipeline:
         pages = [p for p in pages if 0 <= p < total_pages]
 
         return sorted(set(pages))  # Remove duplicates and sort
+
+    def _generate_document_summary(
+        self,
+        document: Dict[str, Any]
+    ) -> Optional[ElementDetection]:
+        """
+        Generate a document-level summary after all pages are processed.
+
+        This summary includes:
+        - Patient demographics
+        - Document date range
+        - Key clinical findings across all categories (meds, labs, procedures)
+
+        Args:
+            document: Complete document structure with all pages processed
+
+        Returns:
+            ElementDetection with document_summary type, or None if generation fails
+        """
+        self.logger.info("Generating document summary...")
+
+        try:
+            # Extract all elements from the document
+            all_elements = []
+            for page in document.get("pages", []):
+                all_elements.extend(page.get("elements", []))
+
+            # Build a condensed view of the document for summary generation
+            condensed_data = {
+                "total_pages": document.get("total_pages", 0),
+                "element_types": {},
+                "key_content": []
+            }
+
+            # Group elements by type and collect key content
+            for elem in all_elements:
+                elem_type = elem.get("type", "uncategorized")
+                if elem_type not in condensed_data["element_types"]:
+                    condensed_data["element_types"][elem_type] = 0
+                condensed_data["element_types"][elem_type] += 1
+
+                # Collect key content from important element types
+                if elem_type in [
+                    "patient_demographics", "medication_table", "lab_results_table",
+                    "vital_signs_table", "problem_list", "assessment_plan",
+                    "clinical_paragraph", "section_header"
+                ]:
+                    content = elem.get("content", "")[:500]  # Limit content length
+                    if content:
+                        condensed_data["key_content"].append({
+                            "type": elem_type,
+                            "content": content,
+                            "page": elem.get("page_number", 0)
+                        })
+
+            # Limit key_content to most important elements (max 50)
+            condensed_data["key_content"] = condensed_data["key_content"][:50]
+
+            # Create prompt for summary generation
+            prompt = f"""Analyze this electronic health record (EHR) document and generate a comprehensive summary.
+
+DOCUMENT OVERVIEW:
+- Total pages: {condensed_data['total_pages']}
+- Element types found: {json.dumps(condensed_data['element_types'], indent=2)}
+
+KEY CONTENT FROM DOCUMENT:
+{json.dumps(condensed_data['key_content'], indent=2)}
+
+TASK: Generate a comprehensive document summary that includes:
+1. Patient demographics (name, DOB, MRN, etc.) if available
+2. Document date or date range
+3. Most important clinical findings across all categories:
+   - Medications (if any)
+   - Laboratory results (if any)
+   - Procedures (if any)
+   - Vital signs (if any)
+   - Key diagnoses or problems (if any)
+4. Any other critical information
+
+Return your summary as a JSON object with this structure:
+{{
+    "summary": "A clear, bulleted summary of the document. Use bullet points (•) to organize information.",
+    "patient_demographics": "Patient info if available, or 'Not found'",
+    "document_date": "Date or date range, or 'Not specified'",
+    "key_findings": {{
+        "medications": "Summary of meds or 'None documented'",
+        "labs": "Summary of lab results or 'None documented'",
+        "procedures": "Summary of procedures or 'None documented'",
+        "other": "Other important findings"
+    }}
+}}
+
+Keep the summary concise but informative (200-400 words total).
+Only return the JSON object, nothing else."""
+
+            # Initialize Gemini model for summary generation
+            summary_model = GenerativeModel(model_name="gemini-2.5-flash")
+
+            generation_config = GenerationConfig(
+                temperature=0.3,
+                max_output_tokens=2048,
+                response_mime_type="application/json",
+                response_schema={
+                    "type": "object",
+                    "properties": {
+                        "summary": {"type": "string"},
+                        "patient_demographics": {"type": "string"},
+                        "document_date": {"type": "string"},
+                        "key_findings": {
+                            "type": "object",
+                            "properties": {
+                                "medications": {"type": "string"},
+                                "labs": {"type": "string"},
+                                "procedures": {"type": "string"},
+                                "other": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["summary", "patient_demographics", "document_date", "key_findings"]
+                }
+            )
+
+            response = summary_model.generate_content(
+                prompt,
+                generation_config=generation_config
+            )
+
+            # Parse the JSON response
+            summary_data = json.loads(response.text)
+
+            # Format the summary as a readable text
+            formatted_summary = f"""DOCUMENT SUMMARY
+
+{summary_data.get('summary', 'No summary available')}
+
+PATIENT DEMOGRAPHICS:
+{summary_data.get('patient_demographics', 'Not found')}
+
+DOCUMENT DATE:
+{summary_data.get('document_date', 'Not specified')}
+
+KEY FINDINGS:
+
+Medications:
+{summary_data['key_findings'].get('medications', 'None documented')}
+
+Laboratory Results:
+{summary_data['key_findings'].get('labs', 'None documented')}
+
+Procedures:
+{summary_data['key_findings'].get('procedures', 'None documented')}
+
+Other Important Information:
+{summary_data['key_findings'].get('other', 'None documented')}"""
+
+            # Create an ElementDetection object for the summary
+            summary_element = {
+                "element_id": f"{document.get('document_id', 'unknown')}_summary",
+                "type": ElementType.DOCUMENT_SUMMARY.value,
+                "content": formatted_summary,
+                "confidence": {
+                    "overall": 0.95,
+                    "extraction": 0.95,
+                    "classification": 1.0,
+                    "clinical_context": 0.95
+                },
+                "bbox_pixel": None,  # No bbox for document-level summary
+                "bbox_pdf": None,
+                "needs_review": False
+            }
+
+            self.logger.info("Document summary generated successfully")
+            return summary_element
+
+        except Exception as e:
+            self.logger.error(f"Failed to generate document summary: {e}")
+            return None

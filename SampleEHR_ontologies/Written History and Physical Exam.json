@@ -1,0 +1,4260 @@
+{
+  "document_id": "Written History and Physical Exam_1763270111",
+  "source_pdf": "SampleEHR_docs/Written History and Physical Exam.pdf",
+  "processing_stats": {
+    "total_pages": 6,
+    "processed_pages": 6,
+    "failed_pages": [],
+    "total_elements": 65,
+    "total_cost_usd": 0.013623,
+    "processing_time_seconds": 140.52361297607422,
+    "start_time": "2025-11-15T21:15:11.542838",
+    "end_time": "2025-11-15T21:17:32.066452"
+  },
+  "schema": {
+    "document_id": "Written History and Physical Exam_1763270111",
+    "source_pdf": "SampleEHR_docs/Written History and Physical Exam.pdf",
+    "total_pages": 6,
+    "pages": [
+      {
+        "page_number": 1,
+        "elements": [],
+        "page_info": {
+          "width_pdf": 612.0,
+          "height_pdf": 792.0,
+          "width_px": 1700,
+          "height_px": 2200,
+          "dpi": 200
+        },
+        "processing_metadata": {
+          "model_name": "gemini-2.5-flash",
+          "processing_time_seconds": 29.67392897605896,
+          "api_cost_usd": 0.0,
+          "timestamp": "2025-11-16T05:15:41.245586"
+        },
+        "error": null
+      },
+      {
+        "page_number": 2,
+        "elements": [],
+        "page_info": {
+          "width_pdf": 612.0,
+          "height_pdf": 792.0,
+          "width_px": 1700,
+          "height_px": 2200,
+          "dpi": 200
+        },
+        "processing_metadata": {
+          "model_name": "gemini-2.5-flash",
+          "processing_time_seconds": 26.65121102333069,
+          "api_cost_usd": 0.0,
+          "timestamp": "2025-11-16T05:16:07.914276"
+        },
+        "error": null
+      },
+      {
+        "page_number": 3,
+        "elements": [
+          {
+            "element_id": "E_0001",
+            "type": "section_header",
+            "content": "Physical Examination",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              92.0,
+              222.0,
+              106.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              753.84,
+              79.92,
+              758.88
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0002",
+            "type": "subsection_header",
+            "content": "Vital Signs:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              118.0,
+              149.0,
+              131.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              744.84,
+              53.64,
+              749.52
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "vitals",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0003",
+            "type": "clinical_paragraph",
+            "content": "Blood Pressure 168/98, Pulse 90, Respirations 20,\nTemperature 37 degrees.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              136.0,
+              387.0,
+              160.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              734.4,
+              139.32,
+              743.04
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "vitals",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0004",
+            "type": "clinical_paragraph",
+            "content": "Always list vital signs. Check for orthostatic BP/P\nchanges if it is relevant to the patient's complaint",
+            "confidence": {
+              "overall": 0.892,
+              "extraction": 0.98,
+              "classification": 0.9,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              555.0,
+              120.0,
+              899.0,
+              160.0
+            ],
+            "bbox_pdf": [
+              199.8,
+              734.4,
+              323.64,
+              748.8
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "documentation_guideline",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0005",
+            "type": "subsection_header",
+            "content": "General:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              180.0,
+              126.0,
+              193.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              722.52,
+              45.36,
+              727.2
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0006",
+            "type": "clinical_paragraph",
+            "content": "Ms. Rogers appears alert, oriented and cooperative.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              198.0,
+              390.0,
+              211.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              716.04,
+              140.4,
+              720.72
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0007",
+            "type": "clinical_paragraph",
+            "content": "Description may give very important clues as to the\nnature or severity of the patient's problem",
+            "confidence": {
+              "overall": 0.892,
+              "extraction": 0.98,
+              "classification": 0.9,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              555.0,
+              180.0,
+              899.0,
+              220.0
+            ],
+            "bbox_pdf": [
+              199.8,
+              712.8,
+              323.64,
+              727.2
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "documentation_guideline",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0008",
+            "type": "subsection_header",
+            "content": "Skin:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              231.0,
+              100.0,
+              244.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              704.16,
+              36.0,
+              708.84
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0009",
+            "type": "clinical_paragraph",
+            "content": "Normal in appearance, texture, and temperature",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              249.0,
+              390.0,
+              262.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              697.68,
+              140.4,
+              702.36
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0010",
+            "type": "clinical_paragraph",
+            "content": "Comment on all organ systems",
+            "confidence": {
+              "overall": 0.896,
+              "extraction": 0.99,
+              "classification": 0.9,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              555.0,
+              240.0,
+              759.0,
+              253.0
+            ],
+            "bbox_pdf": [
+              199.8,
+              700.92,
+              273.24,
+              705.6
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "documentation_guideline",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0011",
+            "type": "subsection_header",
+            "content": "HEENT:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              282.0,
+              119.0,
+              295.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              685.8,
+              42.84,
+              690.48
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0012",
+            "type": "clinical_paragraph",
+            "content": "Scalp normal.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              300.0,
+              154.0,
+              313.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              679.3199999999999,
+              55.440000000000005,
+              684.0
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0013",
+            "type": "clinical_paragraph",
+            "content": "List specific normal or pathological findings when\nrelevant to the patient's complaint",
+            "confidence": {
+              "overall": 0.892,
+              "extraction": 0.98,
+              "classification": 0.9,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              555.0,
+              282.0,
+              899.0,
+              322.0
+            ],
+            "bbox_pdf": [
+              199.8,
+              676.08,
+              323.64,
+              690.48
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "documentation_guideline",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0014",
+            "type": "clinical_paragraph",
+            "content": "Pupils equally round, 4 mm, reactive to light and\naccommodation, sclera and conjunctiva normal.\nFundoscopic examination reveals normal vessels without\nhemorrhage.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              328.0,
+              447.0,
+              382.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              654.48,
+              160.92000000000002,
+              673.92
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0015",
+            "type": "clinical_paragraph",
+            "content": "Tympanic membranes and external auditory canals normal.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              397.0,
+              447.0,
+              410.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              644.4,
+              160.92000000000002,
+              649.0799999999999
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0016",
+            "type": "clinical_paragraph",
+            "content": "Nasal mucosa normal.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              425.0,
+              204.0,
+              438.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              634.3199999999999,
+              73.44,
+              639.0
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0017",
+            "type": "clinical_paragraph",
+            "content": "Oral pharynx is normal without erythema or exudate. Tongue\nand gums are normal.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              453.0,
+              447.0,
+              477.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              620.28,
+              160.92000000000002,
+              628.92
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0018",
+            "type": "subsection_header",
+            "content": "Neck:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              497.0,
+              105.0,
+              510.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              608.4,
+              37.800000000000004,
+              613.0799999999999
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0019",
+            "type": "clinical_paragraph",
+            "content": "Easily moveable without resistance, no abnormal adenopathy\nin the cervical or supraclavicular areas. Trachea is midline\nand thyroid gland is normal without masses. Carotid artery\nupstroke is normal bilaterally without bruits. Jugular venous\npressure is measured as 8 cm with patient at 45 degrees.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              515.0,
+              447.0,
+              595.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              577.8,
+              160.92000000000002,
+              606.6
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0020",
+            "type": "subsection_header",
+            "content": "Chest:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              615.0,
+              115.0,
+              628.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              565.92,
+              41.4,
+              570.6
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0021",
+            "type": "clinical_paragraph",
+            "content": "Lungs are clear to auscultation and percussion bilaterally\nexcept for crackles heard in the lung bases bilaterally. PMI\nis in the 5th inter-costal space at the mid clavicular line. A\ngrade 2/6 systolic decrescendo murmur is heard best at the\nsecond right inter-costal space which radiates to the neck.\nA third heard sound is heard at the apex. No fourth heart\nsound or rub are heard. Cystic changes are noted in the\nbreasts bilaterally but no masses or nipple discharge is\nSeen.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              633.0,
+              447.0,
+              787.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              508.68,
+              160.92000000000002,
+              564.12
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0022",
+            "type": "clinical_paragraph",
+            "content": "This patient needs a detailed cardiac examination",
+            "confidence": {
+              "overall": 0.896,
+              "extraction": 0.99,
+              "classification": 0.9,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              555.0,
+              533.0,
+              882.0,
+              546.0
+            ],
+            "bbox_pdf": [
+              199.8,
+              595.44,
+              317.52000000000004,
+              600.12
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "documentation_guideline",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0023",
+            "type": "subsection_header",
+            "content": "Abdomen:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              807.0,
+              149.0,
+              820.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              496.8,
+              53.64,
+              501.47999999999996
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0024",
+            "type": "clinical_paragraph",
+            "content": "The abdomen is symmetrical without distention; bowel\nsounds are normal in quality and intensity in all areas; a\nbruit is heard in the right paraumbilical area. No masses or\nsplenomegaly are noted; liver span is 8 cm by percussion.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              825.0,
+              447.0,
+              899.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              468.36,
+              160.92000000000002,
+              495.0
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0025",
+            "type": "clinical_paragraph",
+            "content": "More precise than saying \"no hepatomegaly\"",
+            "confidence": {
+              "overall": 0.896,
+              "extraction": 0.99,
+              "classification": 0.9,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              555.0,
+              720.0,
+              899.0,
+              733.0
+            ],
+            "bbox_pdf": [
+              199.8,
+              528.12,
+              323.64,
+              532.8
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "documentation_guideline",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0026",
+            "type": "subsection_header",
+            "content": "Extremities:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              919.0,
+              169.0,
+              932.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              456.47999999999996,
+              60.84,
+              461.15999999999997
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0027",
+            "type": "clinical_paragraph",
+            "content": "No cyanosis, clubbing, or edema are noted. Peripheral\npulses in the femoral, popliteal, anterior tibial, dorsalis pedis,\nbrachial, and radial areas are normal.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              937.0,
+              447.0,
+              991.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              435.24,
+              160.92000000000002,
+              454.68
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0028",
+            "type": "subsection_header",
+            "content": "Nodes:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              1011.0,
+              115.0,
+              1024.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              423.36,
+              41.4,
+              428.03999999999996
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0029",
+            "type": "clinical_paragraph",
+            "content": "No palpable nodes in the cervical, supraclavicular, axillary\nor inguinal areas.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              1029.0,
+              447.0,
+              1069.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              407.15999999999997,
+              160.92000000000002,
+              421.56
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0030",
+            "type": "subsection_header",
+            "content": "Genital/Rectal:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              1089.0,
+              190.0,
+              1102.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              395.28,
+              68.4,
+              399.96
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0031",
+            "type": "clinical_paragraph",
+            "content": "Normal rectal sphincter tone; no rectal masses or\ntenderness. Stool is brown and guaiac negative. Pelvic",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              1107.0,
+              447.0,
+              1147.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              379.08,
+              160.92000000000002,
+              393.47999999999996
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "physical_examination",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0032",
+            "type": "clinical_paragraph",
+            "content": "Always include these exams, or comment specifically\nwhy they were omitted",
+            "confidence": {
+              "overall": 0.896,
+              "extraction": 0.99,
+              "classification": 0.9,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              555.0,
+              879.0,
+              899.0,
+              919.0
+            ],
+            "bbox_pdf": [
+              199.8,
+              461.15999999999997,
+              323.64,
+              475.56
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "documentation_guideline",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          }
+        ],
+        "page_info": {
+          "width_pdf": 612.0,
+          "height_pdf": 792.0,
+          "width_px": 1700,
+          "height_px": 2200,
+          "dpi": 200
+        },
+        "processing_metadata": {
+          "model_name": "gemini-2.5-flash",
+          "processing_time_seconds": 25.86975383758545,
+          "api_cost_usd": 0.0,
+          "timestamp": "2025-11-16T05:16:33.799573"
+        },
+        "error": null
+      },
+      {
+        "page_number": 4,
+        "elements": [
+          {
+            "element_id": "E_0001",
+            "type": "clinical_paragraph",
+            "content": "exmaination reveals normal external genitalia, and normal vagina and cervix on speculum examination. Bimanual examination reveals no palpable uterus, ovaries, or masses.",
+            "confidence": {
+              "overall": 0.978,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              58.0,
+              113.0,
+              448.0,
+              160.0
+            ],
+            "bbox_pdf": [
+              20.88,
+              734.4,
+              161.28,
+              751.32
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "gynecology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0002",
+            "type": "subsection_header",
+            "content": "Neurological:",
+            "confidence": {
+              "overall": 0.9720000000000001,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              58.0,
+              172.0,
+              169.0,
+              185.0
+            ],
+            "bbox_pdf": [
+              20.88,
+              725.4,
+              60.84,
+              730.08
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": null,
+              "clinical_domain": "neurology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0003",
+            "type": "clinical_paragraph",
+            "content": "Cranial nerves II-XII are normal. Motor and sensory examination of the upper and lower extremities is normal. Gait and cerebellar function are also normal. Reflexes are normal and symmetrical bilaterally in both extremities.",
+            "confidence": {
+              "overall": 0.978,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              58.0,
+              190.0,
+              448.0,
+              237.0
+            ],
+            "bbox_pdf": [
+              20.88,
+              706.68,
+              161.28,
+              723.6
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "neurology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0004",
+            "type": "section_header",
+            "content": "Initial Problem List",
+            "confidence": {
+              "overall": 0.9720000000000001,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              58.0,
+              263.0,
+              240.0,
+              278.0
+            ],
+            "bbox_pdf": [
+              20.88,
+              691.92,
+              86.4,
+              697.3199999999999
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": null,
+              "clinical_domain": "general_medicine",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0005",
+            "type": "problem_list",
+            "content": "1. Chest Pain\n2. Dyspnea\n3. History of HTN (4 years)\n4. History of TAH/BSO\n5. History of peptic ulcer disease\n6. Penicillin allergy\n7. FH of early ASCVD\n8. Epigastric pain\n9. Low back pain\n10. Hypertension\n11. Systolic murmur\n12. Cystic changes of breasts\n13. Abdominal bruit",
+            "confidence": {
+              "overall": 0.9680000000000001,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              58.0,
+              290.0,
+              348.0,
+              450.0
+            ],
+            "bbox_pdf": [
+              20.88,
+              630.0,
+              125.28,
+              687.6
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current_and_historical",
+              "clinical_domain": "general_medicine",
+              "cross_references": [],
+              "requires_validation": true
+            }
+          },
+          {
+            "element_id": "E_0006",
+            "type": "uncategorized",
+            "content": "Although you can omit this initial problem list from your final written H&P, (and just list a final problem list shown below), it is useful to make an initial list simply to keep track of all problems uncovered in the interview (#1-9 in this list) and exam (#10-13)",
+            "confidence": {
+              "overall": 0.916,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              556.0,
+              290.0,
+              920.0,
+              366.0
+            ],
+            "bbox_pdf": [
+              200.16,
+              660.24,
+              331.2,
+              687.6
+            ],
+            "needs_review": false
+          },
+          {
+            "element_id": "E_0007",
+            "type": "section_header",
+            "content": "Revised Problem List",
+            "confidence": {
+              "overall": 0.9720000000000001,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              58.0,
+              470.0,
+              240.0,
+              485.0
+            ],
+            "bbox_pdf": [
+              20.88,
+              617.4,
+              86.4,
+              622.8
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": null,
+              "clinical_domain": "general_medicine",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0008",
+            "type": "problem_list",
+            "content": "1. Chest pain\n2. FH of early ASCVD\n3. Early surgical menopause\n4. Dyspnea\n5. Recent onset HTN\n6. Abdominal bruit\n7. Systolic ejection murmur\n8. Epigastric pain\n9. History of peptic ulcer disease\n10. Lumbosacral back pain\n11. OTC non-steroidal analgesic use\n12. Cystic changes of breasts\n13. Penicillin allergy",
+            "confidence": {
+              "overall": 0.9680000000000001,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              58.0,
+              497.0,
+              362.0,
+              657.0
+            ],
+            "bbox_pdf": [
+              20.88,
+              555.48,
+              130.32,
+              613.0799999999999
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current_and_historical",
+              "clinical_domain": "general_medicine",
+              "cross_references": [],
+              "requires_validation": true
+            }
+          },
+          {
+            "element_id": "E_0009",
+            "type": "uncategorized",
+            "content": "This list regroups related problems (or those you suspect are related) into a more logical sequence",
+            "confidence": {
+              "overall": 0.916,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              556.0,
+              497.0,
+              920.0,
+              530.0
+            ],
+            "bbox_pdf": [
+              200.16,
+              601.2,
+              331.2,
+              613.0799999999999
+            ],
+            "needs_review": false
+          }
+        ],
+        "page_info": {
+          "width_pdf": 612.0,
+          "height_pdf": 792.0,
+          "width_px": 1700,
+          "height_px": 2200,
+          "dpi": 200
+        },
+        "processing_metadata": {
+          "model_name": "gemini-2.5-flash",
+          "processing_time_seconds": 17.28178906440735,
+          "api_cost_usd": 0.0,
+          "timestamp": "2025-11-16T05:16:51.100387"
+        },
+        "error": null
+      },
+      {
+        "page_number": 5,
+        "elements": [
+          {
+            "element_id": "E_0001",
+            "type": "section_header",
+            "content": "Assessment and Differential Diagnosis",
+            "confidence": {
+              "overall": 0.9560000000000001,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              56.0,
+              107.0,
+              330.0,
+              121.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              748.44,
+              118.8,
+              753.48
+            ],
+            "needs_review": false
+          },
+          {
+            "element_id": "E_0002",
+            "type": "subsection_header",
+            "content": "1. Chest pain with features of angina pectoris",
+            "confidence": {
+              "overall": 0.9560000000000001,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              56.0,
+              147.0,
+              467.0,
+              161.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              734.04,
+              168.12,
+              739.08
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "cardiology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0003",
+            "type": "clinical_paragraph",
+            "content": "This patient's description of dull, aching, exertion related substernal chest pain is suggestive of ischemic cardiac origin. Her findings of a FH of early ASCVD, hypertension, and early surgical menopause are pertinent risk factors for development of coronary artery disease. Therefore, the combination of this patient's presentation, and the multiple risk factors make angina pectoris the most likely diagnosis. The pain symptoms appear to be increasing, and the occurrence of pain at rest suggests this fits the presentation of unstable angina, and hospitalization is indicated.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              175.0,
+              488.0,
+              300.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              684.0,
+              175.68,
+              729.0
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "cardiology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0004",
+            "type": "clinical_paragraph",
+            "content": "Other processes may explain her chest pain, but are less likely. Gastro-esophageal reflux disease (GERD) may occur at night with recumbency, but usually is not associated with exertion. The pain of GERD is usually burning, and the patient describes no associated gastrointestinal symptoms such as nausea, vomiting or abdominal pain which might suggest peptic ulcer disease. The presence of dyspnea might suggest a pulmonary component to this patient's disease process, but the absence of fever, cough or abnormal pulmonary examination findings make a pulmonary infection less likely, and the association of the dyspnea with the chest pain supports the theory that both symptoms may be from ischemic heart disease.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              314.0,
+              488.0,
+              459.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              626.76,
+              175.68,
+              678.96
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "cardiology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0005",
+            "type": "clinical_paragraph",
+            "content": "In the assessment you take each of the patient's major problems and draw conclusions, in this case that the chest pain is more likely due to ischemic heart disease instead of other possibilities. You tie in several of the other problems as risk factors for ischemic heart disease, and not merely as random unrelated problems. You should list and extensive justification for your most likely diagnosis. You should also explain why you are less suspicious of alternative diagnoses, such as esophageal reflux disease, pulmonary or musculoskeletal pain.",
+            "confidence": {
+              "overall": 0.876,
+              "extraction": 0.99,
+              "classification": 0.85,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              527.0,
+              182.0,
+              919.0,
+              315.0
+            ],
+            "bbox_pdf": [
+              189.72,
+              678.6,
+              330.84000000000003,
+              726.48
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": null,
+              "clinical_domain": null,
+              "cross_references": [],
+              "requires_validation": true
+            }
+          },
+          {
+            "element_id": "E_0006",
+            "type": "subsection_header",
+            "content": "2. Dyspnea",
+            "confidence": {
+              "overall": 0.9560000000000001,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              56.0,
+              470.0,
+              203.0,
+              484.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              617.76,
+              73.08,
+              622.8
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "pulmonology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0007",
+            "type": "clinical_paragraph",
+            "content": "Her dyspnea may correlate with findings on physical exam of a third heart sound and pulmonary crackles, suggesting left ventricular dysfunction. In that case, she may be manifesting symptoms and findings of congestive heart failure from myocardial ischemia.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              500.0,
+              488.0,
+              570.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              586.8,
+              175.68,
+              612.0
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "pulmonology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0008",
+            "type": "subsection_header",
+            "content": "3. Recent onset hypertension and abdominal bruit",
+            "confidence": {
+              "overall": 0.9560000000000001,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              56.0,
+              581.0,
+              488.0,
+              595.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              577.8,
+              175.68,
+              582.84
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "cardiology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0009",
+            "type": "clinical_paragraph",
+            "content": "This combination raises the possibility of a secondary cause of hypertension, specifically ASCVD of the renal artery leading to renovascular hypertension. The lack of hypertensive retinopathy and left ventricular hypertrophy on physical examination further support a recent onset of her BP elevation.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              611.0,
+              488.0,
+              681.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              546.84,
+              175.68,
+              572.04
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "cardiology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0010",
+            "type": "clinical_paragraph",
+            "content": "As in the previous problem, you should explain, in more detail than is shown in this example, why you felt the dyspnea is more likely to be from ischemic heart disease, and not asthma, bronchitis, or other possibilities. Follow this pattern for all subsequent problems.",
+            "confidence": {
+              "overall": 0.876,
+              "extraction": 0.99,
+              "classification": 0.85,
+              "clinical_context": 0.7
+            },
+            "bbox_pixel": [
+              527.0,
+              522.0,
+              919.0,
+              595.0
+            ],
+            "bbox_pdf": [
+              189.72,
+              577.8,
+              330.84000000000003,
+              604.0799999999999
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": null,
+              "clinical_domain": null,
+              "cross_references": [],
+              "requires_validation": true
+            }
+          },
+          {
+            "element_id": "E_0011",
+            "type": "subsection_header",
+            "content": "4. Systolic murmur",
+            "confidence": {
+              "overall": 0.9560000000000001,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.9
+            },
+            "bbox_pixel": [
+              56.0,
+              692.0,
+              260.0,
+              706.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              537.84,
+              93.60000000000001,
+              542.88
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "cardiology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0012",
+            "type": "clinical_paragraph",
+            "content": "The possibility of important valvular heart disease is raised by the murmur, specifically, aortic stenosis. The murmur radiates to the neck as an aortic valvular murmur often does, but a normal carotid upstroke may mean this murmur is not significant.",
+            "confidence": {
+              "overall": 0.966,
+              "extraction": 0.99,
+              "classification": 0.95,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              722.0,
+              488.0,
+              792.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              506.88,
+              175.68,
+              532.0799999999999
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "cardiology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0013",
+            "type": "list_items",
+            "content": "5. Epigastric discomfort, NSAID use with a history of peptic ulcer disease.",
+            "confidence": {
+              "overall": 0.946,
+              "extraction": 0.99,
+              "classification": 0.9,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              803.0,
+              488.0,
+              830.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              493.2,
+              175.68,
+              502.92
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "gastroenterology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0014",
+            "type": "list_items",
+            "content": "6. Lumbo-sacral back pain",
+            "confidence": {
+              "overall": 0.946,
+              "extraction": 0.99,
+              "classification": 0.9,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              841.0,
+              316.0,
+              855.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              484.2,
+              113.76,
+              489.24
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "musculoskeletal",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0015",
+            "type": "list_items",
+            "content": "7. Fibrocystic breast disease",
+            "confidence": {
+              "overall": 0.946,
+              "extraction": 0.99,
+              "classification": 0.9,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              866.0,
+              357.0,
+              880.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              475.2,
+              128.52,
+              480.24
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "current",
+              "clinical_domain": "endocrinology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0016",
+            "type": "list_items",
+            "content": "8. Penicillin allergy",
+            "confidence": {
+              "overall": 0.946,
+              "extraction": 0.99,
+              "classification": 0.9,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              56.0,
+              891.0,
+              280.0,
+              905.0
+            ],
+            "bbox_pdf": [
+              20.16,
+              466.2,
+              100.8,
+              471.24
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "historical",
+              "clinical_domain": "allergy_immunology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          }
+        ],
+        "page_info": {
+          "width_pdf": 612.0,
+          "height_pdf": 792.0,
+          "width_px": 1700,
+          "height_px": 2200,
+          "dpi": 200
+        },
+        "processing_metadata": {
+          "model_name": "gemini-2.5-flash",
+          "processing_time_seconds": 26.962376356124878,
+          "api_cost_usd": 0.0,
+          "timestamp": "2025-11-16T05:17:18.084629"
+        },
+        "error": null
+      },
+      {
+        "page_number": 6,
+        "elements": [
+          {
+            "element_id": "E_0001",
+            "type": "section_header",
+            "content": "Plan:",
+            "confidence": {
+              "overall": 0.982,
+              "extraction": 0.99,
+              "classification": 0.99,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              59.0,
+              121.0,
+              95.0,
+              134.0
+            ],
+            "bbox_pdf": [
+              21.240000000000002,
+              743.76,
+              34.2,
+              748.44
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "planned",
+              "clinical_domain": "assessment_plan",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0002",
+            "type": "list_items",
+            "content": "1. Carefully monitor the patient for any increased chest pain that might be indicative of impending myocardial infarction by admitting the patient to the telemetry floor.",
+            "confidence": {
+              "overall": 0.978,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              59.0,
+              152.0,
+              489.0,
+              198.0
+            ],
+            "bbox_pdf": [
+              21.240000000000002,
+              720.72,
+              176.04000000000002,
+              737.28
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "planned",
+              "clinical_domain": "assessment_plan",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0003",
+            "type": "list_items",
+            "content": "2. Start platelet inhibitors, such as aspirin to decrease the risk of myocardial infarction; start nitrates to decrease the risk of occlusion and to treat her symptoms of pain. For prolonged pain un- responsive to nitrates, she may need an analgesic such as morphine. The nitrates will also help to lower her BP.",
+            "confidence": {
+              "overall": 0.978,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              59.0,
+              205.0,
+              489.0,
+              320.0
+            ],
+            "bbox_pdf": [
+              21.240000000000002,
+              676.8,
+              176.04000000000002,
+              718.2
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "planned",
+              "clinical_domain": "pharmacology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0004",
+            "type": "list_items",
+            "content": "3. Patient should have her cholesterol monitored and when discharged she should be started on an appropriate exercise and weight loss program, including a low-fat diet. If her cholesterol is elevated, she may need cholesterol-lowering medication such as HMG Co-reductases.",
+            "confidence": {
+              "overall": 0.978,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              59.0,
+              327.0,
+              489.0,
+              408.0
+            ],
+            "bbox_pdf": [
+              21.240000000000002,
+              645.12,
+              176.04000000000002,
+              674.28
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "planned",
+              "clinical_domain": "laboratory",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0005",
+            "type": "list_items",
+            "content": "4. Schedule a cardiac catheterization since non-invasive tests have a high pretest probability for being positive and regard- less of the result, negative or positive, she will need a cath",
+            "confidence": {
+              "overall": 0.978,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              59.0,
+              415.0,
+              489.0,
+              461.0
+            ],
+            "bbox_pdf": [
+              21.240000000000002,
+              626.04,
+              176.04000000000002,
+              642.6
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "planned",
+              "clinical_domain": "imaging",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0006",
+            "type": "list_items",
+            "content": "5. Begin diuretics for her dyspnea which is most likely secondary to volume overload - this will treat her high BP as well. She should have a ventriculogram with the cath that will assess cardiac size and presence of wall motion abnormalities.",
+            "confidence": {
+              "overall": 0.978,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              59.0,
+              468.0,
+              489.0,
+              529.0
+            ],
+            "bbox_pdf": [
+              21.240000000000002,
+              601.56,
+              176.04000000000002,
+              623.52
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "planned",
+              "clinical_domain": "pharmacology",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0007",
+            "type": "list_items",
+            "content": "6. Appropriate lab work would include BUN/Creatinine to assess kidney function, electrolytes and baseline EKG.",
+            "confidence": {
+              "overall": 0.978,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              59.0,
+              536.0,
+              489.0,
+              565.0
+            ],
+            "bbox_pdf": [
+              21.240000000000002,
+              588.6,
+              176.04000000000002,
+              599.04
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "planned",
+              "clinical_domain": "laboratory",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          },
+          {
+            "element_id": "E_0008",
+            "type": "clinical_paragraph",
+            "content": "You should develop a diagnostic and therapeutic plan for the patient. Your plan should incorporate acute and long-term care of the patient's most likely problem. You should consider pharmacologic and non-pharmacologic measures and be cognizant of the fact that you need to treat the symptoms (i.e. make the patient comfortable) as much as treating the disease when possible. You are expected to know the usual classes of medications used to treat these illnesses.",
+            "confidence": {
+              "overall": 0.978,
+              "extraction": 0.99,
+              "classification": 0.98,
+              "clinical_context": 0.95
+            },
+            "bbox_pixel": [
+              529.0,
+              152.0,
+              959.0,
+              267.0
+            ],
+            "bbox_pdf": [
+              190.44,
+              695.88,
+              345.24,
+              737.28
+            ],
+            "needs_review": false,
+            "clinical_metadata": {
+              "temporal_qualifier": "planned",
+              "clinical_domain": "assessment_plan",
+              "cross_references": [],
+              "requires_validation": false
+            }
+          }
+        ],
+        "page_info": {
+          "width_pdf": 612.0,
+          "height_pdf": 792.0,
+          "width_px": 1700,
+          "height_px": 2200,
+          "dpi": 200
+        },
+        "processing_metadata": {
+          "model_name": "gemini-2.5-flash",
+          "processing_time_seconds": 13.958616018295288,
+          "api_cost_usd": 0.0,
+          "timestamp": "2025-11-16T05:17:32.063144"
+        },
+        "error": null
+      }
+    ],
+    "processing_stats": {
+      "total_pages": 6,
+      "processed_pages": 6,
+      "failed_pages": [],
+      "total_elements": 65,
+      "total_cost_usd": 0.013623,
+      "processing_time_seconds": 140.52361297607422,
+      "start_time": "2025-11-15T21:15:11.542838",
+      "end_time": "2025-11-15T21:17:32.066452"
+    },
+    "patient_demographics": null,
+    "sub_documents": [
+      {
+        "id": "subdoc_011",
+        "type": "radiology_imaging",
+        "title": "Genital/Rectal:",
+        "page_range": [
+          3,
+          3
+        ],
+        "page_count": 1,
+        "pages": [
+          {
+            "page_number": 3,
+            "elements": [
+              {
+                "element_id": "E_0001",
+                "type": "section_header",
+                "content": "Physical Examination",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  92.0,
+                  222.0,
+                  106.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  753.84,
+                  79.92,
+                  758.88
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0002",
+                "type": "subsection_header",
+                "content": "Vital Signs:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  118.0,
+                  149.0,
+                  131.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  744.84,
+                  53.64,
+                  749.52
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "vitals",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0003",
+                "type": "clinical_paragraph",
+                "content": "Blood Pressure 168/98, Pulse 90, Respirations 20,\nTemperature 37 degrees.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  136.0,
+                  387.0,
+                  160.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  734.4,
+                  139.32,
+                  743.04
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "vitals",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0004",
+                "type": "clinical_paragraph",
+                "content": "Always list vital signs. Check for orthostatic BP/P\nchanges if it is relevant to the patient's complaint",
+                "confidence": {
+                  "overall": 0.892,
+                  "extraction": 0.98,
+                  "classification": 0.9,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  555.0,
+                  120.0,
+                  899.0,
+                  160.0
+                ],
+                "bbox_pdf": [
+                  199.8,
+                  734.4,
+                  323.64,
+                  748.8
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "documentation_guideline",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0005",
+                "type": "subsection_header",
+                "content": "General:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  180.0,
+                  126.0,
+                  193.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  722.52,
+                  45.36,
+                  727.2
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0006",
+                "type": "clinical_paragraph",
+                "content": "Ms. Rogers appears alert, oriented and cooperative.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  198.0,
+                  390.0,
+                  211.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  716.04,
+                  140.4,
+                  720.72
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0007",
+                "type": "clinical_paragraph",
+                "content": "Description may give very important clues as to the\nnature or severity of the patient's problem",
+                "confidence": {
+                  "overall": 0.892,
+                  "extraction": 0.98,
+                  "classification": 0.9,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  555.0,
+                  180.0,
+                  899.0,
+                  220.0
+                ],
+                "bbox_pdf": [
+                  199.8,
+                  712.8,
+                  323.64,
+                  727.2
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "documentation_guideline",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0008",
+                "type": "subsection_header",
+                "content": "Skin:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  231.0,
+                  100.0,
+                  244.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  704.16,
+                  36.0,
+                  708.84
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0009",
+                "type": "clinical_paragraph",
+                "content": "Normal in appearance, texture, and temperature",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  249.0,
+                  390.0,
+                  262.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  697.68,
+                  140.4,
+                  702.36
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0010",
+                "type": "clinical_paragraph",
+                "content": "Comment on all organ systems",
+                "confidence": {
+                  "overall": 0.896,
+                  "extraction": 0.99,
+                  "classification": 0.9,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  555.0,
+                  240.0,
+                  759.0,
+                  253.0
+                ],
+                "bbox_pdf": [
+                  199.8,
+                  700.92,
+                  273.24,
+                  705.6
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "documentation_guideline",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0011",
+                "type": "subsection_header",
+                "content": "HEENT:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  282.0,
+                  119.0,
+                  295.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  685.8,
+                  42.84,
+                  690.48
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0012",
+                "type": "clinical_paragraph",
+                "content": "Scalp normal.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  300.0,
+                  154.0,
+                  313.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  679.3199999999999,
+                  55.440000000000005,
+                  684.0
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0013",
+                "type": "clinical_paragraph",
+                "content": "List specific normal or pathological findings when\nrelevant to the patient's complaint",
+                "confidence": {
+                  "overall": 0.892,
+                  "extraction": 0.98,
+                  "classification": 0.9,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  555.0,
+                  282.0,
+                  899.0,
+                  322.0
+                ],
+                "bbox_pdf": [
+                  199.8,
+                  676.08,
+                  323.64,
+                  690.48
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "documentation_guideline",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0014",
+                "type": "clinical_paragraph",
+                "content": "Pupils equally round, 4 mm, reactive to light and\naccommodation, sclera and conjunctiva normal.\nFundoscopic examination reveals normal vessels without\nhemorrhage.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  328.0,
+                  447.0,
+                  382.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  654.48,
+                  160.92000000000002,
+                  673.92
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0015",
+                "type": "clinical_paragraph",
+                "content": "Tympanic membranes and external auditory canals normal.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  397.0,
+                  447.0,
+                  410.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  644.4,
+                  160.92000000000002,
+                  649.0799999999999
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0016",
+                "type": "clinical_paragraph",
+                "content": "Nasal mucosa normal.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  425.0,
+                  204.0,
+                  438.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  634.3199999999999,
+                  73.44,
+                  639.0
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0017",
+                "type": "clinical_paragraph",
+                "content": "Oral pharynx is normal without erythema or exudate. Tongue\nand gums are normal.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  453.0,
+                  447.0,
+                  477.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  620.28,
+                  160.92000000000002,
+                  628.92
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0018",
+                "type": "subsection_header",
+                "content": "Neck:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  497.0,
+                  105.0,
+                  510.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  608.4,
+                  37.800000000000004,
+                  613.0799999999999
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0019",
+                "type": "clinical_paragraph",
+                "content": "Easily moveable without resistance, no abnormal adenopathy\nin the cervical or supraclavicular areas. Trachea is midline\nand thyroid gland is normal without masses. Carotid artery\nupstroke is normal bilaterally without bruits. Jugular venous\npressure is measured as 8 cm with patient at 45 degrees.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  515.0,
+                  447.0,
+                  595.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  577.8,
+                  160.92000000000002,
+                  606.6
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0020",
+                "type": "subsection_header",
+                "content": "Chest:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  615.0,
+                  115.0,
+                  628.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  565.92,
+                  41.4,
+                  570.6
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0021",
+                "type": "clinical_paragraph",
+                "content": "Lungs are clear to auscultation and percussion bilaterally\nexcept for crackles heard in the lung bases bilaterally. PMI\nis in the 5th inter-costal space at the mid clavicular line. A\ngrade 2/6 systolic decrescendo murmur is heard best at the\nsecond right inter-costal space which radiates to the neck.\nA third heard sound is heard at the apex. No fourth heart\nsound or rub are heard. Cystic changes are noted in the\nbreasts bilaterally but no masses or nipple discharge is\nSeen.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  633.0,
+                  447.0,
+                  787.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  508.68,
+                  160.92000000000002,
+                  564.12
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0022",
+                "type": "clinical_paragraph",
+                "content": "This patient needs a detailed cardiac examination",
+                "confidence": {
+                  "overall": 0.896,
+                  "extraction": 0.99,
+                  "classification": 0.9,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  555.0,
+                  533.0,
+                  882.0,
+                  546.0
+                ],
+                "bbox_pdf": [
+                  199.8,
+                  595.44,
+                  317.52000000000004,
+                  600.12
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "documentation_guideline",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0023",
+                "type": "subsection_header",
+                "content": "Abdomen:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  807.0,
+                  149.0,
+                  820.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  496.8,
+                  53.64,
+                  501.47999999999996
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0024",
+                "type": "clinical_paragraph",
+                "content": "The abdomen is symmetrical without distention; bowel\nsounds are normal in quality and intensity in all areas; a\nbruit is heard in the right paraumbilical area. No masses or\nsplenomegaly are noted; liver span is 8 cm by percussion.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  825.0,
+                  447.0,
+                  899.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  468.36,
+                  160.92000000000002,
+                  495.0
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0025",
+                "type": "clinical_paragraph",
+                "content": "More precise than saying \"no hepatomegaly\"",
+                "confidence": {
+                  "overall": 0.896,
+                  "extraction": 0.99,
+                  "classification": 0.9,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  555.0,
+                  720.0,
+                  899.0,
+                  733.0
+                ],
+                "bbox_pdf": [
+                  199.8,
+                  528.12,
+                  323.64,
+                  532.8
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "documentation_guideline",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0026",
+                "type": "subsection_header",
+                "content": "Extremities:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  919.0,
+                  169.0,
+                  932.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  456.47999999999996,
+                  60.84,
+                  461.15999999999997
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0027",
+                "type": "clinical_paragraph",
+                "content": "No cyanosis, clubbing, or edema are noted. Peripheral\npulses in the femoral, popliteal, anterior tibial, dorsalis pedis,\nbrachial, and radial areas are normal.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  937.0,
+                  447.0,
+                  991.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  435.24,
+                  160.92000000000002,
+                  454.68
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0028",
+                "type": "subsection_header",
+                "content": "Nodes:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  1011.0,
+                  115.0,
+                  1024.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  423.36,
+                  41.4,
+                  428.03999999999996
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0029",
+                "type": "clinical_paragraph",
+                "content": "No palpable nodes in the cervical, supraclavicular, axillary\nor inguinal areas.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  1029.0,
+                  447.0,
+                  1069.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  407.15999999999997,
+                  160.92000000000002,
+                  421.56
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0030",
+                "type": "subsection_header",
+                "content": "Genital/Rectal:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  1089.0,
+                  190.0,
+                  1102.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  395.28,
+                  68.4,
+                  399.96
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0031",
+                "type": "clinical_paragraph",
+                "content": "Normal rectal sphincter tone; no rectal masses or\ntenderness. Stool is brown and guaiac negative. Pelvic",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  1107.0,
+                  447.0,
+                  1147.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  379.08,
+                  160.92000000000002,
+                  393.47999999999996
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "physical_examination",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0032",
+                "type": "clinical_paragraph",
+                "content": "Always include these exams, or comment specifically\nwhy they were omitted",
+                "confidence": {
+                  "overall": 0.896,
+                  "extraction": 0.99,
+                  "classification": 0.9,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  555.0,
+                  879.0,
+                  899.0,
+                  919.0
+                ],
+                "bbox_pdf": [
+                  199.8,
+                  461.15999999999997,
+                  323.64,
+                  475.56
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "documentation_guideline",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              }
+            ],
+            "page_info": {
+              "width_pdf": 612.0,
+              "height_pdf": 792.0,
+              "width_px": 1700,
+              "height_px": 2200,
+              "dpi": 200
+            },
+            "processing_metadata": {
+              "model_name": "gemini-2.5-flash",
+              "processing_time_seconds": 25.86975383758545,
+              "api_cost_usd": 0.0,
+              "timestamp": "2025-11-16T05:16:33.799573"
+            },
+            "error": null
+          }
+        ],
+        "confidence": 0.982,
+        "element_count": 32
+      },
+      {
+        "id": "subdoc_014",
+        "type": "problem_list",
+        "title": "Revised Problem List",
+        "page_range": [
+          4,
+          4
+        ],
+        "page_count": 1,
+        "pages": [
+          {
+            "page_number": 4,
+            "elements": [
+              {
+                "element_id": "E_0001",
+                "type": "clinical_paragraph",
+                "content": "exmaination reveals normal external genitalia, and normal vagina and cervix on speculum examination. Bimanual examination reveals no palpable uterus, ovaries, or masses.",
+                "confidence": {
+                  "overall": 0.978,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  58.0,
+                  113.0,
+                  448.0,
+                  160.0
+                ],
+                "bbox_pdf": [
+                  20.88,
+                  734.4,
+                  161.28,
+                  751.32
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "gynecology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0002",
+                "type": "subsection_header",
+                "content": "Neurological:",
+                "confidence": {
+                  "overall": 0.9720000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  58.0,
+                  172.0,
+                  169.0,
+                  185.0
+                ],
+                "bbox_pdf": [
+                  20.88,
+                  725.4,
+                  60.84,
+                  730.08
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": null,
+                  "clinical_domain": "neurology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0003",
+                "type": "clinical_paragraph",
+                "content": "Cranial nerves II-XII are normal. Motor and sensory examination of the upper and lower extremities is normal. Gait and cerebellar function are also normal. Reflexes are normal and symmetrical bilaterally in both extremities.",
+                "confidence": {
+                  "overall": 0.978,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  58.0,
+                  190.0,
+                  448.0,
+                  237.0
+                ],
+                "bbox_pdf": [
+                  20.88,
+                  706.68,
+                  161.28,
+                  723.6
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "neurology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0004",
+                "type": "section_header",
+                "content": "Initial Problem List",
+                "confidence": {
+                  "overall": 0.9720000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  58.0,
+                  263.0,
+                  240.0,
+                  278.0
+                ],
+                "bbox_pdf": [
+                  20.88,
+                  691.92,
+                  86.4,
+                  697.3199999999999
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": null,
+                  "clinical_domain": "general_medicine",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0005",
+                "type": "problem_list",
+                "content": "1. Chest Pain\n2. Dyspnea\n3. History of HTN (4 years)\n4. History of TAH/BSO\n5. History of peptic ulcer disease\n6. Penicillin allergy\n7. FH of early ASCVD\n8. Epigastric pain\n9. Low back pain\n10. Hypertension\n11. Systolic murmur\n12. Cystic changes of breasts\n13. Abdominal bruit",
+                "confidence": {
+                  "overall": 0.9680000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  58.0,
+                  290.0,
+                  348.0,
+                  450.0
+                ],
+                "bbox_pdf": [
+                  20.88,
+                  630.0,
+                  125.28,
+                  687.6
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current_and_historical",
+                  "clinical_domain": "general_medicine",
+                  "cross_references": [],
+                  "requires_validation": true
+                }
+              },
+              {
+                "element_id": "E_0006",
+                "type": "uncategorized",
+                "content": "Although you can omit this initial problem list from your final written H&P, (and just list a final problem list shown below), it is useful to make an initial list simply to keep track of all problems uncovered in the interview (#1-9 in this list) and exam (#10-13)",
+                "confidence": {
+                  "overall": 0.916,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  556.0,
+                  290.0,
+                  920.0,
+                  366.0
+                ],
+                "bbox_pdf": [
+                  200.16,
+                  660.24,
+                  331.2,
+                  687.6
+                ],
+                "needs_review": false
+              },
+              {
+                "element_id": "E_0007",
+                "type": "section_header",
+                "content": "Revised Problem List",
+                "confidence": {
+                  "overall": 0.9720000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  58.0,
+                  470.0,
+                  240.0,
+                  485.0
+                ],
+                "bbox_pdf": [
+                  20.88,
+                  617.4,
+                  86.4,
+                  622.8
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": null,
+                  "clinical_domain": "general_medicine",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0008",
+                "type": "problem_list",
+                "content": "1. Chest pain\n2. FH of early ASCVD\n3. Early surgical menopause\n4. Dyspnea\n5. Recent onset HTN\n6. Abdominal bruit\n7. Systolic ejection murmur\n8. Epigastric pain\n9. History of peptic ulcer disease\n10. Lumbosacral back pain\n11. OTC non-steroidal analgesic use\n12. Cystic changes of breasts\n13. Penicillin allergy",
+                "confidence": {
+                  "overall": 0.9680000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  58.0,
+                  497.0,
+                  362.0,
+                  657.0
+                ],
+                "bbox_pdf": [
+                  20.88,
+                  555.48,
+                  130.32,
+                  613.0799999999999
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current_and_historical",
+                  "clinical_domain": "general_medicine",
+                  "cross_references": [],
+                  "requires_validation": true
+                }
+              },
+              {
+                "element_id": "E_0009",
+                "type": "uncategorized",
+                "content": "This list regroups related problems (or those you suspect are related) into a more logical sequence",
+                "confidence": {
+                  "overall": 0.916,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  556.0,
+                  497.0,
+                  920.0,
+                  530.0
+                ],
+                "bbox_pdf": [
+                  200.16,
+                  601.2,
+                  331.2,
+                  613.0799999999999
+                ],
+                "needs_review": false
+              }
+            ],
+            "page_info": {
+              "width_pdf": 612.0,
+              "height_pdf": 792.0,
+              "width_px": 1700,
+              "height_px": 2200,
+              "dpi": 200
+            },
+            "processing_metadata": {
+              "model_name": "gemini-2.5-flash",
+              "processing_time_seconds": 17.28178906440735,
+              "api_cost_usd": 0.0,
+              "timestamp": "2025-11-16T05:16:51.100387"
+            },
+            "error": null
+          }
+        ],
+        "confidence": 0.9720000000000001,
+        "element_count": 9
+      },
+      {
+        "id": "subdoc_019",
+        "type": "clinical_content",
+        "title": "4. Systolic murmur",
+        "page_range": [
+          5,
+          5
+        ],
+        "page_count": 1,
+        "pages": [
+          {
+            "page_number": 5,
+            "elements": [
+              {
+                "element_id": "E_0001",
+                "type": "section_header",
+                "content": "Assessment and Differential Diagnosis",
+                "confidence": {
+                  "overall": 0.9560000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  56.0,
+                  107.0,
+                  330.0,
+                  121.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  748.44,
+                  118.8,
+                  753.48
+                ],
+                "needs_review": false
+              },
+              {
+                "element_id": "E_0002",
+                "type": "subsection_header",
+                "content": "1. Chest pain with features of angina pectoris",
+                "confidence": {
+                  "overall": 0.9560000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  56.0,
+                  147.0,
+                  467.0,
+                  161.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  734.04,
+                  168.12,
+                  739.08
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "cardiology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0003",
+                "type": "clinical_paragraph",
+                "content": "This patient's description of dull, aching, exertion related substernal chest pain is suggestive of ischemic cardiac origin. Her findings of a FH of early ASCVD, hypertension, and early surgical menopause are pertinent risk factors for development of coronary artery disease. Therefore, the combination of this patient's presentation, and the multiple risk factors make angina pectoris the most likely diagnosis. The pain symptoms appear to be increasing, and the occurrence of pain at rest suggests this fits the presentation of unstable angina, and hospitalization is indicated.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  175.0,
+                  488.0,
+                  300.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  684.0,
+                  175.68,
+                  729.0
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "cardiology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0004",
+                "type": "clinical_paragraph",
+                "content": "Other processes may explain her chest pain, but are less likely. Gastro-esophageal reflux disease (GERD) may occur at night with recumbency, but usually is not associated with exertion. The pain of GERD is usually burning, and the patient describes no associated gastrointestinal symptoms such as nausea, vomiting or abdominal pain which might suggest peptic ulcer disease. The presence of dyspnea might suggest a pulmonary component to this patient's disease process, but the absence of fever, cough or abnormal pulmonary examination findings make a pulmonary infection less likely, and the association of the dyspnea with the chest pain supports the theory that both symptoms may be from ischemic heart disease.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  314.0,
+                  488.0,
+                  459.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  626.76,
+                  175.68,
+                  678.96
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "cardiology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0005",
+                "type": "clinical_paragraph",
+                "content": "In the assessment you take each of the patient's major problems and draw conclusions, in this case that the chest pain is more likely due to ischemic heart disease instead of other possibilities. You tie in several of the other problems as risk factors for ischemic heart disease, and not merely as random unrelated problems. You should list and extensive justification for your most likely diagnosis. You should also explain why you are less suspicious of alternative diagnoses, such as esophageal reflux disease, pulmonary or musculoskeletal pain.",
+                "confidence": {
+                  "overall": 0.876,
+                  "extraction": 0.99,
+                  "classification": 0.85,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  527.0,
+                  182.0,
+                  919.0,
+                  315.0
+                ],
+                "bbox_pdf": [
+                  189.72,
+                  678.6,
+                  330.84000000000003,
+                  726.48
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": null,
+                  "clinical_domain": null,
+                  "cross_references": [],
+                  "requires_validation": true
+                }
+              },
+              {
+                "element_id": "E_0006",
+                "type": "subsection_header",
+                "content": "2. Dyspnea",
+                "confidence": {
+                  "overall": 0.9560000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  56.0,
+                  470.0,
+                  203.0,
+                  484.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  617.76,
+                  73.08,
+                  622.8
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "pulmonology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0007",
+                "type": "clinical_paragraph",
+                "content": "Her dyspnea may correlate with findings on physical exam of a third heart sound and pulmonary crackles, suggesting left ventricular dysfunction. In that case, she may be manifesting symptoms and findings of congestive heart failure from myocardial ischemia.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  500.0,
+                  488.0,
+                  570.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  586.8,
+                  175.68,
+                  612.0
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "pulmonology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0008",
+                "type": "subsection_header",
+                "content": "3. Recent onset hypertension and abdominal bruit",
+                "confidence": {
+                  "overall": 0.9560000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  56.0,
+                  581.0,
+                  488.0,
+                  595.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  577.8,
+                  175.68,
+                  582.84
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "cardiology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0009",
+                "type": "clinical_paragraph",
+                "content": "This combination raises the possibility of a secondary cause of hypertension, specifically ASCVD of the renal artery leading to renovascular hypertension. The lack of hypertensive retinopathy and left ventricular hypertrophy on physical examination further support a recent onset of her BP elevation.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  611.0,
+                  488.0,
+                  681.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  546.84,
+                  175.68,
+                  572.04
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "cardiology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0010",
+                "type": "clinical_paragraph",
+                "content": "As in the previous problem, you should explain, in more detail than is shown in this example, why you felt the dyspnea is more likely to be from ischemic heart disease, and not asthma, bronchitis, or other possibilities. Follow this pattern for all subsequent problems.",
+                "confidence": {
+                  "overall": 0.876,
+                  "extraction": 0.99,
+                  "classification": 0.85,
+                  "clinical_context": 0.7
+                },
+                "bbox_pixel": [
+                  527.0,
+                  522.0,
+                  919.0,
+                  595.0
+                ],
+                "bbox_pdf": [
+                  189.72,
+                  577.8,
+                  330.84000000000003,
+                  604.0799999999999
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": null,
+                  "clinical_domain": null,
+                  "cross_references": [],
+                  "requires_validation": true
+                }
+              },
+              {
+                "element_id": "E_0011",
+                "type": "subsection_header",
+                "content": "4. Systolic murmur",
+                "confidence": {
+                  "overall": 0.9560000000000001,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.9
+                },
+                "bbox_pixel": [
+                  56.0,
+                  692.0,
+                  260.0,
+                  706.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  537.84,
+                  93.60000000000001,
+                  542.88
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "cardiology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0012",
+                "type": "clinical_paragraph",
+                "content": "The possibility of important valvular heart disease is raised by the murmur, specifically, aortic stenosis. The murmur radiates to the neck as an aortic valvular murmur often does, but a normal carotid upstroke may mean this murmur is not significant.",
+                "confidence": {
+                  "overall": 0.966,
+                  "extraction": 0.99,
+                  "classification": 0.95,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  722.0,
+                  488.0,
+                  792.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  506.88,
+                  175.68,
+                  532.0799999999999
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "cardiology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0013",
+                "type": "list_items",
+                "content": "5. Epigastric discomfort, NSAID use with a history of peptic ulcer disease.",
+                "confidence": {
+                  "overall": 0.946,
+                  "extraction": 0.99,
+                  "classification": 0.9,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  803.0,
+                  488.0,
+                  830.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  493.2,
+                  175.68,
+                  502.92
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "gastroenterology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0014",
+                "type": "list_items",
+                "content": "6. Lumbo-sacral back pain",
+                "confidence": {
+                  "overall": 0.946,
+                  "extraction": 0.99,
+                  "classification": 0.9,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  841.0,
+                  316.0,
+                  855.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  484.2,
+                  113.76,
+                  489.24
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "musculoskeletal",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0015",
+                "type": "list_items",
+                "content": "7. Fibrocystic breast disease",
+                "confidence": {
+                  "overall": 0.946,
+                  "extraction": 0.99,
+                  "classification": 0.9,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  866.0,
+                  357.0,
+                  880.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  475.2,
+                  128.52,
+                  480.24
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "current",
+                  "clinical_domain": "endocrinology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0016",
+                "type": "list_items",
+                "content": "8. Penicillin allergy",
+                "confidence": {
+                  "overall": 0.946,
+                  "extraction": 0.99,
+                  "classification": 0.9,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  56.0,
+                  891.0,
+                  280.0,
+                  905.0
+                ],
+                "bbox_pdf": [
+                  20.16,
+                  466.2,
+                  100.8,
+                  471.24
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "historical",
+                  "clinical_domain": "allergy_immunology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              }
+            ],
+            "page_info": {
+              "width_pdf": 612.0,
+              "height_pdf": 792.0,
+              "width_px": 1700,
+              "height_px": 2200,
+              "dpi": 200
+            },
+            "processing_metadata": {
+              "model_name": "gemini-2.5-flash",
+              "processing_time_seconds": 26.962376356124878,
+              "api_cost_usd": 0.0,
+              "timestamp": "2025-11-16T05:17:18.084629"
+            },
+            "error": null
+          }
+        ],
+        "confidence": 0.9560000000000001,
+        "element_count": 16
+      },
+      {
+        "id": "subdoc_020",
+        "type": "clinical_content",
+        "title": "Plan:",
+        "page_range": [
+          6,
+          6
+        ],
+        "page_count": 1,
+        "pages": [
+          {
+            "page_number": 6,
+            "elements": [
+              {
+                "element_id": "E_0001",
+                "type": "section_header",
+                "content": "Plan:",
+                "confidence": {
+                  "overall": 0.982,
+                  "extraction": 0.99,
+                  "classification": 0.99,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  59.0,
+                  121.0,
+                  95.0,
+                  134.0
+                ],
+                "bbox_pdf": [
+                  21.240000000000002,
+                  743.76,
+                  34.2,
+                  748.44
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "planned",
+                  "clinical_domain": "assessment_plan",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0002",
+                "type": "list_items",
+                "content": "1. Carefully monitor the patient for any increased chest pain that might be indicative of impending myocardial infarction by admitting the patient to the telemetry floor.",
+                "confidence": {
+                  "overall": 0.978,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  59.0,
+                  152.0,
+                  489.0,
+                  198.0
+                ],
+                "bbox_pdf": [
+                  21.240000000000002,
+                  720.72,
+                  176.04000000000002,
+                  737.28
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "planned",
+                  "clinical_domain": "assessment_plan",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0003",
+                "type": "list_items",
+                "content": "2. Start platelet inhibitors, such as aspirin to decrease the risk of myocardial infarction; start nitrates to decrease the risk of occlusion and to treat her symptoms of pain. For prolonged pain un- responsive to nitrates, she may need an analgesic such as morphine. The nitrates will also help to lower her BP.",
+                "confidence": {
+                  "overall": 0.978,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  59.0,
+                  205.0,
+                  489.0,
+                  320.0
+                ],
+                "bbox_pdf": [
+                  21.240000000000002,
+                  676.8,
+                  176.04000000000002,
+                  718.2
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "planned",
+                  "clinical_domain": "pharmacology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0004",
+                "type": "list_items",
+                "content": "3. Patient should have her cholesterol monitored and when discharged she should be started on an appropriate exercise and weight loss program, including a low-fat diet. If her cholesterol is elevated, she may need cholesterol-lowering medication such as HMG Co-reductases.",
+                "confidence": {
+                  "overall": 0.978,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  59.0,
+                  327.0,
+                  489.0,
+                  408.0
+                ],
+                "bbox_pdf": [
+                  21.240000000000002,
+                  645.12,
+                  176.04000000000002,
+                  674.28
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "planned",
+                  "clinical_domain": "laboratory",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0005",
+                "type": "list_items",
+                "content": "4. Schedule a cardiac catheterization since non-invasive tests have a high pretest probability for being positive and regard- less of the result, negative or positive, she will need a cath",
+                "confidence": {
+                  "overall": 0.978,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  59.0,
+                  415.0,
+                  489.0,
+                  461.0
+                ],
+                "bbox_pdf": [
+                  21.240000000000002,
+                  626.04,
+                  176.04000000000002,
+                  642.6
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "planned",
+                  "clinical_domain": "imaging",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0006",
+                "type": "list_items",
+                "content": "5. Begin diuretics for her dyspnea which is most likely secondary to volume overload - this will treat her high BP as well. She should have a ventriculogram with the cath that will assess cardiac size and presence of wall motion abnormalities.",
+                "confidence": {
+                  "overall": 0.978,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  59.0,
+                  468.0,
+                  489.0,
+                  529.0
+                ],
+                "bbox_pdf": [
+                  21.240000000000002,
+                  601.56,
+                  176.04000000000002,
+                  623.52
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "planned",
+                  "clinical_domain": "pharmacology",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0007",
+                "type": "list_items",
+                "content": "6. Appropriate lab work would include BUN/Creatinine to assess kidney function, electrolytes and baseline EKG.",
+                "confidence": {
+                  "overall": 0.978,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  59.0,
+                  536.0,
+                  489.0,
+                  565.0
+                ],
+                "bbox_pdf": [
+                  21.240000000000002,
+                  588.6,
+                  176.04000000000002,
+                  599.04
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "planned",
+                  "clinical_domain": "laboratory",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              },
+              {
+                "element_id": "E_0008",
+                "type": "clinical_paragraph",
+                "content": "You should develop a diagnostic and therapeutic plan for the patient. Your plan should incorporate acute and long-term care of the patient's most likely problem. You should consider pharmacologic and non-pharmacologic measures and be cognizant of the fact that you need to treat the symptoms (i.e. make the patient comfortable) as much as treating the disease when possible. You are expected to know the usual classes of medications used to treat these illnesses.",
+                "confidence": {
+                  "overall": 0.978,
+                  "extraction": 0.99,
+                  "classification": 0.98,
+                  "clinical_context": 0.95
+                },
+                "bbox_pixel": [
+                  529.0,
+                  152.0,
+                  959.0,
+                  267.0
+                ],
+                "bbox_pdf": [
+                  190.44,
+                  695.88,
+                  345.24,
+                  737.28
+                ],
+                "needs_review": false,
+                "clinical_metadata": {
+                  "temporal_qualifier": "planned",
+                  "clinical_domain": "assessment_plan",
+                  "cross_references": [],
+                  "requires_validation": false
+                }
+              }
+            ],
+            "page_info": {
+              "width_pdf": 612.0,
+              "height_pdf": 792.0,
+              "width_px": 1700,
+              "height_px": 2200,
+              "dpi": 200
+            },
+            "processing_metadata": {
+              "model_name": "gemini-2.5-flash",
+              "processing_time_seconds": 13.958616018295288,
+              "api_cost_usd": 0.0,
+              "timestamp": "2025-11-16T05:17:32.063144"
+            },
+            "error": null
+          }
+        ],
+        "confidence": 0.982,
+        "element_count": 8
+      }
+    ],
+    "grouping_metadata": {
+      "total_subdocuments": 4,
+      "section_boundaries_detected": 20,
+      "confidence_threshold": 0.8
+    }
+  },
+  "hierarchical_index": {
+    "document_id": "Written History and Physical Exam_1763270111",
+    "source_pdf": "SampleEHR_docs/Written History and Physical Exam.pdf",
+    "total_pages": 6,
+    "patient_demographics": null,
+    "sub_documents": [
+      {
+        "id": "subdoc_011",
+        "type": "radiology_imaging",
+        "title": "Genital/Rectal:",
+        "page_range": [
+          3,
+          3
+        ],
+        "page_count": 1,
+        "pages": [
+          {
+            "page_number": 3,
+            "element_count": 32,
+            "element_types": [
+              "clinical_paragraph",
+              "section_header",
+              "subsection_header"
+            ]
+          }
+        ],
+        "confidence": 0.982,
+        "element_count": 32
+      },
+      {
+        "id": "subdoc_014",
+        "type": "problem_list",
+        "title": "Revised Problem List",
+        "page_range": [
+          4,
+          4
+        ],
+        "page_count": 1,
+        "pages": [
+          {
+            "page_number": 4,
+            "element_count": 9,
+            "element_types": [
+              "subsection_header",
+              "problem_list",
+              "uncategorized",
+              "section_header",
+              "clinical_paragraph"
+            ]
+          }
+        ],
+        "confidence": 0.9720000000000001,
+        "element_count": 9
+      },
+      {
+        "id": "subdoc_019",
+        "type": "clinical_content",
+        "title": "4. Systolic murmur",
+        "page_range": [
+          5,
+          5
+        ],
+        "page_count": 1,
+        "pages": [
+          {
+            "page_number": 5,
+            "element_count": 16,
+            "element_types": [
+              "list_items",
+              "clinical_paragraph",
+              "section_header",
+              "subsection_header"
+            ]
+          }
+        ],
+        "confidence": 0.9560000000000001,
+        "element_count": 16
+      },
+      {
+        "id": "subdoc_020",
+        "type": "clinical_content",
+        "title": "Plan:",
+        "page_range": [
+          6,
+          6
+        ],
+        "page_count": 1,
+        "pages": [
+          {
+            "page_number": 6,
+            "element_count": 8,
+            "element_types": [
+              "list_items",
+              "clinical_paragraph",
+              "section_header"
+            ]
+          }
+        ],
+        "confidence": 0.982,
+        "element_count": 8
+      }
+    ],
+    "processing_stats": {
+      "total_pages": 6,
+      "processed_pages": 6,
+      "failed_pages": [],
+      "total_elements": 65,
+      "total_cost_usd": 0.013623,
+      "processing_time_seconds": 140.52361297607422,
+      "start_time": "2025-11-15T21:15:11.542838",
+      "end_time": "2025-11-15T21:17:32.066452"
+    }
+  }
+}

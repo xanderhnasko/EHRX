@@ -20,7 +20,7 @@ from ehrx.vlm.config import VLMConfig
 logger = logging.getLogger(__name__)
 
 
-# All available semantic element types
+# All available semantic element types (excluding document_summary which is not queryable)
 SEMANTIC_TYPES = [
     "document_header",
     "patient_demographics",
@@ -43,6 +43,9 @@ SEMANTIC_TYPES = [
     "margin_content",
     "uncategorized"
 ]
+
+# Element types that should be excluded from querying
+EXCLUDED_FROM_QUERY = {"document_summary"}
 
 # Reasoning safeguards
 MAX_ELEMENTS_PER_BATCH = 120
@@ -324,6 +327,10 @@ Only return the JSON object, nothing else."""
 
                 for page in subdoc.get("pages", []):
                     for element in page.get("elements", []):
+                        # Skip excluded element types (e.g., document_summary)
+                        if element.get("type") in EXCLUDED_FROM_QUERY:
+                            continue
+
                         # PRIMARY: Filter by element type (this is the key!)
                         if element.get("type") in relevant_types:
                             # Add page number and subdoc context
@@ -349,6 +356,10 @@ Only return the JSON object, nothing else."""
             # No sub-documents, filter pages directly
             for page in self.schema.get("pages", []):
                 for element in page.get("elements", []):
+                    # Skip excluded element types (e.g., document_summary)
+                    if element.get("type") in EXCLUDED_FROM_QUERY:
+                        continue
+
                     if element.get("type") in relevant_types:
                         element_with_context = {
                             **element,
