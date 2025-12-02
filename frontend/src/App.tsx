@@ -131,7 +131,6 @@ const Header = () => (
     <div className="flex items-center gap-3">
       <div>
         <h1 className="text-lg font-semibold text-slate-100 tracking-tight leading-none">EHRX</h1>
-        <p className="text-xs text-slate-400 mt-0.5">PDF → structured EHR extraction</p>
       </div>
     </div>
     <div className="flex items-center gap-3 bg-slate-800 rounded-full px-4 py-2 border border-slate-700 text-xs text-slate-200">

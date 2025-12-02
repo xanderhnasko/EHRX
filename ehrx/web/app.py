@@ -149,6 +149,7 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
             output_dir=str(output_dir),
             page_range=page_range or "all",
             document_context={"document_type": "Clinical EHR"},
+            save_page_images=True,
         )
 
         grouper = SubDocumentGrouper(confidence_threshold=0.80)
@@ -169,10 +170,24 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
         enhanced_url = gcs.upload_file(enhanced_path, f"extractions/{document_id}/{enhanced_path.name}")
         index_url = gcs.upload_file(index_path, f"extractions/{document_id}/{index_path.name}")
 
+        # Upload page images (public for frontend previews)
+        page_images_dir = output_dir / "pages"
+        page_image_map = {}
+        if page_images_dir.exists():
+            for img_path in sorted(page_images_dir.glob("page-*.png")):
+                page_number = img_path.stem.split("-")[-1]
+                dest = f"extractions/{document_id}/pages/{img_path.name}"
+                gs_url = gcs.upload_file(img_path, dest, make_public=True)
+                page_image_map[str(int(page_number))] = gs_url.replace("gs://", "https://storage.googleapis.com/")
+
     stats = document.get("processing_stats", {})
-    db.upsert_extraction(doc_uuid, "full", full_url, stats.get("total_pages"), stats.get("total_elements"), {"index_url": index_url})
-    db.upsert_extraction(doc_uuid, "enhanced", enhanced_url, stats.get("total_pages"), stats.get("total_elements"), {"index_url": index_url})
-    db.upsert_extraction(doc_uuid, "index", index_url, stats.get("total_pages"), stats.get("total_elements"), None)
+    metadata_common = {
+        "index_url": index_url,
+        "page_images": page_image_map,
+    }
+    db.upsert_extraction(doc_uuid, "full", full_url, stats.get("total_pages"), stats.get("total_elements"), metadata_common)
+    db.upsert_extraction(doc_uuid, "enhanced", enhanced_url, stats.get("total_pages"), stats.get("total_elements"), metadata_common)
+    db.upsert_extraction(doc_uuid, "index", index_url, stats.get("total_pages"), stats.get("total_elements"), metadata_common)
 
     return {
         "document_id": document_id,
@@ -241,5 +256,16 @@ def query_document(payload: QueryRequest):
 
     agent = HybridQueryAgent(schema=schema, vlm_config=VLMConfig.from_env())
     result = agent.query(payload.question)
+
+    # Attach image URLs from extraction metadata if available
+    meta = extraction.get("metadata") or {}
+    page_images = meta.get("page_images") or {}
+    for el in result.get("matched_elements", []):
+        page = el.get("page")
+        if page is None:
+            continue
+        img_url = page_images.get(str(page))
+        if img_url:
+            el["image_url"] = img_url
 
     return JSONResponse(result)

@@ -12,6 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 from dataclasses import dataclass, asdict
+from PIL import Image
 
 from ehrx.vlm.client import VLMClient
 from ehrx.vlm.config import VLMConfig
@@ -85,7 +86,8 @@ class DocumentPipeline:
         pdf_path: str,
         output_dir: str,
         page_range: Optional[str] = None,
-        document_context: Optional[Dict[str, Any]] = None
+        document_context: Optional[Dict[str, Any]] = None,
+        save_page_images: bool = False
     ) -> Dict[str, Any]:
         """
         Process entire PDF through VLM extraction.
@@ -95,6 +97,7 @@ class DocumentPipeline:
             output_dir: Directory for output files
             page_range: Optional page range (e.g., "1-10", "all")
             document_context: Optional document-level context for VLM
+            save_page_images: If True, save rasterized page images to output_dir/pages
 
         Returns:
             Dictionary containing:
@@ -134,6 +137,12 @@ class DocumentPipeline:
 
         self.logger.info(f"Processing {len(pages_to_process)} pages")
 
+        # Optionally prepare page image directory
+        pages_dir = None
+        if save_page_images:
+            pages_dir = output_dir / "pages"
+            pages_dir.mkdir(parents=True, exist_ok=True)
+
         # Process pages sequentially
         page_results = []
         failed_pages = []
@@ -147,7 +156,9 @@ class DocumentPipeline:
                     rasterizer=rasterizer,
                     page_num=page_num,
                     total_pages=total_pages,
-                    document_context=document_context
+                    document_context=document_context,
+                    save_image=save_page_images,
+                    image_dir=pages_dir
                 )
                 page_results.append(page_result)
                 total_elements += len(page_result.elements)
@@ -223,7 +234,9 @@ class DocumentPipeline:
         rasterizer: PDFRasterizer,
         page_num: int,
         total_pages: int,
-        document_context: Optional[Dict[str, Any]] = None
+        document_context: Optional[Dict[str, Any]] = None,
+        save_image: bool = False,
+        image_dir: Optional[Path] = None
     ) -> PageResult:
         """
         Process a single page through VLM extraction.
@@ -242,6 +255,12 @@ class DocumentPipeline:
             page_num=page_num,
             dpi=self.dpi
         )
+
+        # Optionally save the page image
+        if save_image and image_dir:
+            img = Image.fromarray(page_image)
+            fname = image_dir / f"page-{page_num + 1}.png"
+            img.save(fname, format="PNG")
 
         # Create coordinate mapper from page info
         coord_mapper = CoordinateMapper(page_info)

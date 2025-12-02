@@ -16,9 +16,11 @@ class GCSClient:
         self.client = storage.Client()
         self.bucket = self.client.bucket(bucket_name)
 
-    def upload_file(self, local_path: Path, dest_blob: str) -> str:
+    def upload_file(self, local_path: Path, dest_blob: str, make_public: bool = False) -> str:
         blob = self.bucket.blob(dest_blob)
         blob.upload_from_filename(local_path)
+        if make_public:
+            blob.make_public()
         return f"gs://{self.bucket.name}/{dest_blob}"
 
     def upload_bytes(self, data: bytes, dest_blob: str, content_type: Optional[str] = None) -> str:
