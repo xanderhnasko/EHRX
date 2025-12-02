@@ -28,6 +28,34 @@ type QueryResponse = {
   matched_elements: MatchedElement[];
 };
 
+type RawElement = {
+  type: string;
+  content: string;
+  page_number?: number;
+  bbox_pixel?: number[] | null;
+  bbox_pdf?: number[] | null;
+  confidence?: number | null;
+  needs_review?: boolean;
+};
+
+type SectionContent = {
+  id?: string;
+  title?: string;
+  type?: string;
+  page_range?: number[];
+  page_count?: number;
+  confidence?: number | null;
+  pages?: Array<{
+    page_number?: number;
+    elements?: RawElement[];
+  }>;
+};
+
+type PageSnapshot = {
+  page_number?: number;
+  elements?: RawElement[];
+};
+
 type Medication = {
   drug_name: string;
   dosage: string | null;
@@ -58,6 +86,10 @@ type StructuredData = {
   medications: Medication[];
   labs: Lab[];
   procedures: Procedure[];
+  patient_demographics?: RawElement | null;
+  sections?: SectionContent[];
+  pages?: PageSnapshot[];
+  document_dates?: string[] | null;
 };
 
 type ExtractionResponse = {
@@ -244,10 +276,160 @@ const UploadCard = ({ onUpload }: { onUpload: (f: File) => void }) => {
   );
 };
 
-const tabs = ['Summary', 'Meds', 'Labs', 'Procedures'] as const;
+const tabs = ['Overview', 'Patient', 'Problems', 'Meds', 'Labs', 'Procedures', 'Imaging', 'Notes', 'Everything'] as const;
 type Tab = (typeof tabs)[number];
 
 const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab; structuredData: StructuredData | null; loading: boolean }) => {
+  const formatPageRange = (pageRange?: number[]) => {
+    if (!pageRange || pageRange.length === 0) return '—';
+    if (pageRange.length === 1) return `Page ${pageRange[0]}`;
+    return `Pages ${pageRange[0]}–${pageRange[pageRange.length - 1]}`;
+  };
+
+  const splitContent = (text: string) =>
+    text
+      .split(/\n+/)
+      .map((line) => line.replace(/^[•\-\d\.\)\s]+/, '').trim())
+      .filter(Boolean);
+
+  const elementLabel = (type: string) => {
+    const t = type.toLowerCase();
+    if (t.includes('medication')) return 'Medication';
+    if (t.includes('lab')) return 'Lab';
+    if (t.includes('procedure')) return 'Procedure';
+    if (t.includes('radiology')) return 'Imaging';
+    if (t.includes('problem')) return 'Problem';
+    if (t.includes('demographics')) return 'Demographics';
+    if (t.includes('list')) return 'List';
+    if (t.includes('header')) return 'Header';
+    if (t.includes('form')) return 'Form';
+    return 'Detail';
+  };
+
+  const elementPriority = (type: string) => {
+    const t = type.toLowerCase();
+    if (t.includes('header')) return 6;
+    if (t.includes('problem')) return 5;
+    if (t.includes('medication')) return 5;
+    if (t.includes('lab')) return 5;
+    if (t.includes('procedure')) return 5;
+    if (t.includes('demographics')) return 4;
+    if (t.includes('list')) return 3;
+    if (t.includes('clinical')) return 3;
+    if (t.includes('form')) return 2;
+    return 1;
+  };
+
+  const extractLines = (section: SectionContent, take = 8) => {
+    const elements = section.pages?.flatMap((p) =>
+      (p.elements || []).map((el) => ({ ...el, page_number: p.page_number || el.page_number }))
+    ) || [];
+
+    const ordered = [...elements].sort((a, b) => elementPriority(b.type) - elementPriority(a.type));
+    const lines: { text: string; tag: string; page?: number }[] = [];
+
+    for (const el of ordered) {
+      splitContent(el.content || '').forEach((line) => {
+        if (lines.length >= take) return;
+        lines.push({ text: line, tag: elementLabel(el.type), page: el.page_number });
+      });
+      if (lines.length >= take) break;
+    }
+    return lines;
+  };
+
+  const filterSections = (tab: Tab) => {
+    const sections = structuredData?.sections || [];
+    const matchers: Record<Tab, (s: SectionContent) => boolean> = {
+      Overview: () => false,
+      Patient: () => false,
+      Problems: (s) => {
+        const t = (s.type || '').toLowerCase();
+        const title = (s.title || '').toLowerCase();
+        return t.includes('problem') || title.includes('diagnosis') || title.includes('history');
+      },
+      Meds: (s) => {
+        const t = (s.type || '').toLowerCase();
+        const title = (s.title || '').toLowerCase();
+        return t.includes('medication') || title.includes('med');
+      },
+      Labs: (s) => {
+        const t = (s.type || '').toLowerCase();
+        const title = (s.title || '').toLowerCase();
+        return t.includes('laboratory') || t.includes('lab') || title.includes('lab');
+      },
+      Procedures: (s) => {
+        const t = (s.type || '').toLowerCase();
+        const title = (s.title || '').toLowerCase();
+        return t.includes('procedure') || title.includes('surgery') || title.includes('operative');
+      },
+      Imaging: (s) => {
+        const t = (s.type || '').toLowerCase();
+        const title = (s.title || '').toLowerCase();
+        return t.includes('radiology') || title.includes('imaging') || title.includes('ct') || title.includes('mri') || title.includes('x-ray');
+      },
+      Notes: (s) => {
+        const t = (s.type || '').toLowerCase();
+        const title = (s.title || '').toLowerCase();
+        return t.includes('progress') || t.includes('clinical_content') || title.includes('note') || title.includes('plan');
+      },
+      Everything: () => true,
+    };
+    const matcher = matchers[tab];
+    return sections.filter(matcher);
+  };
+
+  const renderSectionGrid = (sections: SectionContent[], emptyLabel: string) => {
+    if (!sections || sections.length === 0) {
+      return <p className="text-slate-500 italic text-sm">{emptyLabel}</p>;
+    }
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {sections.map((section) => {
+          const lines = extractLines(section);
+          return (
+            <div key={`${section.id || section.title}-${section.page_range || ''}`} className="border border-slate-200 rounded-xl p-4 bg-gradient-to-br from-white to-slate-50 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{section.type || 'Section'}</p>
+                  <h4 className="text-sm font-semibold text-slate-900">{section.title || 'Untitled section'}</h4>
+                  <p className="text-xs text-slate-500">{formatPageRange(section.page_range)}</p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  {section.page_count && (
+                    <span className="text-[11px] text-blue-700 bg-blue-50 px-2 py-1 rounded-full font-semibold border border-blue-100">
+                      {section.page_count}p
+                    </span>
+                  )}
+                  {section.confidence && (
+                    <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full font-semibold border border-emerald-100">
+                      {Math.round(section.confidence * 100)}% confident
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="mt-3 space-y-2">
+                {lines.map((line, idx) => (
+                  <div key={idx} className="flex items-start gap-2">
+                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="text-xs uppercase tracking-wide text-slate-400 font-semibold flex items-center gap-2">
+                        {line.tag}
+                        {line.page && <span className="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Page {line.page}</span>}
+                      </div>
+                      <p className="text-sm text-slate-800 leading-snug">{line.text}</p>
+                    </div>
+                  </div>
+                ))}
+                {lines.length === 0 && <p className="text-xs text-slate-500">No text captured for this section.</p>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full overflow-hidden flex flex-col">
@@ -269,38 +451,125 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
     );
   }
 
+  const summaryLines =
+    structuredData.summary
+      ?.split(/[\n•]+/)
+      .map((s) => s.trim())
+      .filter(Boolean) || [];
+
+  const stats = [
+    { label: 'Sections', value: structuredData.sections?.length ?? 0 },
+    { label: 'Pages', value: structuredData.pages?.length ?? '—' },
+    { label: 'Medications', value: structuredData.medications?.length ?? 0 },
+    { label: 'Labs', value: structuredData.labs?.length ?? 0 },
+    { label: 'Procedures', value: structuredData.procedures?.length ?? 0 },
+  ];
+
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[500px]">
-      <div className="overflow-y-auto p-4">
-        {activeTab === 'Summary' && (
-          <div className="text-sm text-slate-700 space-y-3">
-            {structuredData.summary ? (
-              <div className="whitespace-pre-wrap leading-relaxed">{structuredData.summary}</div>
-            ) : (
-              <p className="text-slate-500 italic">No summary available</p>
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[65vh]">
+      <div className="overflow-y-auto p-4 space-y-5">
+        {activeTab === 'Overview' && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+              {stats.map((s) => (
+                <div key={s.label} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 shadow-sm">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{s.label}</p>
+                  <p className="text-xl font-semibold text-slate-900">{s.value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-800 text-slate-100 p-5 shadow-md">
+              <p className="text-[11px] uppercase tracking-wide text-blue-200 font-semibold mb-2">Document summary</p>
+              {summaryLines.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {summaryLines.map((line, idx) => (
+                    <div key={idx} className="flex items-start gap-2">
+                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-300 flex-shrink-0" />
+                      <p className="text-sm leading-relaxed">{line}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-200">No summary available.</p>
+              )}
+            </div>
+            {structuredData.document_dates && structuredData.document_dates.length > 0 && (
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Dates seen</p>
+                <div className="flex flex-wrap gap-2">
+                  {structuredData.document_dates.map((d) => (
+                    <span key={d} className="px-2 py-1 rounded-lg border border-slate-200 bg-white text-xs text-slate-700 shadow-sm">
+                      {d}
+                    </span>
+                  ))}
+                </div>
+              </div>
             )}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-semibold text-slate-800">Document outline</h4>
+                <p className="text-xs text-slate-500">Click into tabs to deep dive</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {(structuredData.sections || []).map((s) => (
+                  <div key={s.id || s.title} className="px-3 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-xs text-slate-700 flex items-center gap-2">
+                    <span className="font-semibold text-slate-900">{s.title || 'Untitled'}</span>
+                    <span className="text-[11px] text-slate-500">{formatPageRange(s.page_range)}</span>
+                  </div>
+                ))}
+                {(structuredData.sections || []).length === 0 && <p className="text-xs text-slate-500">No outline available.</p>}
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'Patient' && (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-slate-200 p-4 bg-slate-50">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Demographics</p>
+              {structuredData.patient_demographics?.content ? (
+                <div className="space-y-1">
+                  {splitContent(structuredData.patient_demographics.content).map((line, idx) => (
+                    <p key={idx} className="text-sm text-slate-800">{line}</p>
+                  ))}
+                  {structuredData.patient_demographics.page_number && (
+                    <p className="text-[11px] text-slate-500 mt-2">Located on page {structuredData.patient_demographics.page_number}</p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-500 italic">No patient demographic block captured.</p>
+              )}
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Problem list / history</p>
+              {renderSectionGrid(filterSections('Problems'), 'No diagnoses or problem lists detected.')}
+            </div>
           </div>
         )}
 
+        {activeTab === 'Problems' && (
+          renderSectionGrid(filterSections('Problems'), 'No diagnoses or problem lists detected.')
+        )}
+
         {activeTab === 'Meds' && (
-          <div>
+          <div className="space-y-4">
             {structuredData.medications.length > 0 ? (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto border border-slate-200 rounded-xl">
                 <table className="min-w-full divide-y divide-slate-200 text-sm">
                   <thead className="bg-slate-50">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Drug Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Medication</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Dosage</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Frequency</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Start Date</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">End Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Start</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">End</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Notes</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-slate-200">
                     {structuredData.medications.map((med, idx) => (
                       <tr key={idx} className="hover:bg-slate-50">
-                        <td className="px-4 py-3 text-slate-900 font-medium">{med.drug_name}</td>
+                        <td className="px-4 py-3 text-slate-900 font-semibold">{med.drug_name}</td>
                         <td className="px-4 py-3 text-slate-700">{med.dosage || '—'}</td>
                         <td className="px-4 py-3 text-slate-700">{med.frequency || '—'}</td>
                         <td className="px-4 py-3 text-slate-700">{med.start_date || '—'}</td>
@@ -312,20 +581,24 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
                 </table>
               </div>
             ) : (
-              <p className="text-slate-500 italic text-sm">No medications documented</p>
+              <p className="text-slate-500 italic text-sm">No structured medications returned.</p>
             )}
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
+              {renderSectionGrid(filterSections('Meds'), 'No medication sections detected in the document.')}
+            </div>
           </div>
         )}
 
         {activeTab === 'Labs' && (
-          <div>
+          <div className="space-y-4">
             {structuredData.labs.length > 0 ? (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto border border-slate-200 rounded-xl">
                 <table className="min-w-full divide-y divide-slate-200 text-sm">
                   <thead className="bg-slate-50">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Test Name</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Date Ordered</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Test</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Date</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Result</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Reason</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Notes</th>
@@ -334,7 +607,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
                   <tbody className="bg-white divide-y divide-slate-200">
                     {structuredData.labs.map((lab, idx) => (
                       <tr key={idx} className="hover:bg-slate-50">
-                        <td className="px-4 py-3 text-slate-900 font-medium">{lab.test_name}</td>
+                        <td className="px-4 py-3 text-slate-900 font-semibold">{lab.test_name}</td>
                         <td className="px-4 py-3 text-slate-700">{lab.date_ordered || '—'}</td>
                         <td className="px-4 py-3 text-slate-700">{lab.result || '—'}</td>
                         <td className="px-4 py-3 text-slate-700">{lab.reason || '—'}</td>
@@ -345,19 +618,23 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
                 </table>
               </div>
             ) : (
-              <p className="text-slate-500 italic text-sm">No lab tests documented</p>
+              <p className="text-slate-500 italic text-sm">No structured labs returned.</p>
             )}
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
+              {renderSectionGrid(filterSections('Labs'), 'No lab sections detected in the document.')}
+            </div>
           </div>
         )}
 
         {activeTab === 'Procedures' && (
-          <div>
+          <div className="space-y-4">
             {structuredData.procedures.length > 0 ? (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto border border-slate-200 rounded-xl">
                 <table className="min-w-full divide-y divide-slate-200 text-sm">
                   <thead className="bg-slate-50">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Procedure Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Procedure</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Date</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Purpose</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Result</th>
@@ -367,7 +644,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
                   <tbody className="bg-white divide-y divide-slate-200">
                     {structuredData.procedures.map((proc, idx) => (
                       <tr key={idx} className="hover:bg-slate-50">
-                        <td className="px-4 py-3 text-slate-900 font-medium">{proc.procedure_name}</td>
+                        <td className="px-4 py-3 text-slate-900 font-semibold">{proc.procedure_name}</td>
                         <td className="px-4 py-3 text-slate-700">{proc.date || '—'}</td>
                         <td className="px-4 py-3 text-slate-700">{proc.purpose || '—'}</td>
                         <td className="px-4 py-3 text-slate-700">{proc.result || '—'}</td>
@@ -378,8 +655,23 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
                 </table>
               </div>
             ) : (
-              <p className="text-slate-500 italic text-sm">No procedures documented</p>
+              <p className="text-slate-500 italic text-sm">No structured procedures returned.</p>
             )}
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
+              {renderSectionGrid(filterSections('Procedures'), 'No procedure sections detected in the document.')}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'Imaging' && renderSectionGrid(filterSections('Imaging'), 'No imaging or radiology sections detected.')}
+
+        {activeTab === 'Notes' && renderSectionGrid(filterSections('Notes'), 'No clinical notes detected.')}
+
+        {activeTab === 'Everything' && (
+          <div className="space-y-3">
+            <p className="text-xs text-slate-500">Every grouped section from the ontology.</p>
+            {renderSectionGrid(filterSections('Everything'), 'No sections captured.')}
           </div>
         )}
       </div>
@@ -422,7 +714,7 @@ const AnalysisArea = ({
   >([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<Tab>('Summary');
+  const [activeTab, setActiveTab] = useState<Tab>('Overview');
   const [chatOpen, setChatOpen] = useState(true);
   const [selectedEvidenceList, setSelectedEvidenceList] = useState<MatchedElement[] | null>(null);
   const [evidenceIndex, setEvidenceIndex] = useState(0);

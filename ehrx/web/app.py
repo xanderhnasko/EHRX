@@ -6,6 +6,7 @@ Deploy behind Cloud Run/uvicorn as needed.
 """
 
 import os
+import re
 import logging
 import tempfile
 import uuid
@@ -392,13 +393,82 @@ def get_structured_data(document_id: str, kind: str = "enhanced"):
         "summary": None,
         "medications": [],
         "labs": [],
-        "procedures": []
+        "procedures": [],
+        "patient_demographics": schema.get("patient_demographics"),
+        "sections": [],
+        "pages": [],
+        "document_dates": [],
     }
 
     # Extract summary from document_summary field
     if "document_summary" in schema:
         summary_elem = schema["document_summary"]
         structured_data["summary"] = summary_elem.get("content", "No summary available")
+
+    # Heuristic document dates (loose; surface to UI for context)
+    date_candidates = set()
+    for page in schema.get("pages", []):
+        for element in page.get("elements", []):
+            content = element.get("content") or ""
+            for match in re.findall(r"(\d{1,2}/\d{1,2}/\d{2,4})", content):
+                date_candidates.add(match)
+    structured_data["document_dates"] = sorted(date_candidates)
+
+    # Capture grouped sections with their raw elements for reconstruction UI
+    sections = []
+    for subdoc in schema.get("sub_documents", []):
+        section_pages = []
+        for page in subdoc.get("pages", []):
+            elems = []
+            for element in page.get("elements", []):
+                elems.append(
+                    {
+                        "type": element.get("type"),
+                        "content": element.get("content"),
+                        "page_number": page.get("page_number"),
+                        "bbox_pixel": element.get("bbox_pixel"),
+                        "bbox_pdf": element.get("bbox_pdf"),
+                        "confidence": (element.get("confidence") or {}).get("overall"),
+                        "needs_review": element.get("needs_review"),
+                    }
+                )
+            section_pages.append({"page_number": page.get("page_number"), "elements": elems})
+        sections.append(
+            {
+                "id": subdoc.get("id"),
+                "title": subdoc.get("title"),
+                "type": subdoc.get("type"),
+                "page_range": subdoc.get("page_range"),
+                "page_count": subdoc.get("page_count"),
+                "confidence": subdoc.get("confidence"),
+                "pages": section_pages,
+            }
+        )
+    structured_data["sections"] = sections
+
+    # Lightweight per-page snapshot to support timeline view
+    page_summaries = []
+    for page in schema.get("pages", []):
+        elems = []
+        for element in page.get("elements", []):
+            elems.append(
+                {
+                    "type": element.get("type"),
+                    "content": element.get("content"),
+                    "bbox_pixel": element.get("bbox_pixel"),
+                    "bbox_pdf": element.get("bbox_pdf"),
+                    "confidence": (element.get("confidence") or {}).get("overall"),
+                    "needs_review": element.get("needs_review"),
+                }
+            )
+        page_summaries.append(
+            {
+                "page_number": page.get("page_number"),
+                "page_info": page.get("page_info"),
+                "elements": elems,
+            }
+        )
+    structured_data["pages"] = page_summaries
 
     # Extract medications, labs, and procedures from sub_documents or pages
     if "sub_documents" in schema:
