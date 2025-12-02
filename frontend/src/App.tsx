@@ -812,9 +812,14 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
 
   let overlayStyle: React.CSSProperties | null = null;
   if (hasDims) {
+    const [rawX0, rawY0, rawX1, rawY1] = bbox;
+    const normalized = bbox.every((v) => typeof v === 'number' && v >= 0 && v <= 1);
+    const x0 = normalized ? rawX0 * (baseW as number) : rawX0;
+    const y0 = normalized ? rawY0 * (baseH as number) : rawY0;
+    const x1 = normalized ? rawX1 * (baseW as number) : rawX1;
+    const y1 = normalized ? rawY1 * (baseH as number) : rawY1;
     const scaleX = size.w / (baseW as number);
     const scaleY = size.h / (baseH as number);
-    const [x0, y0, x1, y1] = bbox;
     overlayStyle = {
       left: x0 * scaleX,
       top: y0 * scaleY,
@@ -824,12 +829,12 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
   }
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block bg-slate-100 p-2 rounded-md border border-slate-200">
       <img
         ref={imgRef}
         src={ev.image_url}
         alt="Page preview"
-        className="max-h-96 rounded border border-slate-200"
+        className="max-h-[70vh] max-w-[90vw] rounded border border-slate-200 shadow-sm block"
         onLoad={handleLoad}
         onError={handleError}
       />
