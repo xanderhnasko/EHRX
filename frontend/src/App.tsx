@@ -1054,16 +1054,12 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
       x1 = r2 * baseW;
       y1 = r3 * baseH;
     } else {
-      // Raw pixel coords from VLM appear to use bottom-left origin; flip to top-left.
-      y0 = baseH - r3;
-      y1 = baseH - r1;
+      // Raw pixel coords from VLM are top-left origin; only scale up from detector canvas.
+      x0 = r0 * coordScaleX;
+      x1 = r2 * coordScaleX;
+      y0 = r1 * coordScaleY;
+      y1 = r3 * coordScaleY;
     }
-
-    // Upscale from detector canvas to full PNG
-    x0 *= coordScaleX;
-    x1 *= coordScaleX;
-    y0 *= coordScaleY;
-    y1 *= coordScaleY;
 
     if (x1 < x0) [x0, x1] = [x1, x0];
     if (y1 < y0) [y0, y1] = [y1, y0];
@@ -1071,8 +1067,8 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
     // Aggressive expansion to favor recall (sections often extend beyond the header bbox)
     const currW = x1 - x0;
     const currH = y1 - y0;
-    const targetW = Math.max(currW + baseW * 0.04, currW * 3, baseW * 0.12);
-    const targetH = Math.max(currH + baseH * 0.06, currH * 3, baseH * 0.08);
+    const targetW = Math.max(currW + baseW * 0.05, currW * 3.5, baseW * 0.18);
+    const targetH = Math.max(currH + baseH * 0.08, currH * 3.5, baseH * 0.12);
     const cx = (x0 + x1) / 2;
     const cy = (y0 + y1) / 2;
     x0 = Math.max(0, cx - targetW / 2);
