@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Optional
 from threading import Lock
 from collections import OrderedDict
+from PIL import Image
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -206,6 +207,15 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
                     except Exception as e:
                         logging.warning(f"Failed to sign page image {dest}: {e}")
                         continue
+                # Fallback: if dimensions missing for this page, derive from the image file
+                page_key = str(int(page_number))
+                if page_key not in page_dim_map:
+                    try:
+                        with Image.open(img_path) as img:
+                            w, h = img.size
+                            page_dim_map[page_key] = {"width_px": w, "height_px": h}
+                    except Exception as e:
+                        logging.warning(f"Failed to read dimensions for {img_path}: {e}")
         logging.info(
             f"Page images uploaded for doc {document_id}: count={len(page_image_map)}, dims={len(page_dim_map)}"
         )
