@@ -795,22 +795,25 @@ export default function App() {
 const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
   const imgRef = useRef<HTMLImageElement | null>(null);
   const [size, setSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
+  const [natural, setNatural] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
 
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     setSize({ w: e.currentTarget.clientWidth, h: e.currentTarget.clientHeight });
+    setNatural({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight });
   };
   const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.warn('Image failed to load', ev.image_url, e);
   };
 
   const bbox = ev.bbox || [];
-  const hasDims =
-    ev.page_width_px && ev.page_height_px && bbox.length === 4 && size.w > 0 && size.h > 0;
+  const baseW = ev.page_width_px || natural.w;
+  const baseH = ev.page_height_px || natural.h;
+  const hasDims = baseW && baseH && bbox.length === 4 && size.w > 0 && size.h > 0;
 
   let overlayStyle: React.CSSProperties | null = null;
   if (hasDims) {
-    const scaleX = size.w / (ev.page_width_px as number);
-    const scaleY = size.h / (ev.page_height_px as number);
+    const scaleX = size.w / (baseW as number);
+    const scaleY = size.h / (baseH as number);
     const [x0, y0, x1, y1] = bbox;
     overlayStyle = {
       left: x0 * scaleX,

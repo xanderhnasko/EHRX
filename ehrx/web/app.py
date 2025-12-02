@@ -11,7 +11,7 @@ import tempfile
 import uuid
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 from threading import Lock
 from collections import OrderedDict
 from PIL import Image
@@ -64,6 +64,27 @@ if not GCS_BUCKET:
 gcs = GCSClient(GCS_BUCKET)
 
 PAGE_IMAGES_PUBLIC = os.getenv("PAGE_IMAGES_PUBLIC", "false").lower() == "true"
+
+
+def _png_dimensions(path: Path) -> Tuple[Optional[int], Optional[int]]:
+    """
+    Fast PNG dimension reader with Pillow fallback.
+    """
+    try:
+        with path.open("rb") as f:
+            header = f.read(24)
+            if len(header) >= 24 and header.startswith(b"\x89PNG\r\n\x1a\n"):
+                w = int.from_bytes(header[16:20], "big")
+                h = int.from_bytes(header[20:24], "big")
+                if w and h:
+                    return w, h
+    except Exception:
+        pass
+    try:
+        with Image.open(path) as img:
+            return img.size
+    except Exception:
+        return None, None
 
 
 class SchemaCache:
@@ -210,12 +231,11 @@ def extract_document(document_id: str, page_range: Optional[str] = None):
                 # Fallback: if dimensions missing for this page, derive from the image file
                 page_key = str(int(page_number))
                 if page_key not in page_dim_map:
-                    try:
-                        with Image.open(img_path) as img:
-                            w, h = img.size
-                            page_dim_map[page_key] = {"width_px": w, "height_px": h}
-                    except Exception as e:
-                        logging.warning(f"Failed to read dimensions for {img_path}: {e}")
+                    w, h = _png_dimensions(img_path)
+                    if w and h:
+                        page_dim_map[page_key] = {"width_px": w, "height_px": h}
+                    else:
+                        logging.warning(f"Failed to read dimensions for {img_path}")
         logging.info(
             f"Page images uploaded for doc {document_id}: count={len(page_image_map)}, dims={len(page_dim_map)}"
         )
