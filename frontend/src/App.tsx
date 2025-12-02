@@ -1006,19 +1006,29 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
     };
   }, [ev.image_url]);
 
-  // Prefer the actual PNG dimensions, since bboxes originate from the rasterized page.
-  const baseW = natural.w || ev.page_width_px || 0;
-  const baseH = natural.h || ev.page_height_px || 0;
+  // Use the source page dimensions from the API (DPI-correct), fallback to natural if missing.
+  const baseW = ev.page_width_px || natural.w || 0;
+  const baseH = ev.page_height_px || natural.h || 0;
 
   const bboxSource =
     (Array.isArray(ev.bbox) && ev.bbox.length === 4 && ev.bbox) ||
     (Array.isArray(ev.bbox_norm) && ev.bbox_norm.length === 4 && ev.bbox_norm) ||
     null;
   // When bboxSource comes from bbox_norm, treat it as PDF coords (bottom-left origin).
-  const bboxIsPdfSpace =
+  const bboxIsPdfSpaceExplicit =
     !(Array.isArray(ev.bbox) && ev.bbox.length === 4) &&
     Array.isArray(ev.bbox_norm) &&
     ev.bbox_norm.length === 4;
+
+  // Heuristic: if bbox numbers are comfortably within PDF point bounds, treat as PDF space.
+  const bboxLooksPdf =
+    !!(ev.page_width_pdf && ev.page_height_pdf && bboxSource) &&
+    bboxSource.every((v, i) =>
+      typeof v === 'number' &&
+      v >= 0 &&
+      (i % 2 === 0 ? v <= ev.page_width_pdf! * 1.05 : v <= ev.page_height_pdf! * 1.05)
+    );
+  const bboxIsPdfSpace = bboxIsPdfSpaceExplicit || bboxLooksPdf;
 
   // Convert whatever bbox space we have into pixel coords using top-left origin (to match <img>)
   let overlayStyle: React.CSSProperties | null = null;
@@ -1031,12 +1041,7 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
     let x1 = r2;
     let y1 = r3;
 
-    if (normalized) {
-      x0 = r0 * baseW;
-      y0 = r1 * baseH;
-      x1 = r2 * baseW;
-      y1 = r3 * baseH;
-    } else if (bboxIsPdfSpace && ev.page_width_pdf && ev.page_height_pdf) {
+    if (bboxIsPdfSpace && ev.page_width_pdf && ev.page_height_pdf) {
       // PDF coords are bottom-left; convert to pixels and flip Y
       const scaleX = baseW / ev.page_width_pdf;
       const scaleY = baseH / ev.page_height_pdf;
@@ -1044,6 +1049,11 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
       x1 = r2 * scaleX;
       y0 = (ev.page_height_pdf - r3) * scaleY;
       y1 = (ev.page_height_pdf - r1) * scaleY;
+    } else if (normalized) {
+      x0 = r0 * baseW;
+      y0 = r1 * baseH;
+      x1 = r2 * baseW;
+      y1 = r3 * baseH;
     }
 
     if (x1 < x0) [x0, x1] = [x1, x0];
@@ -1066,6 +1076,26 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
       height: Math.max(1, (y1 - y0) * scaleY),
     };
   }
+
+  // Debug logger for alignment; check DevTools console while modal is open.
+  useEffect(() => {
+    if (!bboxSource) return;
+    console.log('BBox debug', {
+      page: ev.page,
+      bboxSource,
+      bboxIsPdfSpace,
+      bbox_norm: ev.bbox_norm,
+      page_width_px: ev.page_width_px,
+      page_height_px: ev.page_height_px,
+      page_width_pdf: ev.page_width_pdf,
+      page_height_pdf: ev.page_height_pdf,
+      natural,
+      rendered: size,
+      baseW,
+      baseH,
+      overlayStyle,
+    });
+  }, [bboxSource, bboxIsPdfSpace, ev, natural, size, baseW, baseH, overlayStyle]);
 
   return (
     <div className="inline-block rounded-md border border-slate-200 bg-slate-100 p-2">
