@@ -17,6 +17,8 @@ type MatchedElement = {
   page_width_pdf?: number;
   page_height_pdf?: number;
   bbox_norm?: number[];
+  page_bbox_max_x_px?: number | null;
+  page_bbox_max_y_px?: number | null;
 };
 
 type QueryResponse = {
@@ -1026,6 +1028,13 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
     const [r0, r1, r2, r3] = bboxSource.map((v) => Number(v) || 0);
     const normalized = bboxSource.every((v) => typeof v === "number" && v >= 0 && v <= 1);
 
+    // If the detector reported boxes on a smaller canvas (e.g., model downscaled input),
+    // use the per-page max bbox extent to upscale into the true PNG size.
+    const coordMaxW = ev.page_bbox_max_x_px && ev.page_bbox_max_x_px > 0 ? ev.page_bbox_max_x_px : baseW;
+    const coordMaxH = ev.page_bbox_max_y_px && ev.page_bbox_max_y_px > 0 ? ev.page_bbox_max_y_px : baseH;
+    const coordScaleX = coordMaxW ? baseW / coordMaxW : 1;
+    const coordScaleY = coordMaxH ? baseH / coordMaxH : 1;
+
     let x0 = r0;
     let y0 = r1;
     let x1 = r2;
@@ -1049,6 +1058,12 @@ const BBoxPreview = ({ ev }: { ev: MatchedElement }) => {
       y0 = baseH - r3;
       y1 = baseH - r1;
     }
+
+    // Upscale from detector canvas to full PNG
+    x0 *= coordScaleX;
+    x1 *= coordScaleX;
+    y0 *= coordScaleY;
+    y1 *= coordScaleY;
 
     if (x1 < x0) [x0, x1] = [x1, x0];
     if (y1 < y0) [y0, y1] = [y1, y0];

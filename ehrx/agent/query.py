@@ -158,6 +158,22 @@ class HybridQueryAgent:
             f"{self._count_total_elements()} elements"
         )
 
+        # Precompute per-page bbox extents to help downstream scaling
+        page_bbox_max = {}
+        for page in self.schema.get("pages", []):
+            page_num = page.get("page_number")
+            if page_num is None:
+                continue
+            max_x = 0
+            max_y = 0
+            for element in page.get("elements", []):
+                bbox = element.get("bbox_pixel") or element.get("bbox_norm") or element.get("bbox")
+                if bbox and isinstance(bbox, (list, tuple)) and len(bbox) == 4:
+                    max_x = max(max_x, float(bbox[0]), float(bbox[2]))
+                    max_y = max(max_y, float(bbox[1]), float(bbox[3]))
+            if max_x or max_y:
+                page_bbox_max[str(int(page_num))] = {"max_x_px": max_x, "max_y_px": max_y}
+
         # Stage 3: Reason with Pro
         answer = self._reason_with_pro(question, filtered_schema)
 
@@ -189,6 +205,7 @@ class HybridQueryAgent:
             page_key = None
             if "page_number" in base and base.get("page_number") is not None:
                 page_key = str(int(base.get("page_number")))
+            page_scale = page_bbox_max.get(page_key or "")
             matched_elements.append(
                 {
                     "element_id": el_id,
@@ -201,6 +218,8 @@ class HybridQueryAgent:
                     "subdoc_title": base.get("subdoc_title"),
                     "page_key": page_key,
                     "bbox_norm": base.get("bbox_pdf"),
+                    "page_bbox_max_x_px": page_scale.get("max_x_px") if page_scale else None,
+                    "page_bbox_max_y_px": page_scale.get("max_y_px") if page_scale else None,
                 }
             )
 
