@@ -552,11 +552,14 @@ const AnalysisArea = ({
               </div>
             </div>
             {(() => {
-              const ev = selectedEvidenceList[evidenceIndex];
+              const ev = selectedEvidenceList[evidenceIndex] || ({} as MatchedElement);
+              const bbox = Array.isArray(ev.bbox) ? ev.bbox : [];
               return (
                 <>
-                  <div className="text-xs text-slate-500">Page {ev.page} • BBox: {ev.bbox.join(', ')}</div>
-                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">{ev.text}</div>
+                  <div className="text-xs text-slate-500">
+                    Page {ev.page ?? 'n/a'} • BBox: {bbox.length ? bbox.join(', ') : 'n/a'}
+                  </div>
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">{ev.text || 'No text available.'}</div>
                   {ev.image_url ? (
                     <div className="mt-2">
                       <div className="text-xs text-slate-500 mb-1">Preview</div>
