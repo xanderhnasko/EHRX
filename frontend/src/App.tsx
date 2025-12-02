@@ -232,72 +232,7 @@ const Modal = ({ open, onClose, children, title }: { open: boolean; onClose: () 
   );
 };
 
-const DocumentsTab = ({
-  onUpload,
-  recentDocs,
-  onLoadExisting,
-  processing,
-  processingStep,
-}: {
-  onUpload: (f: File) => void;
-  recentDocs: RecentDoc[];
-  onLoadExisting: (id: string) => void;
-  processing: boolean;
-  processingStep: string | null;
-}) => {
-  const [existingId, setExistingId] = useState('');
-
-  return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      <div className="flex-1">
-        <UploadCard onUpload={onUpload} />
-      </div>
-      <div className="w-full lg:w-1/3 bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-        <h3 className="text-sm font-semibold text-slate-800 mb-2">Recent documents</h3>
-        <p className="text-xs text-slate-500 mb-3">Load without re-uploading.</p>
-        {processing && (
-          <div className="mb-3 text-xs text-blue-600 flex items-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Processing: {processingStep || 'working...'}</span>
-          </div>
-        )}
-        <div className="space-y-2 max-h-[400px] overflow-y-auto">
-          {recentDocs.length === 0 && <p className="text-sm text-slate-500">No recent documents yet.</p>}
-          {recentDocs.map((d) => (
-            <button
-              key={d.id}
-              onClick={() => onLoadExisting(d.id)}
-              className="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
-            >
-              <div className="text-sm font-semibold text-slate-800 truncate">{d.name || d.id}</div>
-              <div className="text-xs text-slate-500">{d.id}</div>
-              {d.createdAt && <div className="text-[11px] text-slate-400">Created: {d.createdAt}</div>}
-            </button>
-          ))}
-        </div>
-        <div className="mt-4">
-          <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Load by ID</p>
-          <input
-            type="text"
-            value={existingId}
-            onChange={(e) => setExistingId(e.target.value)}
-            placeholder="Document UUID"
-            className="mt-2 w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-          />
-          <button
-            onClick={() => existingId && onLoadExisting(existingId.trim())}
-            disabled={!existingId || processing}
-            className="mt-2 w-full inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-slate-900 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Load
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const AnalysisTab = ({
+const AnalysisArea = ({
   docId,
   docMeta,
   processing,
@@ -317,7 +252,9 @@ const AnalysisTab = ({
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('Summary');
   const [chatOpen, setChatOpen] = useState(true);
-  const [selectedEvidence, setSelectedEvidence] = useState<MatchedElement | null>(null);
+  const [selectedEvidenceList, setSelectedEvidenceList] = useState<MatchedElement[] | null>(null);
+  const [evidenceIndex, setEvidenceIndex] = useState(0);
+  const [openReasoning, setOpenReasoning] = useState<Set<number>>(new Set());
 
   const docReady = !!(docMeta && docMeta.extractions && docMeta.extractions.length > 0);
 
@@ -499,32 +436,43 @@ const AnalysisTab = ({
                     {m.content}
                   </div>
 
-                  {m.reasoning && (
+                  {m.role === 'assistant' && (m.reasoning || (m.evidence && m.evidence.length > 0)) && (
+                    <div className="flex items-center gap-3 text-xs text-slate-600">
+                      {m.reasoning && (
+                        <button
+                          onClick={() => {
+                            const next = new Set(openReasoning);
+                            next.has(idx) ? next.delete(idx) : next.add(idx);
+                            setOpenReasoning(next);
+                          }}
+                          className="px-2 py-1 rounded border border-slate-200 hover:border-blue-300 hover:text-blue-700 transition-colors"
+                        >
+                          {openReasoning.has(idx) ? 'Hide reasoning' : 'Show reasoning'}
+                        </button>
+                      )}
+                      {m.evidence && m.evidence.length > 0 && (
+                        <button
+                          onClick={() => {
+                            setSelectedEvidenceList(m.evidence || null);
+                            setEvidenceIndex(0);
+                          }}
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded border border-slate-200 hover:border-blue-300 hover:text-blue-700 transition-colors"
+                        >
+                          <BoxSelect className="w-3 h-3" />
+                          View sources
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {m.role === 'assistant' && m.reasoning && openReasoning.has(idx) && (
                     <div className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden text-xs">
                       <div className="px-4 py-2 bg-slate-100 border-b border-slate-200 flex items-center gap-2 text-slate-600 font-medium">
                         <BoxSelect className="w-3 h-3" />
                         Reasoning
                       </div>
                       <div className="p-4">
-                        <p className="text-slate-600 mb-4 leading-relaxed italic border-l-2 border-blue-200 pl-3">{m.reasoning}</p>
-
-                        {m.evidence && m.evidence.length > 0 && (
-                          <div className="space-y-2">
-                            <p className="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-2">Source</p>
-                            {m.evidence.map((ev, i) => (
-                              <button
-                                key={i}
-                                onClick={() => setSelectedEvidence(ev)}
-                                className="w-full text-left group flex gap-3 items-start bg-white p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
-                              >
-                                <div className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] font-mono font-bold whitespace-nowrap group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                  Pg {ev.page}
-                                </div>
-                                <div className="text-slate-700 group-hover:text-slate-900 font-medium">"{ev.text}"</div>
-                              </button>
-                            ))}
-                          </div>
-                        )}
+                        <p className="text-slate-600 leading-relaxed italic border-l-2 border-blue-200 pl-3">{m.reasoning}</p>
                       </div>
                     </div>
                   )}
@@ -580,22 +528,47 @@ const AnalysisTab = ({
         </button>
       )}
 
-      <Modal open={!!selectedEvidence} onClose={() => setSelectedEvidence(null)} title="Provenance">
-        {selectedEvidence ? (
+      <Modal open={!!selectedEvidenceList} onClose={() => setSelectedEvidenceList(null)} title="Provenance">
+        {selectedEvidenceList && selectedEvidenceList.length > 0 ? (
           <div className="space-y-3 text-sm text-slate-700">
-            <div className="font-semibold text-slate-800">Page {selectedEvidence.page}</div>
-            <div className="text-xs text-slate-500">BBox: {selectedEvidence.bbox.join(', ')}</div>
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">{selectedEvidence.text}</div>
-            {selectedEvidence.image_url && (
-              <div className="mt-2">
-                <div className="text-xs text-slate-500 mb-1">Preview</div>
-                <div className="relative">
-                  <img src={selectedEvidence.image_url} alt="Page preview" className="max-h-96 rounded border border-slate-200" />
-                  {/* In future, overlay bbox here */}
-                </div>
+            <div className="flex items-center justify-between">
+              <div className="font-semibold text-slate-800">Source {evidenceIndex + 1} of {selectedEvidenceList.length}</div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setEvidenceIndex((i) => Math.max(0, i - 1))}
+                  disabled={evidenceIndex === 0}
+                  className="px-2 py-1 text-xs border border-slate-200 rounded disabled:opacity-50"
+                >
+                  Prev
+                </button>
+                <button
+                  onClick={() => setEvidenceIndex((i) => Math.min(selectedEvidenceList.length - 1, i + 1))}
+                  disabled={evidenceIndex === selectedEvidenceList.length - 1}
+                  className="px-2 py-1 text-xs border border-slate-200 rounded disabled:opacity-50"
+                >
+                  Next
+                </button>
               </div>
-            )}
-            {!selectedEvidence.image_url && <p className="text-xs text-slate-500">No page image available.</p>}
+            </div>
+            {(() => {
+              const ev = selectedEvidenceList[evidenceIndex];
+              return (
+                <>
+                  <div className="text-xs text-slate-500">Page {ev.page} • BBox: {ev.bbox.join(', ')}</div>
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">{ev.text}</div>
+                  {ev.image_url ? (
+                    <div className="mt-2">
+                      <div className="text-xs text-slate-500 mb-1">Preview</div>
+                      <div className="relative">
+                        <img src={ev.image_url} alt="Page preview" className="max-h-96 rounded border border-slate-200" />
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-500">No page image available.</p>
+                  )}
+                </>
+              );
+            })()}
           </div>
         ) : null}
       </Modal>
@@ -604,7 +577,7 @@ const AnalysisTab = ({
 };
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'documents' | 'analysis'>('documents');
+  const [docModalOpen, setDocModalOpen] = useState(false);
   const [docId, setDocId] = useState<string>('');
   const [docMeta, setDocMeta] = useState<DocumentResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -647,7 +620,7 @@ export default function App() {
       const meta = await api.getDocument(uploadRes.document_id);
       setDocMeta(meta);
       updateRecents(meta);
-      setActiveTab('analysis');
+      setDocModalOpen(false);
     } catch (e: any) {
       console.error(e);
       setError(e?.message || 'Error processing document.');
@@ -666,7 +639,7 @@ export default function App() {
       setDocId(id);
       setDocMeta(meta);
       updateRecents(meta);
-      setActiveTab('analysis');
+      setDocModalOpen(false);
     } catch (e: any) {
       console.error(e);
       setError(e?.message || 'Unable to load document.');
@@ -698,51 +671,37 @@ export default function App() {
     <div className="min-h-screen bg-slate-100 font-sans text-slate-900 selection:bg-blue-200 selection:text-blue-900 flex flex-col">
       <Header />
 
-      <div className="border-b border-slate-200 bg-white px-4">
-        <div className="flex gap-4">
+      <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Current document</p>
+          <p className="text-sm text-slate-800">
+            {docMeta?.document?.original_filename || docId || 'None selected'}
+          </p>
+          {processing && (
+            <p className="text-xs text-blue-600 flex items-center gap-2">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              {processingStep || 'Processing...'}
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => setActiveTab('documents')}
-            className={`py-3 text-sm font-semibold border-b-2 ${
-              activeTab === 'documents' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500'
-            }`}
+            onClick={() => setDocModalOpen(true)}
+            className="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-900 text-white hover:bg-blue-600 transition-colors"
           >
-            Documents
-          </button>
-          <button
-            onClick={() => setActiveTab('analysis')}
-            className={`py-3 text-sm font-semibold border-b-2 ${
-              activeTab === 'analysis' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500'
-            }`}
-          >
-            Analysis
+            Select / Upload
           </button>
         </div>
       </div>
 
       <main className="flex-1 flex flex-col relative">
-        {activeTab === 'documents' && (
-          <div className="p-4 lg:p-6">
-            <DocumentsTab
-              onUpload={handleUpload}
-              recentDocs={recentDocs}
-              onLoadExisting={handleLoadExisting}
-              processing={processing}
-              processingStep={processingStep}
-            />
-          </div>
-        )}
-        {activeTab === 'analysis' && (
-          <AnalysisTab
-            docId={docId}
-            docMeta={docMeta}
-            processing={processing}
-            onQuery={handleQuery}
-            recentQueries={docRecentQueries}
-            onReplayQuery={(rq) => {
-              // handled inside AnalysisTab via handleReplay
-            }}
-          />
-        )}
+        <AnalysisArea
+          docId={docId}
+          docMeta={docMeta}
+          processing={processing}
+          onQuery={handleQuery}
+          recentQueries={docRecentQueries}
+        />
 
         {error && (
           <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white border border-amber-300 text-amber-700 px-4 py-3 rounded-lg shadow-lg text-sm flex items-center gap-2">
@@ -754,6 +713,44 @@ export default function App() {
           </div>
         )}
       </main>
+
+      <Modal open={docModalOpen} onClose={() => setDocModalOpen(false)} title="Select or Upload Document">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <UploadCard onUpload={handleUpload} />
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+            <h3 className="text-sm font-semibold text-slate-800 mb-2">Recent documents</h3>
+            <p className="text-xs text-slate-500 mb-3">Load without re-uploading.</p>
+            <div className="space-y-2 max-h-[340px] overflow-y-auto">
+              {recentDocs.length === 0 && <p className="text-sm text-slate-500">No recent documents yet.</p>}
+              {recentDocs.map((d) => (
+                <button
+                  key={d.id}
+                  onClick={() => handleLoadExisting(d.id)}
+                  className="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                >
+                  <div className="text-sm font-semibold text-slate-800 truncate">{d.name || d.id}</div>
+                  <div className="text-xs text-slate-500">{d.id}</div>
+                  {d.createdAt && <div className="text-[11px] text-slate-400">Created: {d.createdAt}</div>}
+                </button>
+              ))}
+            </div>
+            <div className="mt-4">
+              <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold">Load by ID</p>
+              <input
+                type="text"
+                placeholder="Document UUID"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const v = (e.target as HTMLInputElement).value.trim();
+                    if (v) handleLoadExisting(v);
+                  }
+                }}
+                className="mt-2 w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
