@@ -311,8 +311,32 @@ Only return the JSON object, nothing else."""
         # Parse JSON response (guaranteed valid due to response_schema)
         result = json.loads(response.text)
 
+        # Heuristic backstops: ensure key element types are included when the query clearly targets them.
+        q_low = question.lower()
+        relevant_types = set(result.get("relevant_types", []))
+        relevant_subdocs = set(result.get("relevant_subdocs", []))
+
+        def bump(types: list[str], subdocs: list[str] | None = None):
+            relevant_types.update(types)
+            if subdocs:
+                relevant_subdocs.update(subdocs)
+
+        if any(k in q_low for k in ["med", "medication", "drug", "dose", "prescription"]):
+            bump(["medication_table", "clinical_paragraph", "list_items"], ["medications", "problem_list"])
+        if any(k in q_low for k in ["lab", "result", "cbc", "chem", "glucose", "panel"]):
+            bump(["lab_results_table", "general_table", "clinical_paragraph"], ["laboratory_results"])
+        if any(k in q_low for k in ["procedure", "surgery", "operation", "biopsy", "colectomy"]):
+            bump(["clinical_paragraph", "general_table", "section_header"], ["procedures"])
+        if any(k in q_low for k in ["imaging", "radiology", "ct", "mri", "x-ray", "ultrasound"]):
+            bump(["clinical_paragraph", "general_table", "section_header"], ["radiology_imaging"])
+        if any(k in q_low for k in ["problem", "diagnosis", "history", "hx"]):
+            bump(["problem_list", "list_items", "clinical_paragraph"], ["problem_list", "progress_notes"])
+
+        result["relevant_types"] = list(relevant_types)
+        result["relevant_subdocs"] = list(relevant_subdocs)
+
         # Debug logging
-        self.logger.info(f"Flash identified {len(result.get('relevant_types', []))} relevant types")
+        self.logger.info(f"Flash identified {len(result.get('relevant_types', []))} relevant types (after heuristics)")
         self.logger.debug(f"Relevant types: {result.get('relevant_types', [])}")
 
         return result
@@ -427,10 +451,13 @@ Only return the JSON object, nothing else."""
                 seen_ids.add(eid)
                 deduped_elements.append(elem)
 
+        # Choose a single summary to avoid contradictory concatenation across batches.
+        final_summary = summaries[0] if summaries else ""
+
         return {
             "elements": deduped_elements,
             "reasoning": "\n".join(reasonings),
-            "answer_summary": "\n".join(summaries)
+            "answer_summary": final_summary
         }
 
     def _rehydrate_elements(
