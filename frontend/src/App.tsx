@@ -534,22 +534,21 @@ const SectionViewer = ({
     return sections.filter(matcher);
   };
 
-  const renderSectionGrid = (tab: Tab, sections: SectionContent[], emptyLabel: string) => {
-    if (!sections || sections.length === 0) {
-      return <p className="text-slate-500 italic text-sm">{emptyLabel}</p>;
-    }
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {sections.map((section) => {
-          const lines = extractLines(section, tab);
-          return (
-            <div key={`${section.id || section.title}-${section.page_range || ''}`} className="border border-slate-200 rounded-xl p-4 bg-white shadow-sm">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{prettify(section.type) || 'Section'}</p>
-                  <h4 className="text-sm font-semibold text-slate-900">{section.title || 'Untitled section'}</h4>
-                  <p className="text-xs text-slate-500">{formatPageRange(section.page_range)}</p>
-                </div>
+const renderSectionGrid = (tab: Tab, sections: SectionContent[], emptyLabel: string) => {
+  if (!sections || sections.length === 0) {
+    return <p className="text-slate-500 italic text-sm">{emptyLabel}</p>;
+  }
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {sections.map((section) => {
+        const lines = extractLines(section, tab);
+        return (
+          <div key={`${section.id || section.title}-${section.page_range || ''}`} className="border border-slate-200 rounded-xl p-4 bg-white shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h4 className="text-sm font-semibold text-slate-900">{section.title || prettify(section.type) || 'Section'}</h4>
+                <p className="text-xs text-slate-500">{formatPageRange(section.page_range)}</p>
+              </div>
                 <div className="flex flex-col items-end gap-1">
                   {section.page_count && (
                     <span className="text-[11px] text-blue-700 bg-blue-50 px-2 py-1 rounded-full font-semibold border border-blue-100">
@@ -639,10 +638,6 @@ const SectionViewer = ({
                 </div>
               ))}
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 p-5 shadow-sm">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Document summary</p>
-              {renderBullets(reconstruction?.summary || cleanLines(summaryLines), 'No summary available.')}
-            </div>
             {structuredData.document_dates && structuredData.document_dates.length > 0 && (
               <div>
                 <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Dates seen</p>
@@ -676,27 +671,10 @@ const SectionViewer = ({
         {activeTab === 'Patient' && (
           <div className="space-y-4">
             <div className="rounded-xl border border-slate-200 p-4 bg-white">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
               {renderBullets(bulletsFromRecon('Patient'), 'No patient details reconstructed.')}
             </div>
-            <div className="rounded-xl border border-slate-200 p-4 bg-slate-50">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Demographics</p>
-              {structuredData.patient_demographics?.content ? (
-                <div className="space-y-1">
-                  {splitContent(structuredData.patient_demographics.content).map((line, idx) => (
-                    <p key={idx} className="text-sm text-slate-800">{line}</p>
-                  ))}
-                  {structuredData.patient_demographics.page_number && (
-                    <p className="text-[11px] text-slate-500 mt-2">Located on page {structuredData.patient_demographics.page_number}</p>
-                  )}
-                </div>
-              ) : (
-                <p className="text-sm text-slate-500 italic">No patient demographic block captured.</p>
-              )}
-            </div>
             <div>
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Problem list / history</p>
-              {renderSectionGrid('Problems', filterSections('Problems'), 'No diagnoses or problem lists detected.')}
+              {renderSectionGrid('Problems', filterSections('Problems'), 'No diagnoses or history sections detected.')}
             </div>
           </div>
         )}
@@ -704,17 +682,15 @@ const SectionViewer = ({
         {activeTab === 'Problems' && (
           <div className="space-y-4">
             <div className="rounded-xl border border-slate-200 p-4 bg-white">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
               {renderBullets(bulletsFromRecon('Problems'), 'No problems reconstructed.')}
             </div>
-            {renderSectionGrid('Problems', filterSections('Problems'), 'No diagnoses or problem lists detected.')}
+            {renderSectionGrid('Problems', filterSections('Problems'), 'No diagnoses or history sections detected.')}
           </div>
         )}
 
         {activeTab === 'Meds' && (
           <div className="space-y-4">
             <div className="rounded-xl border border-slate-200 p-4 bg-white">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
               {renderBullets(bulletsFromRecon('Meds'), 'No medications reconstructed.')}
             </div>
             {meds.length > 0 ? (
@@ -744,9 +720,7 @@ const SectionViewer = ({
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <p className="text-slate-500 italic text-sm">No structured medications returned.</p>
-            )}
+            ) : null}
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
               {renderSectionGrid('Meds', filterSections('Meds'), 'No medication sections detected in the document.')}
@@ -757,7 +731,6 @@ const SectionViewer = ({
         {activeTab === 'Labs' && (
           <div className="space-y-4">
             <div className="rounded-xl border border-slate-200 p-4 bg-white">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
               {renderBullets(bulletsFromRecon('Labs'), 'No labs reconstructed.')}
             </div>
             {labs.length > 0 ? (
@@ -785,9 +758,7 @@ const SectionViewer = ({
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <p className="text-slate-500 italic text-sm">No structured labs returned.</p>
-            )}
+            ) : null}
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
               {renderSectionGrid('Labs', filterSections('Labs'), 'No lab sections detected in the document.')}
@@ -798,7 +769,6 @@ const SectionViewer = ({
         {activeTab === 'Procedures' && (
           <div className="space-y-4">
             <div className="rounded-xl border border-slate-200 p-4 bg-white">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
               {renderBullets(bulletsFromRecon('Procedures'), 'No procedures reconstructed.')}
             </div>
             {procs.length > 0 ? (
@@ -826,9 +796,7 @@ const SectionViewer = ({
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <p className="text-slate-500 italic text-sm">No structured procedures returned.</p>
-            )}
+            ) : null}
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
               {renderSectionGrid('Procedures', filterSections('Procedures'), 'No procedure sections detected in the document.')}
@@ -839,7 +807,6 @@ const SectionViewer = ({
         {activeTab === 'Imaging' && (
           <div className="space-y-4">
             <div className="rounded-xl border border-slate-200 p-4 bg-white">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
               {renderBullets(bulletsFromRecon('Imaging'), 'No imaging reconstructed.')}
             </div>
             {renderSectionGrid('Imaging', filterSections('Imaging'), 'No imaging or radiology sections detected.')}
@@ -849,7 +816,6 @@ const SectionViewer = ({
         {activeTab === 'Notes' && (
           <div className="space-y-4">
             <div className="rounded-xl border border-slate-200 p-4 bg-white">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
               {renderBullets(bulletsFromRecon('Notes'), 'No notes reconstructed.')}
             </div>
             {renderSectionGrid('Notes', filterSections('Notes'), 'No clinical notes detected.')}
@@ -859,7 +825,6 @@ const SectionViewer = ({
         {activeTab === 'Everything' && (
           <div className="space-y-3">
             <div className="rounded-xl border border-slate-200 p-4 bg-white">
-              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
               {renderBullets(bulletsFromRecon('Everything'), 'Nothing reconstructed.')}
             </div>
             <p className="text-xs text-slate-500">Grouped sections from the ontology.</p>
