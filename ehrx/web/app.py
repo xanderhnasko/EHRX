@@ -144,7 +144,7 @@ class ReconstructionCache:
 RECONSTRUCTION_CACHE = ReconstructionCache(
     max_size=int(os.getenv("RECONSTRUCTION_CACHE_SIZE", "128"))
 )
-RECON_PROMPT_VERSION = "v3"
+RECON_PROMPT_VERSION = "v4"
 
 class QueryRequest(BaseModel):
     document_id: str
@@ -745,16 +745,7 @@ def reconstruct_document(document_id: str, kind: str = "enhanced", refresh: bool
     if not chunks:
         raise HTTPException(status_code=500, detail="No content to reconstruct")
 
-    try:
-        reconstruction = _reconstruct_with_llm(chunks)
-    except Exception as e:
-        logging.error(f"Reconstruction failed: {e}")
-        raise HTTPException(status_code=500, detail="Failed to reconstruct document")
-
-    # If everything is empty, try fallback bucketing to avoid blank UI
-    if all(len(reconstruction.get(k, [])) == 0 for k in ["summary", "patient", "problems", "meds", "labs", "procedures", "imaging", "notes", "other"]):
-        logging.warning("Reconstruction returned all empty; using fallback bucketing heuristics.")
-        reconstruction = _fallback_bucket(chunks)
+    reconstruction = _reconstruct_with_llm(chunks)
 
     RECONSTRUCTION_CACHE.set(cache_key, reconstruction)
     return JSONResponse(reconstruction)
@@ -865,48 +856,9 @@ def _fallback_bucket(chunks: List[str]) -> dict:
 def _reconstruct_with_llm(chunks: List[str]) -> dict:
     """
     Use Gemini to bucket content into EHR sections and emit clean bullets.
+    Runs in batches to avoid oversized single prompts.
     """
     from vertexai.generative_models import GenerativeModel, GenerationConfig
-
-    prompt = f"""You are reconstructing an EHR from extracted fragments.
-
-Goal: classify and rewrite every clinically meaningful fragment into concise bullets under the correct section. Use semantic understanding, not just headings.
-
-Sections:
-- patient: demographics, identifiers
-- problems: diagnoses, history, assessments
-- meds: medications (any dosage/frequency/route/timing/details)
-- labs: lab tests and results (any units/formats)
-- procedures: procedures/surgeries/operations
-- imaging: radiology/imaging findings
-- notes: narrative clinical notes/plans
-- other: important details that don't fit the above
-
-Rules:
-- Use flexible bullets; include whatever fields exist. Do not drop information because a field is missing.
-- Prefer clarity over uniformity; combine related details when helpful.
-- Keep/merge duplicates; pick the clearest wording.
-- Include dates, numbers, and qualifiers when present.
-- Exclude boilerplate and empty headers. Do not echo placeholders like "DOCUMENT SUMMARY".
-- If a fragment clearly belongs to a section, ensure that section has at least one bullet.
-
-Fragments (label + text):
-{json.dumps(chunks, indent=2)[:15000]}
-
-Return JSON ONLY in this schema (arrays of strings; empty array only if truly no evidence):
-{{
-  "summary": ["bullet", "..."],
-  "patient": ["bullet", "..."],
-  "problems": ["bullet", "..."],
-  "meds": ["bullet", "..."],
-  "labs": ["bullet", "..."],
-  "procedures": ["bullet", "..."],
-  "imaging": ["bullet", "..."],
-  "notes": ["bullet", "..."],
-  "other": ["bullet", "..."]
-}}
-
-Keep lists concise but complete; typically 3-12 bullets per section when data exists."""
 
     model = GenerativeModel(model_name="gemini-2.5-flash")
     generation_config = GenerationConfig(
@@ -930,9 +882,96 @@ Keep lists concise but complete; typically 3-12 bullets per section when data ex
         },
     )
 
-    response = model.generate_content(prompt, generation_config=generation_config)
-    result = json.loads(response.text)
-    # Ensure all keys present
-    for key in ["summary", "patient", "problems", "meds", "labs", "procedures", "imaging", "notes", "other"]:
-        result.setdefault(key, [])
-    return result
+    def run_batch(batch_chunks: List[str]) -> dict:
+        prompt = f"""You are reconstructing an EHR from extracted fragments.
+
+Goal: classify and rewrite every clinically meaningful fragment into concise bullets under the correct section. Use semantic understanding, not just headings.
+
+Sections:
+- patient: demographics, identifiers
+- problems: diagnoses, history, assessments
+- meds: medications (any dosage/frequency/route/timing/details)
+- labs: lab tests and results (any units/formats)
+- procedures: procedures/surgeries/operations
+- imaging: radiology/imaging findings
+- notes: narrative clinical notes/plans
+- other: important details that don't fit the above
+
+Rules:
+- Use flexible bullets; include whatever fields exist. Do not drop information because a field is missing.
+- Prefer clarity over uniformity; combine related details when helpful.
+- Keep/merge duplicates; pick the clearest wording.
+- Include dates, numbers, and qualifiers when present.
+- Exclude boilerplate and empty headers. Do not echo placeholders like "DOCUMENT SUMMARY".
+- If a fragment clearly belongs to a section, ensure that section has at least one bullet.
+
+Fragments (label + text):
+{json.dumps(batch_chunks, indent=2)}
+
+Return JSON ONLY in this schema (arrays of strings; empty array only if truly no evidence):
+{{
+  "summary": ["bullet", "..."],
+  "patient": ["bullet", "..."],
+  "problems": ["bullet", "..."],
+  "meds": ["bullet", "..."],
+  "labs": ["bullet", "..."],
+  "procedures": ["bullet", "..."],
+  "imaging": ["bullet", "..."],
+  "notes": ["bullet", "..."],
+  "other": ["bullet", "..."]
+}}
+
+Keep lists concise but complete; typically 3-12 bullets per section when data exists."""
+        response = model.generate_content(prompt, generation_config=generation_config)
+        return json.loads(response.text)
+
+    # Split into batches to reduce prompt size; target ~25 chunks or ~12000 chars per batch
+    batches: List[List[str]] = []
+    current: List[str] = []
+    char_count = 0
+    for c in chunks:
+        c_len = len(c)
+        if current and (len(current) >= 25 or char_count + c_len > 12000):
+            batches.append(current)
+            current = []
+            char_count = 0
+        current.append(c)
+        char_count += c_len
+    if current:
+        batches.append(current)
+
+    combined: dict = {
+        "summary": [],
+        "patient": [],
+        "problems": [],
+        "meds": [],
+        "labs": [],
+        "procedures": [],
+        "imaging": [],
+        "notes": [],
+        "other": [],
+    }
+
+    for batch in batches:
+        partial = run_batch(batch)
+        for key in combined.keys():
+            combined[key].extend(partial.get(key, []))
+
+    # Deduplicate while preserving order
+    def dedupe(seq: List[str]) -> List[str]:
+        seen = set()
+        out = []
+        for item in seq:
+            if not isinstance(item, str):
+                continue
+            norm = item.strip()
+            if not norm or norm.lower() in seen:
+                continue
+            seen.add(norm.lower())
+            out.append(norm)
+        return out
+
+    for key in combined.keys():
+        combined[key] = dedupe(combined[key])
+
+    return combined
