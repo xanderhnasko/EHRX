@@ -144,6 +144,7 @@ class ReconstructionCache:
 RECONSTRUCTION_CACHE = ReconstructionCache(
     max_size=int(os.getenv("RECONSTRUCTION_CACHE_SIZE", "128"))
 )
+RECON_PROMPT_VERSION = "v2"
 
 class QueryRequest(BaseModel):
     document_id: str
@@ -341,7 +342,7 @@ def query_document(payload: QueryRequest):
     if not extraction:
         raise HTTPException(status_code=404, detail="No extraction available for document")
 
-    cache_key = extraction["storage_url"]
+    cache_key = f"{extraction['storage_url']}::{RECON_PROMPT_VERSION}"
     schema = SCHEMA_CACHE.get(cache_key)
 
     if not schema:
@@ -789,7 +790,7 @@ def _chunk_schema(schema: dict, max_chunk_chars: int = 1800) -> List[str]:
                 for element in page.get("elements", []):
                     content = element.get("content") or ""
                     etype = element.get("type") or ""
-                    label = f"[{title}] (type={etype}, page={page_num})"
+                    label = f"[{title}] type={etype} page={page_num}"
                     add_chunk(label, content)
     else:
         for page in schema.get("pages", []):
@@ -797,7 +798,7 @@ def _chunk_schema(schema: dict, max_chunk_chars: int = 1800) -> List[str]:
             for element in page.get("elements", []):
                 content = element.get("content") or ""
                 etype = element.get("type") or ""
-                label = f"[Page {page_num}] (type={etype})"
+                label = f"[Page {page_num}] type={etype}"
                 add_chunk(label, content)
 
     return chunks
@@ -811,28 +812,30 @@ def _reconstruct_with_llm(chunks: List[str]) -> dict:
 
     prompt = f"""You are reconstructing an EHR from extracted fragments.
 
-You will receive many small fragments of text. For each fragment, decide which section it belongs to:
+Goal: classify and rewrite every clinically meaningful fragment into concise bullets under the correct section. Use semantic understanding, not just headings.
+
+Sections:
 - patient: demographics, identifiers
 - problems: diagnoses, history, assessments
-- meds: medications (any dosage, frequency, route, start/stop, or freeform details)
-- labs: lab tests and results (allow arbitrary result formats/units)
+- meds: medications (any dosage/frequency/route/timing/details)
+- labs: lab tests and results (any units/formats)
 - procedures: procedures/surgeries/operations
 - imaging: radiology/imaging findings
 - notes: narrative clinical notes/plans
-- other: anything important that doesn't fit above
+- other: important details that don't fit the above
 
-RULES:
-- Use flexible bullets: include whatever fields are present (do not force missing fields).
-- Prefer clarity over uniformity; you may combine related details in one bullet.
-- Do not repeat headings like "DOCUMENT SUMMARY".
-- Normalize duplicates; keep the clearest wording.
-- Include dates, numbers, units, and qualifiers when present.
-- Exclude boilerplate and empty headers.
+Rules:
+- Use flexible bullets; include whatever fields exist. Do not drop information because a field is missing.
+- Prefer clarity over uniformity; combine related details when helpful.
+- Keep/merge duplicates; pick the clearest wording.
+- Include dates, numbers, and qualifiers when present.
+- Exclude boilerplate and empty headers. Do not echo placeholders like "DOCUMENT SUMMARY".
+- If a fragment clearly belongs to a section, ensure that section has at least one bullet.
 
-Fragments:
+Fragments (label + text):
 {json.dumps(chunks, indent=2)[:15000]}
 
-Return JSON ONLY in this schema (arrays of strings; empty array if nothing):
+Return JSON ONLY in this schema (arrays of strings; empty array only if truly no evidence):
 {{
   "summary": ["bullet", "..."],
   "patient": ["bullet", "..."],
@@ -845,7 +848,7 @@ Return JSON ONLY in this schema (arrays of strings; empty array if nothing):
   "other": ["bullet", "..."]
 }}
 
-Keep lists concise but complete; typically 3-12 bullets when data exists."""
+Keep lists concise but complete; typically 3-12 bullets per section when data exists."""
 
     model = GenerativeModel(model_name="gemini-2.5-flash")
     generation_config = GenerationConfig(
