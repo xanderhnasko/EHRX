@@ -141,7 +141,8 @@ type RecentQuery = {
 
 const RECENT_DOCS_KEY = 'ehrx_recent_docs';
 const RECENT_QUERIES_KEY = 'ehrx_recent_queries';
-const RECON_CACHE_PREFIX = 'ehrx_reconstruction_';
+const RECON_VERSION = 'v2';
+const RECON_CACHE_PREFIX = `ehrx_reconstruction_${RECON_VERSION}_`;
 
 const loadLocal = <T,>(key: string, fallback: T): T => {
   try {
@@ -218,8 +219,10 @@ const api = {
     return res.json();
   },
 
-  getReconstruction: async (docId: string): Promise<Reconstruction> => {
-    const res = await fetch(`${API_BASE}/api/documents/${docId}/reconstruction`, { method: 'GET' });
+  getReconstruction: async (docId: string, refresh = false): Promise<Reconstruction> => {
+    const url = new URL(`${API_BASE}/api/documents/${docId}/reconstruction`, window.location.origin);
+    if (refresh) url.searchParams.set('refresh', 'true');
+    const res = await fetch(url.toString().replace(window.location.origin, ''));
     if (!res.ok) {
       const text = await res.text();
       throw new Error(text || 'Failed to reconstruct document');

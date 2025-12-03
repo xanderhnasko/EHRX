@@ -144,7 +144,7 @@ class ReconstructionCache:
 RECONSTRUCTION_CACHE = ReconstructionCache(
     max_size=int(os.getenv("RECONSTRUCTION_CACHE_SIZE", "128"))
 )
-RECON_PROMPT_VERSION = "v2"
+RECON_PROMPT_VERSION = "v3"
 
 class QueryRequest(BaseModel):
     document_id: str
@@ -708,7 +708,7 @@ Only return the JSON array, nothing else."""
 
 
 @app.get("/api/documents/{document_id}/reconstruction")
-def reconstruct_document(document_id: str, kind: str = "enhanced"):
+def reconstruct_document(document_id: str, kind: str = "enhanced", refresh: bool = False):
     """
     Reconstruct the document into clean sectioned bullets using Gemini, with caching.
     """
@@ -727,9 +727,9 @@ def reconstruct_document(document_id: str, kind: str = "enhanced"):
     if not extraction:
         raise HTTPException(status_code=404, detail="No extraction available for document")
 
-    cache_key = extraction["storage_url"]
+    cache_key = f"{extraction['storage_url']}::{RECON_PROMPT_VERSION}"
     cached = RECONSTRUCTION_CACHE.get(cache_key)
-    if cached:
+    if cached and not refresh:
         return JSONResponse(cached)
 
     schema = SCHEMA_CACHE.get(cache_key)
@@ -751,11 +751,16 @@ def reconstruct_document(document_id: str, kind: str = "enhanced"):
         logging.error(f"Reconstruction failed: {e}")
         raise HTTPException(status_code=500, detail="Failed to reconstruct document")
 
+    # If everything is empty, try fallback bucketing to avoid blank UI
+    if all(len(reconstruction.get(k, [])) == 0 for k in ["summary", "patient", "problems", "meds", "labs", "procedures", "imaging", "notes", "other"]):
+        logging.warning("Reconstruction returned all empty; using fallback bucketing heuristics.")
+        reconstruction = _fallback_bucket(chunks)
+
     RECONSTRUCTION_CACHE.set(cache_key, reconstruction)
     return JSONResponse(reconstruction)
 
 
-def _chunk_schema(schema: dict, max_chunk_chars: int = 1800) -> List[str]:
+def _chunk_schema(schema: dict, max_chunk_chars: int = 1600) -> List[str]:
     """
     Flatten schema sub-documents/pages into text chunks that fit LLM context.
     """
@@ -781,27 +786,80 @@ def _chunk_schema(schema: dict, max_chunk_chars: int = 1800) -> List[str]:
         if current.strip():
             chunks.append(f"{label}\n{current.strip()}")
 
-    # Prefer sub_documents if present
+    # Prioritize clinical element types
+    priority_types = [
+        "medication_table",
+        "lab_results_table",
+        "problem_list",
+        "clinical_paragraph",
+        "list_items",
+        "general_table",
+        "procedure",
+        "radiology_imaging",
+    ]
+    def sort_key(e_type: str) -> int:
+        try:
+            return priority_types.index(e_type)
+        except ValueError:
+            return len(priority_types) + 1
+
+    def process_pages(pages, title_prefix: str = ""):
+        for page in pages:
+            page_num = page.get("page_number")
+            elements = sorted(page.get("elements", []), key=lambda el: sort_key(el.get("type", "")))
+            for element in elements:
+                content = element.get("content") or ""
+                etype = element.get("type") or ""
+                label = f"{title_prefix}type={etype} page={page_num}"
+                add_chunk(label, content)
+
     if "sub_documents" in schema:
         for subdoc in schema.get("sub_documents", []):
             title = subdoc.get("title") or subdoc.get("type") or "Untitled"
-            for page in subdoc.get("pages", []):
-                page_num = page.get("page_number")
-                for element in page.get("elements", []):
-                    content = element.get("content") or ""
-                    etype = element.get("type") or ""
-                    label = f"[{title}] type={etype} page={page_num}"
-                    add_chunk(label, content)
+            process_pages(subdoc.get("pages", []), title_prefix=f"[{title}] ")
     else:
-        for page in schema.get("pages", []):
-            page_num = page.get("page_number")
-            for element in page.get("elements", []):
-                content = element.get("content") or ""
-                etype = element.get("type") or ""
-                label = f"[Page {page_num}] type={etype}"
-                add_chunk(label, content)
+        process_pages(schema.get("pages", []), title_prefix="[Page] ")
 
     return chunks
+
+
+def _fallback_bucket(chunks: List[str]) -> dict:
+    """
+    Lightweight keyword-based bucketing to avoid empty responses if the LLM returns nothing.
+    """
+    buckets = {
+        "summary": [],
+        "patient": [],
+        "problems": [],
+        "meds": [],
+        "labs": [],
+        "procedures": [],
+        "imaging": [],
+        "notes": [],
+        "other": [],
+    }
+    for c in chunks:
+        lower = c.lower()
+        target = None
+        if any(k in lower for k in ["medication", "dose", "mg", "units", "tablet", "capsule", "q."]):
+            target = "meds"
+        elif any(k in lower for k in ["lab", "result", "cbc", "chemistry", "glucose", "creatinine"]):
+            target = "labs"
+        elif any(k in lower for k in ["procedure", "surgery", "operative", "colectomy", "biopsy"]):
+            target = "procedures"
+        elif any(k in lower for k in ["radiology", "imaging", "ct", "mri", "x-ray", "ultrasound"]):
+            target = "imaging"
+        elif any(k in lower for k in ["diagnosis", "history", "problem", "hx"]):
+            target = "problems"
+        elif any(k in lower for k in ["note", "plan", "assessment"]):
+            target = "notes"
+        elif any(k in lower for k in ["name:", "dob", "acct", "mrn", "sex", "age"]):
+            target = "patient"
+        if target:
+            buckets[target].append(c.strip())
+        else:
+            buckets["other"].append(c.strip())
+    return buckets
 
 
 def _reconstruct_with_llm(chunks: List[str]) -> dict:
@@ -852,8 +910,8 @@ Keep lists concise but complete; typically 3-12 bullets per section when data ex
 
     model = GenerativeModel(model_name="gemini-2.5-flash")
     generation_config = GenerationConfig(
-        temperature=0.25,
-        max_output_tokens=2048,
+        temperature=0.4,
+        max_output_tokens=64000,
         response_mime_type="application/json",
         response_schema={
             "type": "object",
