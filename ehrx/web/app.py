@@ -144,7 +144,7 @@ class ReconstructionCache:
 RECONSTRUCTION_CACHE = ReconstructionCache(
     max_size=int(os.getenv("RECONSTRUCTION_CACHE_SIZE", "128"))
 )
-RECON_PROMPT_VERSION = "v4"
+RECON_PROMPT_VERSION = "v5"
 
 class QueryRequest(BaseModel):
     document_id: str
@@ -745,7 +745,11 @@ def reconstruct_document(document_id: str, kind: str = "enhanced", refresh: bool
     if not chunks:
         raise HTTPException(status_code=500, detail="No content to reconstruct")
 
-    reconstruction = _reconstruct_with_llm(chunks)
+    try:
+        reconstruction = _reconstruct_with_llm(chunks)
+    except Exception as e:
+        logging.error(f"Reconstruction failed with LLM: {e}")
+        raise HTTPException(status_code=500, detail=f"LLM reconstruction failed: {e}")
 
     RECONSTRUCTION_CACHE.set(cache_key, reconstruction)
     return JSONResponse(reconstruction)
@@ -863,7 +867,8 @@ def _reconstruct_with_llm(chunks: List[str]) -> dict:
     model = GenerativeModel(model_name="gemini-2.5-flash")
     generation_config = GenerationConfig(
         temperature=0.4,
-        max_output_tokens=64000,
+        # Practical max for flash responses; higher values can error on some deployments.
+        max_output_tokens=8192,
         response_mime_type="application/json",
         response_schema={
             "type": "object",
