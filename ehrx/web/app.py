@@ -45,7 +45,7 @@ app = FastAPI(title="PDF2EHR API")
 # CORS for local dev and deployed frontend (set FRONTEND_ORIGINS as comma-separated list)
 allowed_origins = os.getenv(
     "FRONTEND_ORIGINS",
-    "http://localhost:5173"
+    "http://localhost:5173,https://ehrx.netlify.app"
 ).split(",")
 allowed_origins = [o.strip() for o in allowed_origins if o.strip()]
 app.add_middleware(
