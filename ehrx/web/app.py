@@ -12,7 +12,7 @@ import tempfile
 import uuid
 import json
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 from threading import Lock
 from collections import OrderedDict
 from PIL import Image
@@ -114,6 +114,35 @@ class SchemaCache:
 
 SCHEMA_CACHE = SchemaCache(
     max_size=int(os.getenv("SCHEMA_CACHE_SIZE", "128"))
+)
+
+
+class ReconstructionCache:
+    """LRU for reconstructed sections so we don't re-run LLM per request."""
+
+    def __init__(self, max_size: int = 128):
+        self.max_size = max_size
+        self._lock = Lock()
+        self._data: OrderedDict[str, dict] = OrderedDict()
+
+    def get(self, key: str) -> Optional[dict]:
+        with self._lock:
+            if key not in self._data:
+                return None
+            self._data.move_to_end(key)
+            return self._data[key]
+
+    def set(self, key: str, value: dict) -> None:
+        with self._lock:
+            if key in self._data:
+                self._data.move_to_end(key)
+            self._data[key] = value
+            if len(self._data) > self.max_size:
+                self._data.popitem(last=False)
+
+
+RECONSTRUCTION_CACHE = ReconstructionCache(
+    max_size=int(os.getenv("RECONSTRUCTION_CACHE_SIZE", "128"))
 )
 
 class QueryRequest(BaseModel):
@@ -675,3 +704,174 @@ Only return the JSON array, nothing else."""
     except Exception as e:
         logging.error(f"Failed to parse procedure element: {e}")
         return []
+
+
+@app.get("/api/documents/{document_id}/reconstruction")
+def reconstruct_document(document_id: str, kind: str = "enhanced"):
+    """
+    Reconstruct the document into clean sectioned bullets using Gemini, with caching.
+    """
+    try:
+        doc_uuid = uuid.UUID(document_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid document_id")
+
+    extractions = db.get_extractions(doc_uuid)
+    by_kind = {}
+    for e in extractions:
+        if e["kind"] not in by_kind:
+            by_kind[e["kind"]] = e
+
+    extraction = by_kind.get(kind) or by_kind.get("enhanced") or by_kind.get("full")
+    if not extraction:
+        raise HTTPException(status_code=404, detail="No extraction available for document")
+
+    cache_key = extraction["storage_url"]
+    cached = RECONSTRUCTION_CACHE.get(cache_key)
+    if cached:
+        return JSONResponse(cached)
+
+    schema = SCHEMA_CACHE.get(cache_key)
+    if not schema:
+        with tempfile.TemporaryDirectory() as td:
+            json_path = Path(td) / "schema.json"
+            gcs.download_to_path(extraction["storage_url"], json_path)
+            with open(json_path, "r") as f:
+                schema = json.load(f)
+            SCHEMA_CACHE.set(cache_key, schema)
+
+    chunks = _chunk_schema(schema)
+    if not chunks:
+        raise HTTPException(status_code=500, detail="No content to reconstruct")
+
+    try:
+        reconstruction = _reconstruct_with_llm(chunks)
+    except Exception as e:
+        logging.error(f"Reconstruction failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to reconstruct document")
+
+    RECONSTRUCTION_CACHE.set(cache_key, reconstruction)
+    return JSONResponse(reconstruction)
+
+
+def _chunk_schema(schema: dict, max_chunk_chars: int = 1800) -> List[str]:
+    """
+    Flatten schema sub-documents/pages into text chunks that fit LLM context.
+    """
+    chunks: List[str] = []
+
+    def add_chunk(label: str, text: str):
+        safe_text = text.strip()
+        if not safe_text:
+            return
+        if len(safe_text) <= max_chunk_chars:
+            chunks.append(f"{label}\n{text}")
+            return
+        # Split long text on sentences
+        sentences = re.split(r"(?<=[.!?])\s+", safe_text)
+        current = ""
+        for s in sentences:
+            if len(current) + len(s) + 1 > max_chunk_chars:
+                if current:
+                    chunks.append(f"{label}\n{current.strip()}")
+                current = s
+            else:
+                current += " " + s
+        if current.strip():
+            chunks.append(f"{label}\n{current.strip()}")
+
+    # Prefer sub_documents if present
+    if "sub_documents" in schema:
+        for subdoc in schema.get("sub_documents", []):
+            title = subdoc.get("title") or subdoc.get("type") or "Untitled"
+            for page in subdoc.get("pages", []):
+                page_num = page.get("page_number")
+                for element in page.get("elements", []):
+                    content = element.get("content") or ""
+                    etype = element.get("type") or ""
+                    label = f"[{title}] (type={etype}, page={page_num})"
+                    add_chunk(label, content)
+    else:
+        for page in schema.get("pages", []):
+            page_num = page.get("page_number")
+            for element in page.get("elements", []):
+                content = element.get("content") or ""
+                etype = element.get("type") or ""
+                label = f"[Page {page_num}] (type={etype})"
+                add_chunk(label, content)
+
+    return chunks
+
+
+def _reconstruct_with_llm(chunks: List[str]) -> dict:
+    """
+    Use Gemini to bucket content into EHR sections and emit clean bullets.
+    """
+    from vertexai.generative_models import GenerativeModel, GenerationConfig
+
+    prompt = f"""You are reconstructing an EHR from extracted fragments.
+
+You will receive many small fragments of text. For each fragment, decide which section it belongs to:
+- patient: demographics, identifiers
+- problems: diagnoses, history, assessments
+- meds: medications (any dosage, frequency, route, start/stop, or freeform details)
+- labs: lab tests and results (allow arbitrary result formats/units)
+- procedures: procedures/surgeries/operations
+- imaging: radiology/imaging findings
+- notes: narrative clinical notes/plans
+- other: anything important that doesn't fit above
+
+RULES:
+- Use flexible bullets: include whatever fields are present (do not force missing fields).
+- Prefer clarity over uniformity; you may combine related details in one bullet.
+- Do not repeat headings like "DOCUMENT SUMMARY".
+- Normalize duplicates; keep the clearest wording.
+- Include dates, numbers, units, and qualifiers when present.
+- Exclude boilerplate and empty headers.
+
+Fragments:
+{json.dumps(chunks, indent=2)[:15000]}
+
+Return JSON ONLY in this schema (arrays of strings; empty array if nothing):
+{{
+  "summary": ["bullet", "..."],
+  "patient": ["bullet", "..."],
+  "problems": ["bullet", "..."],
+  "meds": ["bullet", "..."],
+  "labs": ["bullet", "..."],
+  "procedures": ["bullet", "..."],
+  "imaging": ["bullet", "..."],
+  "notes": ["bullet", "..."],
+  "other": ["bullet", "..."]
+}}
+
+Keep lists concise but complete; typically 3-12 bullets when data exists."""
+
+    model = GenerativeModel(model_name="gemini-2.5-flash")
+    generation_config = GenerationConfig(
+        temperature=0.25,
+        max_output_tokens=2048,
+        response_mime_type="application/json",
+        response_schema={
+            "type": "object",
+            "properties": {
+                "summary": {"type": "array", "items": {"type": "string"}},
+                "patient": {"type": "array", "items": {"type": "string"}},
+                "problems": {"type": "array", "items": {"type": "string"}},
+                "meds": {"type": "array", "items": {"type": "string"}},
+                "labs": {"type": "array", "items": {"type": "string"}},
+                "procedures": {"type": "array", "items": {"type": "string"}},
+                "imaging": {"type": "array", "items": {"type": "string"}},
+                "notes": {"type": "array", "items": {"type": "string"}},
+                "other": {"type": "array", "items": {"type": "string"}},
+            },
+            "required": ["summary", "patient", "problems", "meds", "labs", "procedures", "imaging", "notes", "other"],
+        },
+    )
+
+    response = model.generate_content(prompt, generation_config=generation_config)
+    result = json.loads(response.text)
+    # Ensure all keys present
+    for key in ["summary", "patient", "problems", "meds", "labs", "procedures", "imaging", "notes", "other"]:
+        result.setdefault(key, [])
+    return result

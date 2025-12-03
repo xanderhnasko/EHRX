@@ -92,6 +92,18 @@ type StructuredData = {
   document_dates?: string[] | null;
 };
 
+type Reconstruction = {
+  summary: string[];
+  patient: string[];
+  problems: string[];
+  meds: string[];
+  labs: string[];
+  procedures: string[];
+  imaging: string[];
+  notes: string[];
+  other: string[];
+};
+
 type ExtractionResponse = {
   document_id: string;
   extractions: {
@@ -129,6 +141,7 @@ type RecentQuery = {
 
 const RECENT_DOCS_KEY = 'ehrx_recent_docs';
 const RECENT_QUERIES_KEY = 'ehrx_recent_queries';
+const RECON_CACHE_PREFIX = 'ehrx_reconstruction_';
 
 const loadLocal = <T,>(key: string, fallback: T): T => {
   try {
@@ -201,6 +214,15 @@ const api = {
     if (!res.ok) {
       const text = await res.text();
       throw new Error(text || 'Failed to fetch structured data');
+    }
+    return res.json();
+  },
+
+  getReconstruction: async (docId: string): Promise<Reconstruction> => {
+    const res = await fetch(`${API_BASE}/api/documents/${docId}/reconstruction`, { method: 'GET' });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || 'Failed to reconstruct document');
     }
     return res.json();
   },
@@ -279,7 +301,19 @@ const UploadCard = ({ onUpload }: { onUpload: (f: File) => void }) => {
 const tabs = ['Overview', 'Patient', 'Problems', 'Meds', 'Labs', 'Procedures', 'Imaging', 'Notes', 'Everything'] as const;
 type Tab = (typeof tabs)[number];
 
-const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab; structuredData: StructuredData | null; loading: boolean }) => {
+const SectionViewer = ({
+  activeTab,
+  structuredData,
+  reconstruction,
+  loading,
+  loadingReconstruction,
+}: {
+  activeTab: Tab;
+  structuredData: StructuredData | null;
+  reconstruction: Reconstruction | null;
+  loading: boolean;
+  loadingReconstruction: boolean;
+}) => {
   const formatPageRange = (pageRange?: number[]) => {
     if (!pageRange || pageRange.length === 0) return '—';
     if (pageRange.length === 1) return `Page ${pageRange[0]}`;
@@ -422,6 +456,56 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
     return (section.pages || []).some((p) => (p.elements || []).some((el) => wanted.includes((el.type || '').toLowerCase())));
   };
 
+  const bulletsFromRecon = (tab: Tab): string[] => {
+    if (!reconstruction) return [];
+    switch (tab) {
+      case 'Overview':
+        return reconstruction.summary || [];
+      case 'Patient':
+        return reconstruction.patient || [];
+      case 'Problems':
+        return reconstruction.problems || [];
+      case 'Meds':
+        return reconstruction.meds || [];
+      case 'Labs':
+        return reconstruction.labs || [];
+      case 'Procedures':
+        return reconstruction.procedures || [];
+      case 'Imaging':
+        return reconstruction.imaging || [];
+      case 'Notes':
+        return reconstruction.notes || [];
+      case 'Everything':
+      default:
+        return (reconstruction.summary || []).concat(
+          reconstruction.patient || [],
+          reconstruction.problems || [],
+          reconstruction.meds || [],
+          reconstruction.labs || [],
+          reconstruction.procedures || [],
+          reconstruction.imaging || [],
+          reconstruction.notes || [],
+          reconstruction.other || []
+        );
+    }
+  };
+
+  const renderBullets = (items: string[], emptyLabel: string) => {
+    if (!items || items.length === 0) {
+      return <p className="text-sm text-slate-500 italic">{emptyLabel}</p>;
+    }
+    return (
+      <div className="space-y-2">
+        {items.map((item, idx) => (
+          <div key={idx} className="flex items-start gap-2">
+            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+            <p className="text-sm leading-relaxed text-slate-800">{item}</p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const filterSections = (tab: Tab) => {
     const sections = structuredData?.sections || [];
     const matchers: Record<Tab, (s: SectionContent) => boolean> = {
@@ -501,7 +585,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
     );
   };
 
-  if (loading) {
+  if (loading || loadingReconstruction) {
     return (
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full overflow-hidden flex flex-col">
         <div className="p-6 text-sm text-slate-600 flex-1 flex items-center justify-center">
@@ -511,7 +595,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
     );
   }
 
-  if (!structuredData) {
+  if (!structuredData && !reconstruction) {
     return (
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm h-full overflow-hidden flex flex-col">
         <div className="p-6 text-sm text-slate-600 flex-1">
@@ -523,18 +607,21 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
   }
 
   const summaryLines =
-    structuredData.summary
+    structuredData?.summary
       ?.split(/[\n•]+/)
       .map((s) => s.trim())
       .filter(Boolean) || [];
 
   const stats = [
-    { label: 'Sections', value: structuredData.sections?.length ?? 0 },
-    { label: 'Pages', value: structuredData.pages?.length ?? '—' },
-    { label: 'Medications', value: structuredData.medications?.length ?? 0 },
-    { label: 'Labs', value: structuredData.labs?.length ?? 0 },
-    { label: 'Procedures', value: structuredData.procedures?.length ?? 0 },
+    { label: 'Sections', value: structuredData?.sections?.length ?? 0 },
+    { label: 'Pages', value: structuredData?.pages?.length ?? '—' },
+    { label: 'Medications', value: structuredData?.medications?.length ?? 0 },
+    { label: 'Labs', value: structuredData?.labs?.length ?? 0 },
+    { label: 'Procedures', value: structuredData?.procedures?.length ?? 0 },
   ];
+  const meds = structuredData?.medications || [];
+  const labs = structuredData?.labs || [];
+  const procs = structuredData?.procedures || [];
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[65vh]">
@@ -551,18 +638,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 p-5 shadow-sm">
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Document summary</p>
-              {cleanLines(summaryLines).length > 0 ? (
-                <div className="space-y-2">
-                  {cleanLines(summaryLines).map((line, idx) => (
-                    <div key={idx} className="flex items-start gap-2">
-                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
-                      <p className="text-sm leading-relaxed">{line}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-slate-500">No summary available.</p>
-              )}
+              {renderBullets(reconstruction?.summary || cleanLines(summaryLines), 'No summary available.')}
             </div>
             {structuredData.document_dates && structuredData.document_dates.length > 0 && (
               <div>
@@ -596,6 +672,10 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
 
         {activeTab === 'Patient' && (
           <div className="space-y-4">
+            <div className="rounded-xl border border-slate-200 p-4 bg-white">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
+              {renderBullets(bulletsFromRecon('Patient'), 'No patient details reconstructed.')}
+            </div>
             <div className="rounded-xl border border-slate-200 p-4 bg-slate-50">
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Demographics</p>
               {structuredData.patient_demographics?.content ? (
@@ -613,18 +693,28 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Problem list / history</p>
-              {renderSectionGrid(filterSections('Problems'), 'No diagnoses or problem lists detected.')}
+              {renderSectionGrid('Problems', filterSections('Problems'), 'No diagnoses or problem lists detected.')}
             </div>
           </div>
         )}
 
         {activeTab === 'Problems' && (
-          renderSectionGrid(filterSections('Problems'), 'No diagnoses or problem lists detected.')
+          <div className="space-y-4">
+            <div className="rounded-xl border border-slate-200 p-4 bg-white">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
+              {renderBullets(bulletsFromRecon('Problems'), 'No problems reconstructed.')}
+            </div>
+            {renderSectionGrid('Problems', filterSections('Problems'), 'No diagnoses or problem lists detected.')}
+          </div>
         )}
 
         {activeTab === 'Meds' && (
           <div className="space-y-4">
-            {structuredData.medications.length > 0 ? (
+            <div className="rounded-xl border border-slate-200 p-4 bg-white">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
+              {renderBullets(bulletsFromRecon('Meds'), 'No medications reconstructed.')}
+            </div>
+            {meds.length > 0 ? (
               <div className="overflow-x-auto border border-slate-200 rounded-xl">
                 <table className="min-w-full divide-y divide-slate-200 text-sm">
                   <thead className="bg-slate-50">
@@ -638,7 +728,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-slate-200">
-                    {structuredData.medications.map((med, idx) => (
+                    {meds.map((med, idx) => (
                       <tr key={idx} className="hover:bg-slate-50">
                         <td className="px-4 py-3 text-slate-900 font-semibold">{med.drug_name}</td>
                         <td className="px-4 py-3 text-slate-700">{med.dosage || '—'}</td>
@@ -663,7 +753,11 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
 
         {activeTab === 'Labs' && (
           <div className="space-y-4">
-            {structuredData.labs.length > 0 ? (
+            <div className="rounded-xl border border-slate-200 p-4 bg-white">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
+              {renderBullets(bulletsFromRecon('Labs'), 'No labs reconstructed.')}
+            </div>
+            {labs.length > 0 ? (
               <div className="overflow-x-auto border border-slate-200 rounded-xl">
                 <table className="min-w-full divide-y divide-slate-200 text-sm">
                   <thead className="bg-slate-50">
@@ -676,7 +770,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-slate-200">
-                    {structuredData.labs.map((lab, idx) => (
+                    {labs.map((lab, idx) => (
                       <tr key={idx} className="hover:bg-slate-50">
                         <td className="px-4 py-3 text-slate-900 font-semibold">{lab.test_name}</td>
                         <td className="px-4 py-3 text-slate-700">{lab.date_ordered || '—'}</td>
@@ -700,7 +794,11 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
 
         {activeTab === 'Procedures' && (
           <div className="space-y-4">
-            {structuredData.procedures.length > 0 ? (
+            <div className="rounded-xl border border-slate-200 p-4 bg-white">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
+              {renderBullets(bulletsFromRecon('Procedures'), 'No procedures reconstructed.')}
+            </div>
+            {procs.length > 0 ? (
               <div className="overflow-x-auto border border-slate-200 rounded-xl">
                 <table className="min-w-full divide-y divide-slate-200 text-sm">
                   <thead className="bg-slate-50">
@@ -713,7 +811,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-slate-200">
-                    {structuredData.procedures.map((proc, idx) => (
+                    {procs.map((proc, idx) => (
                       <tr key={idx} className="hover:bg-slate-50">
                         <td className="px-4 py-3 text-slate-900 font-semibold">{proc.procedure_name}</td>
                         <td className="px-4 py-3 text-slate-700">{proc.date || '—'}</td>
@@ -735,13 +833,33 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
           </div>
         )}
 
-        {activeTab === 'Imaging' && renderSectionGrid('Imaging', filterSections('Imaging'), 'No imaging or radiology sections detected.')}
+        {activeTab === 'Imaging' && (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-slate-200 p-4 bg-white">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
+              {renderBullets(bulletsFromRecon('Imaging'), 'No imaging reconstructed.')}
+            </div>
+            {renderSectionGrid('Imaging', filterSections('Imaging'), 'No imaging or radiology sections detected.')}
+          </div>
+        )}
 
-        {activeTab === 'Notes' && renderSectionGrid('Notes', filterSections('Notes'), 'No clinical notes detected.')}
+        {activeTab === 'Notes' && (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-slate-200 p-4 bg-white">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
+              {renderBullets(bulletsFromRecon('Notes'), 'No notes reconstructed.')}
+            </div>
+            {renderSectionGrid('Notes', filterSections('Notes'), 'No clinical notes detected.')}
+          </div>
+        )}
 
         {activeTab === 'Everything' && (
           <div className="space-y-3">
-            <p className="text-xs text-slate-500">Every grouped section from the ontology.</p>
+            <div className="rounded-xl border border-slate-200 p-4 bg-white">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">LLM reconstruction</p>
+              {renderBullets(bulletsFromRecon('Everything'), 'Nothing reconstructed.')}
+            </div>
+            <p className="text-xs text-slate-500">Grouped sections from the ontology.</p>
             {renderSectionGrid('Everything', filterSections('Everything'), 'No sections captured.')}
           </div>
         )}
@@ -792,6 +910,8 @@ const AnalysisArea = ({
   const [openReasoning, setOpenReasoning] = useState<Set<number>>(new Set());
   const [structuredData, setStructuredData] = useState<StructuredData | null>(null);
   const [loadingStructuredData, setLoadingStructuredData] = useState(false);
+  const [reconstruction, setReconstruction] = useState<Reconstruction | null>(null);
+  const [loadingReconstruction, setLoadingReconstruction] = useState(false);
 
   const docReady = !!(docMeta && docMeta.extractions && docMeta.extractions.length > 0);
 
@@ -819,6 +939,23 @@ const AnalysisArea = ({
         .finally(() => {
           setLoadingStructuredData(false);
         });
+
+      // Reconstruction with client-side cache
+      const cached = loadLocal<Reconstruction | null>(`${RECON_CACHE_PREFIX}${docId}`, null);
+      if (cached) {
+        setReconstruction(cached);
+      } else {
+        setLoadingReconstruction(true);
+        api.getReconstruction(docId)
+          .then((data) => {
+            setReconstruction(data);
+            saveLocal(`${RECON_CACHE_PREFIX}${docId}`, data);
+          })
+          .catch((err) => {
+            console.error('Failed to reconstruct document:', err);
+          })
+          .finally(() => setLoadingReconstruction(false));
+      }
     }
   }, [docReady, docId]);
 
@@ -929,7 +1066,13 @@ const AnalysisArea = ({
             ))}
           </div>
           <div className="p-4">
-            <SectionViewer activeTab={activeTab} structuredData={structuredData} loading={loadingStructuredData} />
+            <SectionViewer
+              activeTab={activeTab}
+              structuredData={structuredData}
+              reconstruction={reconstruction}
+              loading={loadingStructuredData}
+              loadingReconstruction={loadingReconstruction}
+            />
             {docReady && docMeta?.document && (
               <div className="mt-3 text-xs text-slate-500 space-y-1">
                 <div className="font-semibold text-slate-600">Document info</div>
