@@ -617,9 +617,24 @@ const renderSectionGrid = (tab: Tab, sections: SectionContent[], emptyLabel: str
   const stats = [
     { label: 'Sections', value: structuredData?.sections?.length ?? 0 },
     { label: 'Pages', value: structuredData?.pages?.length ?? '—' },
-    { label: 'Medications', value: structuredData?.medications?.length ?? 0 },
-    { label: 'Labs', value: structuredData?.labs?.length ?? 0 },
-    { label: 'Procedures', value: structuredData?.procedures?.length ?? 0 },
+    {
+      label: 'Medications',
+      value: Math.max(
+        structuredData?.medications?.length || 0,
+        reconstruction?.meds?.length || 0
+      ),
+    },
+    {
+      label: 'Labs',
+      value: Math.max(structuredData?.labs?.length || 0, reconstruction?.labs?.length || 0),
+    },
+    {
+      label: 'Procedures',
+      value: Math.max(
+        structuredData?.procedures?.length || 0,
+        reconstruction?.procedures?.length || 0
+      ),
+    },
   ];
   const meds = structuredData?.medications || [];
   const labs = structuredData?.labs || [];
@@ -723,7 +738,7 @@ const renderSectionGrid = (tab: Tab, sections: SectionContent[], emptyLabel: str
             ) : null}
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
-              {renderSectionGrid('Meds', filterSections('Meds'), 'No medication sections detected in the document.')}
+              {renderSectionGrid('Meds', filterSections('Meds'), '')}
             </div>
           </div>
         )}
@@ -761,7 +776,7 @@ const renderSectionGrid = (tab: Tab, sections: SectionContent[], emptyLabel: str
             ) : null}
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
-              {renderSectionGrid('Labs', filterSections('Labs'), 'No lab sections detected in the document.')}
+              {renderSectionGrid('Labs', filterSections('Labs'), '')}
             </div>
           </div>
         )}
@@ -799,17 +814,17 @@ const renderSectionGrid = (tab: Tab, sections: SectionContent[], emptyLabel: str
             ) : null}
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
-              {renderSectionGrid('Procedures', filterSections('Procedures'), 'No procedure sections detected in the document.')}
+              {renderSectionGrid('Procedures', filterSections('Procedures'), '')}
             </div>
           </div>
         )}
 
         {activeTab === 'Imaging' && (
-          <div className="space-y-4">
-            <div className="rounded-xl border border-slate-200 p-4 bg-white">
-              {renderBullets(bulletsFromRecon('Imaging'), 'No imaging reconstructed.')}
-            </div>
-            {renderSectionGrid('Imaging', filterSections('Imaging'), 'No imaging or radiology sections detected.')}
+            <div className="space-y-4">
+              <div className="rounded-xl border border-slate-200 p-4 bg-white">
+                {renderBullets(bulletsFromRecon('Imaging'), 'No imaging reconstructed.')}
+              </div>
+            {renderSectionGrid('Imaging', filterSections('Imaging'), '')}
           </div>
         )}
 
@@ -828,7 +843,7 @@ const renderSectionGrid = (tab: Tab, sections: SectionContent[], emptyLabel: str
               {renderBullets(bulletsFromRecon('Everything'), 'Nothing reconstructed.')}
             </div>
             <p className="text-xs text-slate-500">Grouped sections from the ontology.</p>
-            {renderSectionGrid('Everything', filterSections('Everything'), 'No sections captured.')}
+            {renderSectionGrid('Everything', filterSections('Everything'), '')}
           </div>
         )}
       </div>
