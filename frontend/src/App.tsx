@@ -366,7 +366,31 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
     return 1;
   };
 
-  const extractLines = (section: SectionContent, take = 8) => {
+  const lineMatchesTab = (tab: Tab, line: string, elementType: string) => {
+    const lower = line.toLowerCase();
+    const t = elementType.toLowerCase();
+    const has = (keywords: string[]) => keywords.some((k) => lower.includes(k));
+    const tHas = (keywords: string[]) => keywords.some((k) => t.includes(k));
+
+    switch (tab) {
+      case 'Meds':
+        return tHas(['medication']) || has(['mg', 'mcg', 'units', 'dose', 'medication', 'tablet', 'pill', 'insulin', 'daily', 'q.']);
+      case 'Labs':
+        return tHas(['lab']) || has(['lab', 'result', 'test', 'panel', 'hemoglobin', 'hematocrit', 'cbc', 'creatinine', 'glucose']);
+      case 'Procedures':
+        return tHas(['procedure']) || has(['procedure', 'surgery', 'operative', 'biopsy', 'colectomy', 'performed']);
+      case 'Imaging':
+        return tHas(['radiology', 'imaging']) || has(['ct', 'mri', 'x-ray', 'radiology', 'ultrasound']);
+      case 'Problems':
+        return tHas(['problem', 'history']) || has(['history', 'diagnosis', 'problem', 'hx', 'assessment']);
+      case 'Notes':
+        return tHas(['progress', 'clinical']) || has(['note', 'plan', 'assessment']);
+      default:
+        return true;
+    }
+  };
+
+  const extractLines = (section: SectionContent, tab: Tab, take = 8) => {
     const elements = section.pages?.flatMap((p) =>
       (p.elements || []).map((el) => ({ ...el, page_number: p.page_number || el.page_number }))
     ) || [];
@@ -379,6 +403,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
       const filtered = cleanLines(splitContent(el.content || ''));
       filtered.forEach((line) => {
         if (lines.length >= take) return;
+        if (!lineMatchesTab(tab, line, el.type || '')) return;
         lines.push({ text: line, tag: elementLabel(el.type), page: el.page_number });
       });
       if (lines.length >= take) break;
@@ -386,55 +411,50 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
     return lines;
   };
 
+  const sectionMatches = (section: SectionContent, keywords: string[]) => {
+    const type = (section.type || '').toLowerCase();
+    const title = (section.title || '').toLowerCase();
+    return keywords.some((k) => type.includes(k) || title.includes(k));
+  };
+
+  const sectionHasElementTypes = (section: SectionContent, types: string[]) => {
+    const wanted = types.map((t) => t.toLowerCase());
+    return (section.pages || []).some((p) => (p.elements || []).some((el) => wanted.includes((el.type || '').toLowerCase())));
+  };
+
   const filterSections = (tab: Tab) => {
     const sections = structuredData?.sections || [];
     const matchers: Record<Tab, (s: SectionContent) => boolean> = {
       Overview: () => false,
       Patient: () => false,
-      Problems: (s) => {
-        const t = (s.type || '').toLowerCase();
-        const title = (s.title || '').toLowerCase();
-        return t.includes('problem') || title.includes('diagnosis') || title.includes('history');
-      },
-      Meds: (s) => {
-        const t = (s.type || '').toLowerCase();
-        const title = (s.title || '').toLowerCase();
-        return t.includes('medication') || title.includes('med');
-      },
-      Labs: (s) => {
-        const t = (s.type || '').toLowerCase();
-        const title = (s.title || '').toLowerCase();
-        return t.includes('laboratory') || t.includes('lab') || title.includes('lab');
-      },
-      Procedures: (s) => {
-        const t = (s.type || '').toLowerCase();
-        const title = (s.title || '').toLowerCase();
-        return t.includes('procedure') || title.includes('surgery') || title.includes('operative');
-      },
-      Imaging: (s) => {
-        const t = (s.type || '').toLowerCase();
-        const title = (s.title || '').toLowerCase();
-        return t.includes('radiology') || title.includes('imaging') || title.includes('ct') || title.includes('mri') || title.includes('x-ray');
-      },
-      Notes: (s) => {
-        const t = (s.type || '').toLowerCase();
-        const title = (s.title || '').toLowerCase();
-        return t.includes('progress') || t.includes('clinical_content') || title.includes('note') || title.includes('plan');
-      },
+      Problems: (s) =>
+        sectionMatches(s, ['problem', 'history', 'diagnosis']) ||
+        sectionHasElementTypes(s, ['problem_list', 'list_items']),
+      Meds: (s) =>
+        sectionMatches(s, ['medication', 'meds']) ||
+        sectionHasElementTypes(s, ['medication_table']),
+      Labs: (s) =>
+        sectionMatches(s, ['laboratory', 'lab']) ||
+        sectionHasElementTypes(s, ['lab_results_table']),
+      Procedures: (s) =>
+        sectionMatches(s, ['procedure', 'surgery', 'operative']) ||
+        sectionHasElementTypes(s, ['general_table', 'procedure']),
+      Imaging: (s) => sectionMatches(s, ['radiology', 'imaging', 'ct', 'mri', 'x-ray']),
+      Notes: (s) => sectionMatches(s, ['progress', 'clinical_content', 'note', 'plan']),
       Everything: () => true,
     };
     const matcher = matchers[tab];
     return sections.filter(matcher);
   };
 
-  const renderSectionGrid = (sections: SectionContent[], emptyLabel: string) => {
+  const renderSectionGrid = (tab: Tab, sections: SectionContent[], emptyLabel: string) => {
     if (!sections || sections.length === 0) {
       return <p className="text-slate-500 italic text-sm">{emptyLabel}</p>;
     }
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sections.map((section) => {
-          const lines = extractLines(section);
+          const lines = extractLines(section, tab);
           return (
             <div key={`${section.id || section.title}-${section.page_range || ''}`} className="border border-slate-200 rounded-xl p-4 bg-white shadow-sm">
               <div className="flex items-start justify-between gap-3">
@@ -532,7 +552,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
             <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 p-5 shadow-sm">
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Document summary</p>
               {cleanLines(summaryLines).length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="space-y-2">
                   {cleanLines(summaryLines).map((line, idx) => (
                     <div key={idx} className="flex items-start gap-2">
                       <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
@@ -636,7 +656,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
             )}
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
-              {renderSectionGrid(filterSections('Meds'), 'No medication sections detected in the document.')}
+              {renderSectionGrid('Meds', filterSections('Meds'), 'No medication sections detected in the document.')}
             </div>
           </div>
         )}
@@ -673,7 +693,7 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
             )}
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
-              {renderSectionGrid(filterSections('Labs'), 'No lab sections detected in the document.')}
+              {renderSectionGrid('Labs', filterSections('Labs'), 'No lab sections detected in the document.')}
             </div>
           </div>
         )}
@@ -710,19 +730,19 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
             )}
             <div>
               <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Source sections</p>
-              {renderSectionGrid(filterSections('Procedures'), 'No procedure sections detected in the document.')}
+              {renderSectionGrid('Procedures', filterSections('Procedures'), 'No procedure sections detected in the document.')}
             </div>
           </div>
         )}
 
-        {activeTab === 'Imaging' && renderSectionGrid(filterSections('Imaging'), 'No imaging or radiology sections detected.')}
+        {activeTab === 'Imaging' && renderSectionGrid('Imaging', filterSections('Imaging'), 'No imaging or radiology sections detected.')}
 
-        {activeTab === 'Notes' && renderSectionGrid(filterSections('Notes'), 'No clinical notes detected.')}
+        {activeTab === 'Notes' && renderSectionGrid('Notes', filterSections('Notes'), 'No clinical notes detected.')}
 
         {activeTab === 'Everything' && (
           <div className="space-y-3">
             <p className="text-xs text-slate-500">Every grouped section from the ontology.</p>
-            {renderSectionGrid(filterSections('Everything'), 'No sections captured.')}
+            {renderSectionGrid('Everything', filterSections('Everything'), 'No sections captured.')}
           </div>
         )}
       </div>
