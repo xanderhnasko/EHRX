@@ -452,7 +452,11 @@ Only return the JSON object, nothing else."""
                 deduped_elements.append(elem)
 
         # Choose a single summary to avoid contradictory concatenation across batches.
-        final_summary = summaries[0] if summaries else ""
+        # Heuristic: prefer the longest non-empty summary (often the more complete one).
+        final_summary = ""
+        if summaries:
+            summaries_sorted = sorted(summaries, key=lambda s: len(s or ""), reverse=True)
+            final_summary = summaries_sorted[0] if summaries_sorted else ""
 
         return {
             "elements": deduped_elements,
