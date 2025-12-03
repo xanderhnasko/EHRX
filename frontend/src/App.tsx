@@ -292,6 +292,52 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
       .map((line) => line.replace(/^[•\-\d\.\)\s]+/, '').trim())
       .filter(Boolean);
 
+  const prettify = (str?: string) => {
+    if (!str) return '';
+    return str
+      .replace(/_/g, ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (m) => m.toUpperCase());
+  };
+
+  const isStructuralType = (t: string) => {
+    const lower = t.toLowerCase();
+    return (
+      lower.includes('header') ||
+      lower.includes('section') ||
+      lower.includes('page_metadata') ||
+      lower.includes('demographics') ||
+      lower.includes('margin_content') ||
+      lower.includes('page_number')
+    );
+  };
+
+  const isHeadingLine = (line: string) => {
+    const l = line.trim();
+    if (!l) return true;
+    const lower = l.toLowerCase();
+    const tokens = ['document summary', 'patient demographics', 'document date', 'key findings', 'medications', 'laboratory', 'procedures', 'other important information', 'problem list', 'past medical history'];
+    if (tokens.some((t) => lower.startsWith(t))) return true;
+    if (l.endsWith(':')) return true;
+    if (l.length <= 3) return true;
+    return false;
+  };
+
+  const cleanLines = (lines: string[]) => {
+    const seen = new Set<string>();
+    const filtered: string[] = [];
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      if (isHeadingLine(trimmed)) continue;
+      const key = trimmed.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      filtered.push(trimmed);
+    }
+    return filtered;
+  };
+
   const elementLabel = (type: string) => {
     const t = type.toLowerCase();
     if (t.includes('medication')) return 'Medication';
@@ -329,7 +375,9 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
     const lines: { text: string; tag: string; page?: number }[] = [];
 
     for (const el of ordered) {
-      splitContent(el.content || '').forEach((line) => {
+      if (isStructuralType(el.type || '')) continue;
+      const filtered = cleanLines(splitContent(el.content || ''));
+      filtered.forEach((line) => {
         if (lines.length >= take) return;
         lines.push({ text: line, tag: elementLabel(el.type), page: el.page_number });
       });
@@ -388,10 +436,10 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
         {sections.map((section) => {
           const lines = extractLines(section);
           return (
-            <div key={`${section.id || section.title}-${section.page_range || ''}`} className="border border-slate-200 rounded-xl p-4 bg-gradient-to-br from-white to-slate-50 shadow-sm">
+            <div key={`${section.id || section.title}-${section.page_range || ''}`} className="border border-slate-200 rounded-xl p-4 bg-white shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{section.type || 'Section'}</p>
+                  <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{prettify(section.type) || 'Section'}</p>
                   <h4 className="text-sm font-semibold text-slate-900">{section.title || 'Untitled section'}</h4>
                   <p className="text-xs text-slate-500">{formatPageRange(section.page_range)}</p>
                 </div>
@@ -409,19 +457,22 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
                 </div>
               </div>
               <div className="mt-3 space-y-2">
-                {lines.map((line, idx) => (
-                  <div key={idx} className="flex items-start gap-2">
-                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />
-                    <div className="flex-1">
-                      <div className="text-xs uppercase tracking-wide text-slate-400 font-semibold flex items-center gap-2">
-                        {line.tag}
-                        {line.page && <span className="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Page {line.page}</span>}
+                {lines.length > 0 ? (
+                  lines.map((line, idx) => (
+                    <div key={idx} className="flex items-start gap-2">
+                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                      <div className="flex-1">
+                        <div className="text-xs uppercase tracking-wide text-slate-400 font-semibold flex items-center gap-2">
+                          {line.tag}
+                          {line.page && <span className="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Page {line.page}</span>}
+                        </div>
+                        <p className="text-sm text-slate-800 leading-snug">{line.text}</p>
                       </div>
-                      <p className="text-sm text-slate-800 leading-snug">{line.text}</p>
                     </div>
-                  </div>
-                ))}
-                {lines.length === 0 && <p className="text-xs text-slate-500">No text captured for this section.</p>}
+                  ))
+                ) : (
+                  <p className="text-xs text-slate-500">No clinical content captured for this section.</p>
+                )}
               </div>
             </div>
           );
@@ -472,25 +523,25 @@ const SectionViewer = ({ activeTab, structuredData, loading }: { activeTab: Tab;
           <>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
               {stats.map((s) => (
-                <div key={s.label} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 shadow-sm">
+                <div key={s.label} className="rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm">
                   <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{s.label}</p>
                   <p className="text-xl font-semibold text-slate-900">{s.value}</p>
                 </div>
               ))}
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-800 text-slate-100 p-5 shadow-md">
-              <p className="text-[11px] uppercase tracking-wide text-blue-200 font-semibold mb-2">Document summary</p>
-              {summaryLines.length > 0 ? (
+            <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 p-5 shadow-sm">
+              <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Document summary</p>
+              {cleanLines(summaryLines).length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {summaryLines.map((line, idx) => (
+                  {cleanLines(summaryLines).map((line, idx) => (
                     <div key={idx} className="flex items-start gap-2">
-                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-300 flex-shrink-0" />
+                      <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
                       <p className="text-sm leading-relaxed">{line}</p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-slate-200">No summary available.</p>
+                <p className="text-sm text-slate-500">No summary available.</p>
               )}
             </div>
             {structuredData.document_dates && structuredData.document_dates.length > 0 && (
