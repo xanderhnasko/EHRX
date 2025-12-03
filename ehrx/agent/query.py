@@ -452,7 +452,7 @@ Only return the JSON object, nothing else."""
                 deduped_elements.append(elem)
 
         # Choose a single summary to avoid contradictory concatenation across batches.
-        # Heuristic: prefer the longest non-empty summary (often the more complete one).
+        # Use the longest non-empty summary to retain the most complete answer without filtering it away.
         final_summary = ""
         if summaries:
             summaries_sorted = sorted(summaries, key=lambda s: len(s or ""), reverse=True)
