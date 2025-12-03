@@ -181,13 +181,6 @@ class HybridQueryAgent:
         if reasoning_text and len(reasoning_text) > REASONING_MAX_CHARS:
             reasoning_text = reasoning_text[:REASONING_MAX_CHARS] + "..."
 
-        # Enrich matched elements with provenance (page/bbox/text) from filtered_schema
-        element_index = {
-            elem.get("element_id"): elem
-            for elem in filtered_schema.get("elements", [])
-            if elem.get("element_id")
-        }
-
         def _coerce_bbox(bbox_val: Any) -> list:
             if isinstance(bbox_val, list):
                 return bbox_val
@@ -199,25 +192,22 @@ class HybridQueryAgent:
 
         matched_elements = []
         for el in answer.get("elements", []):
-            el_id = el.get("element_id")
-            base = element_index.get(el_id, {})
-            bbox_source = base.get("bbox_pixel") or base.get("bbox_norm") or base.get("bbox")
-            page_key = None
-            if "page_number" in base and base.get("page_number") is not None:
-                page_key = str(int(base.get("page_number")))
+            bbox_source = el.get("bbox_pixel") or el.get("bbox_norm") or el.get("bbox")
+            page_num = el.get("page_number")
+            page_key = str(int(page_num)) if page_num is not None else None
             page_scale = page_bbox_max.get(page_key or "")
             matched_elements.append(
                 {
-                    "element_id": el_id,
+                    "element_id": el.get("element_id"),
                     "relevance": el.get("relevance") or el.get("justification"),
-                    "text": base.get("content") or base.get("text"),
-                    "page": base.get("page_number"),
+                    "text": el.get("content") or el.get("text"),
+                    "page": page_num,
                     "bbox": _coerce_bbox(bbox_source),
-                    "type": base.get("type"),
-                    "subdoc_type": base.get("subdoc_type"),
-                    "subdoc_title": base.get("subdoc_title"),
+                    "type": el.get("type"),
+                    "subdoc_type": el.get("subdoc_type"),
+                    "subdoc_title": el.get("subdoc_title"),
                     "page_key": page_key,
-                    "bbox_norm": base.get("bbox_pdf"),
+                    "bbox_norm": el.get("bbox_pdf"),
                     "page_bbox_max_x_px": page_scale.get("max_x_px") if page_scale else None,
                     "page_bbox_max_y_px": page_scale.get("max_y_px") if page_scale else None,
                 }
