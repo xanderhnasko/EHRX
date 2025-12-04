@@ -583,8 +583,47 @@ Only return the JSON object, nothing else."""
             result.get("elements", [])
         )
 
+        # Post-filter: keep elements that actually contain answer keywords to avoid irrelevant bboxes.
+        filtered_hydrated = hydrated_elements
+        ans_text = result.get("answer_summary") or ""
+        tokens = [t.lower() for t in ans_text.split() if len(t) > 3]
+        if tokens:
+            def has_token(el: Dict[str, Any]) -> bool:
+                content = (el.get("content") or el.get("text") or "").lower()
+                return any(tok in content for tok in tokens)
+            filtered = [el for el in hydrated_elements if has_token(el)]
+            if filtered:
+                filtered_hydrated = filtered
+
+        # If nothing survived (or Pro returned nothing), fall back to best-matching elements by keyword overlap with the answer.
+        if not filtered_hydrated and tokens:
+            def score(el: Dict[str, Any]) -> int:
+                content = (el.get("content") or el.get("text") or "").lower()
+                return sum(1 for tok in tokens if tok in content)
+
+            # Prefer clinically relevant types
+            type_priority = {
+                "medication_table": 3,
+                "lab_results_table": 3,
+                "problem_list": 2,
+                "list_items": 2,
+                "clinical_paragraph": 1,
+            }
+            candidates = []
+            for el in full_filtered_elements:
+                sc = score(el)
+                if sc == 0:
+                    continue
+                candidates.append(
+                    (type_priority.get(el.get("type"), 0), sc, el)
+                )
+            if candidates:
+                candidates.sort(key=lambda x: (x[0], x[1]), reverse=True)
+                top = [c[2] for c in candidates[:5]]
+                filtered_hydrated = top
+
         return {
-            "elements": hydrated_elements,
+            "elements": filtered_hydrated,
             "reasoning": result.get("reasoning", ""),
             "answer_summary": result.get("answer_summary", "")
         }
@@ -600,6 +639,7 @@ Only return the JSON object, nothing else."""
         """
         simplified_schema = {"elements": batch_elements}
         schema_json = json.dumps(simplified_schema, indent=2)
+        available_ids = [el.get("element_id") for el in batch_elements if el.get("element_id")]
 
         brevity_instruction = "Keep answer_summary under 80 words. Keep reasoning under 60 words." if compact else "Keep answer_summary concise. Keep reasoning under 100 words."
 
@@ -626,8 +666,12 @@ IMPORTANT INSTRUCTIONS:
 3. Don't just look at element types - READ THE CONTENT!
 4. Extract the actual answer from the content and present it clearly
 5. OUTPUT MUST BE TINY: Only return element_id(s) for matched items. DO NOT repeat content, bbox, or page info.
+6. USE ONLY element_id values from the list below. Do not invent IDs.
 6. Keep any relevance note extremely short (<= 10 words).
 7. {brevity_instruction}
+
+ELEMENT IDS AVAILABLE (use these IDs exactly):
+{available_ids}
 
 TASK: Find ALL elements that answer the question and provide a clear natural language answer.
 
