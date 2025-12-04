@@ -441,12 +441,10 @@ Only return the JSON object, nothing else."""
                 seen_ids.add(eid)
                 deduped_elements.append(elem)
 
-        # Choose a single summary to avoid contradictory concatenation across batches.
-        # Use the longest non-empty summary to retain the most complete answer without filtering it away.
-        final_summary = ""
-        if summaries:
-            summaries_sorted = sorted(summaries, key=lambda s: len(s or ""), reverse=True)
-            final_summary = summaries_sorted[0] if summaries_sorted else ""
+        # Merge summaries from all batches to retain full context; trim for safety.
+        final_summary = " ".join([s for s in summaries if s]).strip()
+        if len(final_summary) > 1000:
+            final_summary = final_summary[:1000] + "..."
 
         return {
             "elements": deduped_elements,
@@ -628,8 +626,10 @@ IMPORTANT INSTRUCTIONS:
 4. Extract the actual answer from the content and present it clearly
 5. OUTPUT MUST BE TINY: Only return element_id(s) for matched items. DO NOT repeat content, bbox, or page info.
 6. USE ONLY element_id values from the list below. Do not invent IDs.
-6. Keep any relevance note extremely short (<= 10 words).
-7. {brevity_instruction}
+7. The answer_summary MUST be fully supported by the returned element_id(s). Do NOT assert absence unless the elements support that.
+8. Return only element_id(s) whose content directly contains the answer; do not include unrelated elements.
+9. Keep any relevance note extremely short (<= 10 words).
+10. {brevity_instruction}
 
 ELEMENT IDS AVAILABLE (use these IDs exactly):
 {available_ids}
