@@ -583,47 +583,8 @@ Only return the JSON object, nothing else."""
             result.get("elements", [])
         )
 
-        # Post-filter: keep elements that actually contain answer keywords to avoid irrelevant bboxes.
-        filtered_hydrated = hydrated_elements
-        ans_text = result.get("answer_summary") or ""
-        tokens = [t.lower() for t in ans_text.split() if len(t) > 3]
-        if tokens:
-            def has_token(el: Dict[str, Any]) -> bool:
-                content = (el.get("content") or el.get("text") or "").lower()
-                return any(tok in content for tok in tokens)
-            filtered = [el for el in hydrated_elements if has_token(el)]
-            if filtered:
-                filtered_hydrated = filtered
-
-        # If nothing survived (or Pro returned nothing), fall back to best-matching elements by keyword overlap with the answer.
-        if not filtered_hydrated and tokens:
-            def score(el: Dict[str, Any]) -> int:
-                content = (el.get("content") or el.get("text") or "").lower()
-                return sum(1 for tok in tokens if tok in content)
-
-            # Prefer clinically relevant types
-            type_priority = {
-                "medication_table": 3,
-                "lab_results_table": 3,
-                "problem_list": 2,
-                "list_items": 2,
-                "clinical_paragraph": 1,
-            }
-            candidates = []
-            for el in full_filtered_elements:
-                sc = score(el)
-                if sc == 0:
-                    continue
-                candidates.append(
-                    (type_priority.get(el.get("type"), 0), sc, el)
-                )
-            if candidates:
-                candidates.sort(key=lambda x: (x[0], x[1]), reverse=True)
-                top = [c[2] for c in candidates[:5]]
-                filtered_hydrated = top
-
         return {
-            "elements": filtered_hydrated,
+            "elements": hydrated_elements,
             "reasoning": result.get("reasoning", ""),
             "answer_summary": result.get("answer_summary", "")
         }
