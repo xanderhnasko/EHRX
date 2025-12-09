@@ -251,7 +251,7 @@ def main():
     print(f"  cat {enhanced_path} | jq '.sub_documents[0]'")
     print(f"  cat {index_path} | jq '.sub_documents'")
 
-    print("\n🎯 Next: Run on full 650 pages with: python run_mvp_pipeline.py")
+    print("\n🎯 Next: Run on full 650 pages with: python scripts/run_mvp_pipeline.py")
 
 
 if __name__ == "__main__":

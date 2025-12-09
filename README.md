@@ -1,114 +1,45 @@
-# PDF2EHR (ehrx)
+# PDF2EHR (EHRX)
 
-Extract structured data from scanned EHR PDFs using vision language models with semantic ontology and agentic search.
+Extract structured clinical data from scanned EHR PDFs using a Vertex AI Gemini pipeline plus a lightweight FastAPI + React UI.
 
-## Overview
+## Hosted App
+- Live site: https://ehrx.netlify.app/ (uses our GCP credits; availability depends on those remaining)
+- Workflow: upload a PDF → wait for extraction → ask questions against the document; provenance and structured views are returned.
 
-PDF2EHR converts scanned medical records into structured, queryable data with full provenance tracking. The pipeline:
+## Run It Yourself (GCP-backed)
+- Prereqs: Python 3.11, Node 18+, `poppler-utils` for PDF rasterization, a GCP project with Vertex AI + Cloud Storage enabled, and a Postgres instance reachable from where you run the API.
+- Env file (`.env` at repo root) minimally needs:
+  ```
+  GCP_PROJECT_ID=your-project
+  GCP_LOCATION=us-central1
+  GOOGLE_APPLICATION_CREDENTIALS=/abs/path/to/service-account.json
+  GCS_BUCKET=your-bucket
+  DB_HOST=127.0.0.1
+  DB_PORT=5432
+  DB_NAME=ehrx
+  DB_USER=appuser
+  DB_PASSWORD=your-password
+  FRONTEND_ORIGINS=http://localhost:5173
+  ```
 
-1. **PDF Processing** - Converts PDF pages to images
-2. **VLM Extraction** - Uses Gemini models to identify and classify medical elements
-3. **Semantic Grouping** - Groups elements into logical sub-documents (medications, labs, notes, etc.)
-4. **Agentic Query** - Natural language search with filter-then-reason architecture
+### Backend API (FastAPI)
+- Install deps: `pip install -e . && pip install -r requirements.txt`
+- Run locally: `uvicorn ehrx.web.app:app --host 0.0.0.0 --port 8080`
+- Endpoints: `POST /documents` (upload), `POST /documents/{id}/extract`, `POST /api/query`, `GET /api/healthz`
 
-## Quick Start
+### CLI Pipelines (direct Gemini calls)
+- Full extract on a PDF (incurs GCP cost): `python scripts/run_mvp_pipeline.py`
+- Quick demo on existing extraction (no new model calls): `python scripts/run_sample_e2e.py --full-json output/test_20_pages/SENSITIVE_ehr1_copy_1763164390_full.json`
+- Batch ontologies: `python scripts/batch_process_ontologies.py --in <pdf_dir> --out <ontologies_dir>`
 
-### Prerequisites
+### Frontend
+- `cd frontend && npm install`
+- Create `frontend/.env.local` with `VITE_API_URL=http://localhost:8080`
+- Dev server: `npm run dev` (defaults to http://localhost:5173). Build for static hosting: `npm run build` (outputs to `frontend/dist/`).
 
-System dependencies:
-```bash
-brew install poppler  # macOS
-```
+### Tests
+- `pytest tests`
 
-### Installation
-
-```bash
-pip install -e .
-pip install -r requirements.txt
-```
-
-### Environment Setup
-
-Create `.env` file:
-```
-GOOGLE_CLOUD_PROJECT=your-project-id
-GOOGLE_CLOUD_LOCATION=us-central1
-```
-
-Verify environment:
-```bash
-python scripts/verify_env.py
-```
-
-### Usage
-
-**Process a PDF:**
-```bash
-python scripts/run_mvp_pipeline.py
-```
-
-**Query existing extraction:**
-```bash
-python scripts/test_query_only.py
-```
-
-## Project Structure
-
-```
-ehrx/
-├── agent/          # Query interface (filter → reason pipeline)
-├── vlm/            # Vision Language Model integration (Gemini)
-├── core/           # Configuration and utilities
-├── layout/         # Column detection and reading order
-├── pdf/            # PDF page conversion
-├── hierarchy.py    # Document structure modeling
-└── serialize.py    # JSON serialization with provenance
-
-scripts/            # Demo and testing scripts
-tests/              # Unit tests
-configs/            # YAML configuration
-output/             # Extraction results (gitignored)
-docs/               # Technical documentation
-```
-
-## Query Agent
-
-The `HybridQueryAgent` provides natural language search over extracted EHR data:
-
-```python
-from ehrx.agent.query import HybridQueryAgent
-from ehrx.vlm.config import VLMConfig
-
-agent = HybridQueryAgent(
-    schema_path="output/extraction_enhanced.json",
-    vlm_config=VLMConfig.from_env()
-)
-
-result = agent.query("What medications is the patient taking?")
-
-# result contains:
-# - answer_summary: Human-readable answer
-# - matched_elements: Source elements with bounding boxes
-# - reasoning: How the answer was derived
-# - filter_stats: Query efficiency metrics
-```
-
-## Output Format
-
-Extractions produce JSON with:
-- Page-level elements (tables, paragraphs, forms)
-- Semantic types (medication_table, lab_result, clinical_paragraph)
-- Bounding box coordinates (pixel and PDF space)
-- Sub-document groupings (medications, labs, progress_notes)
-- Full provenance chain for audit trails
-
-## Development
-
-Run tests:
-```bash
-pytest tests/
-```
-
-## License
-
-Proprietary - PDF2EHR Team
+## Notes
+- Protect PHI: inputs/outputs under `output/` and sample PDFs are gitignored by default.
+- Adjust `netlify.toml` redirects or `FRONTEND_ORIGINS` if you host your own API.

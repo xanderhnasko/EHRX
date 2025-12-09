@@ -28,7 +28,7 @@ export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account.json"
 ### 2. Run Test Pipeline (5 pages)
 
 ```bash
-python test_pipeline.py
+python scripts/test_pipeline.py
 ```
 
 When prompted:
@@ -39,7 +39,7 @@ When prompted:
 ### 3. Run Full MVP Pipeline (650 pages)
 
 ```bash
-python run_mvp_pipeline.py
+python scripts/run_mvp_pipeline.py
 ```
 
 When prompted:
@@ -169,8 +169,10 @@ PDF2EHR/
 ├── docs/
 │   ├── MVP_PLAN.md            # Detailed implementation plan
 │   └── MVP_QUICKSTART.md      # This file
-├── test_pipeline.py           # Test on 5 pages
-└── run_mvp_pipeline.py        # Full pipeline + query mode
+├── scripts/
+│   ├── test_pipeline.py       # Test on 5 pages
+│   └── run_mvp_pipeline.py    # Full pipeline + query mode
+└── ...
 ```
 
 ## Output Files
@@ -305,5 +307,5 @@ See `docs/VLM_REFACTOR.md` for full roadmap:
 **Ready to process your 650-page EHR?**
 
 ```bash
-python run_mvp_pipeline.py
+python scripts/run_mvp_pipeline.py
 ```
