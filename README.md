@@ -1,6 +1,10 @@
-# PDF2EHR (EHRX)
+# EHRX
 
-Extract structured clinical data from scanned EHR PDFs using a Vertex AI Gemini pipeline plus a lightweight FastAPI + React UI.
+Extract structured clinical data from scanned EHR PDFs using a Vertex AI Gemini pipeline plus a lightweight UI.
+
+**[Demo Video](https://drive.google.com/file/d/1s9Q6T-DwVsQ4mLyIGU3orPFTvw0hC5ly/view?usp=sharing)**
+
+**Please check out our paper and architecture [here](https://drive.google.com/file/d/1hiEO-I0a6326PFAODhFmqbmyPOjILsYv/view?usp=sharing)** 
 
 ## Hosted App
 
